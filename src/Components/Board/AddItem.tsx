@@ -52,7 +52,7 @@ export default function AddItemDrawer({
       .map((i) => Number(String(i.id).split("-")[1]))
       .filter((n) => Number.isFinite(n));
     const max = nums.length ? Math.max(...nums) : 0;
-    return `row-${max + 1}`;
+    return `task-${max + 1}`;
   }, [allItems]);
 
   // ✅ position הבא בתוך העמודה (נוח לסידור)
@@ -124,7 +124,7 @@ export default function AddItemDrawer({
 
       <Drawer anchor="right" open={open} onClose={() => setOpen(false)}>
         <Box sx={{ width: 360, p: 2.5 }}>
-          <Typography sx={{ fontWeight: 800, mb: 2 }}>Add Item</Typography>
+          <Typography sx={{ fontWeight: 800, mb: 2 }}>Add task</Typography>
 
           <TextField
             fullWidth
@@ -153,6 +153,10 @@ export default function AddItemDrawer({
             type="number"
             value={assigneeId}
             onChange={(e) => setAssigneeId(Number(e.target.value))}
+            onFocus={(e) => {
+              if (assigneeId === 0) e.target.select();
+            }}
+            inputProps={{ min: 0 }} // לא מאפשר לרדת מתחת ל-0
             sx={{ mb: 2 }}
           />
 
