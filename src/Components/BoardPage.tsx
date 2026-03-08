@@ -65,7 +65,13 @@ export default function BoardPage() {
 
   return (
     <Box>
-      <Table columns={columns} items={items} ondeleteItems={deleteItem}  onaddItem={aadItem} boardId={activeBoardId!} />
+      <Table
+        columns={columns}
+        items={items}
+        ondeleteItems={deleteItem}
+        onaddItem={aadItem}
+        boardId={activeBoardId!}
+      />
     </Box>
   );
 }

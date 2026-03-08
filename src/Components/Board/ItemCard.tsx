@@ -105,6 +105,7 @@ export default function ItemCard({ item, column, ondeleteItems  }: ItemCardProps
               backgroundColor: `${tag.color}98`,
               color: "#ffffff",
               border: `1px solid ${tag.color}90`,
+              textShadow: "0 0 3px rgba(0,0,0,0.6)",
               px: 1,
               height: 24,
               borderRadius: 999,

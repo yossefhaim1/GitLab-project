@@ -12,14 +12,7 @@ type ColumnProps = {
   onaddItem: (item: Items) => void;
 };
 
-export default function Column({
-  column,
-  items,
-  allItems,
-  boardId,
-  ondeleteItems,
-  onaddItem,
-}: ColumnProps) {
+export default function Column({column, items, allItems, boardId, ondeleteItems, onaddItem,}: ColumnProps) {
   return (
     <Box
       sx={{

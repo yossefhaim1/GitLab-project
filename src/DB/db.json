@@ -1,6 +1,10 @@
 {
   "boards": [
-    { "id": "board-1", "name": "Development Board", "isDefault": true }
+    {
+      "id": "board-1",
+      "name": "Development Board",
+      "isDefault": true
+    }
   ],
   "columns": [
     {
@@ -37,11 +41,25 @@
       "title": "Fix login bug",
       "status": "TO_DO",
       "assigneeId": 1,
-      "priority": [{ "type": "HIGH", "color": "#b91c1c" }],
+      "priority": [
+        {
+          "type": "HIGH",
+          "color": "#b91c1c"
+        }
+      ],
       "tags": [
-        { "type": "Bug", "color": "#f97316" },
-        { "type": "Development", "color": "#ef4444" },
-        { "type": "Urgent", "color": "#6b7280" }
+        {
+          "type": "Bug",
+          "color": "#f97316"
+        },
+        {
+          "type": "Development",
+          "color": "#ef4444"
+        },
+        {
+          "type": "Urgent",
+          "color": "#6b7280"
+        }
       ]
     },
     {
@@ -52,11 +70,25 @@
       "title": "Improve UI design",
       "status": "TO_DO",
       "assigneeId": 2,
-      "priority": [{ "type": "MEDIUM", "color": "#b45309" }],
+      "priority": [
+        {
+          "type": "MEDIUM",
+          "color": "#b45309"
+        }
+      ],
       "tags": [
-        { "type": "UI", "color": "#3b82f6" },
-        { "type": "Design", "color": "#a855f7" },
-        { "type": "Enhancement", "color": "#22c55e" }
+        {
+          "type": "UI",
+          "color": "#3b82f6"
+        },
+        {
+          "type": "Design",
+          "color": "#a855f7"
+        },
+        {
+          "type": "Enhancement",
+          "color": "#22c55e"
+        }
       ]
     },
     {
@@ -67,11 +99,25 @@
       "title": "Add validation",
       "status": "TO_DO",
       "assigneeId": 3,
-      "priority": [{ "type": "LOW", "color": "#374151" }],
+      "priority": [
+        {
+          "type": "LOW",
+          "color": "#374151"
+        }
+      ],
       "tags": [
-        { "type": "Backend", "color": "#14b8a6" },
-        { "type": "Validation", "color": "#f97316" },
-        { "type": "TechDebt", "color": "#6b7280" }
+        {
+          "type": "Backend",
+          "color": "#14b8a6"
+        },
+        {
+          "type": "Validation",
+          "color": "#f97316"
+        },
+        {
+          "type": "TechDebt",
+          "color": "#6b7280"
+        }
       ]
     },
     {
@@ -82,11 +128,25 @@
       "title": "Create landing page",
       "status": "TO_DO",
       "assigneeId": 4,
-      "priority": [{ "type": "HIGH", "color": "#b91c1c" }],
+      "priority": [
+        {
+          "type": "HIGH",
+          "color": "#b91c1c"
+        }
+      ],
       "tags": [
-        { "type": "Frontend", "color": "#3b82f6" },
-        { "type": "Marketing", "color": "#ec4899" },
-        { "type": "Urgent", "color": "#6b7280" }
+        {
+          "type": "Frontend",
+          "color": "#3b82f6"
+        },
+        {
+          "type": "Marketing",
+          "color": "#ec4899"
+        },
+        {
+          "type": "Urgent",
+          "color": "#6b7280"
+        }
       ]
     },
     {
@@ -97,11 +157,25 @@
       "title": "Update documentation",
       "status": "TO_DO",
       "assigneeId": 5,
-      "priority": [{ "type": "MEDIUM", "color": "#b45309" }],
+      "priority": [
+        {
+          "type": "MEDIUM",
+          "color": "#b45309"
+        }
+      ],
       "tags": [
-        { "type": "Docs", "color": "#a16207" },
-        { "type": "Maintenance", "color": "#6b7280" },
-        { "type": "Team", "color": "#22c55e" }
+        {
+          "type": "Docs",
+          "color": "#a16207"
+        },
+        {
+          "type": "Maintenance",
+          "color": "#6b7280"
+        },
+        {
+          "type": "Team",
+          "color": "#22c55e"
+        }
       ]
     },
     {
@@ -112,14 +186,27 @@
       "title": "Refactor helpers",
       "status": "TO_DO",
       "assigneeId": 6,
-      "priority": [{ "type": "LOW", "color": "#374151" }],
+      "priority": [
+        {
+          "type": "LOW",
+          "color": "#374151"
+        }
+      ],
       "tags": [
-        { "type": "Refactor", "color": "#a855f7" },
-        { "type": "TechDebt", "color": "#6b7280" },
-        { "type": "Cleanup", "color": "#22c55e" }
+        {
+          "type": "Refactor",
+          "color": "#a855f7"
+        },
+        {
+          "type": "TechDebt",
+          "color": "#6b7280"
+        },
+        {
+          "type": "Cleanup",
+          "color": "#22c55e"
+        }
       ]
     },
-
     {
       "id": "row-7",
       "boardId": "board-1",
@@ -128,11 +215,25 @@
       "title": "Build API integration",
       "status": "in-progress",
       "assigneeId": 1,
-      "priority": [{ "type": "HIGH", "color": "#b91c1c" }],
+      "priority": [
+        {
+          "type": "HIGH",
+          "color": "#b91c1c"
+        }
+      ],
       "tags": [
-        { "type": "API", "color": "#14b8a6" },
-        { "type": "Integration", "color": "#3b82f6" },
-        { "type": "Urgent", "color": "#6b7280" }
+        {
+          "type": "API",
+          "color": "#14b8a6"
+        },
+        {
+          "type": "Integration",
+          "color": "#3b82f6"
+        },
+        {
+          "type": "Urgent",
+          "color": "#6b7280"
+        }
       ]
     },
     {
@@ -143,11 +244,25 @@
       "title": "Setup CI/CD",
       "status": "in-progress",
       "assigneeId": 2,
-      "priority": [{ "type": "HIGH", "color": "#b91c1c" }],
+      "priority": [
+        {
+          "type": "HIGH",
+          "color": "#b91c1c"
+        }
+      ],
       "tags": [
-        { "type": "DevOps", "color": "#f97316" },
-        { "type": "CI/CD", "color": "#ef4444" },
-        { "type": "Infrastructure", "color": "#6b7280" }
+        {
+          "type": "DevOps",
+          "color": "#f97316"
+        },
+        {
+          "type": "CI/CD",
+          "color": "#ef4444"
+        },
+        {
+          "type": "Infrastructure",
+          "color": "#6b7280"
+        }
       ]
     },
     {
@@ -158,11 +273,25 @@
       "title": "Implement auth",
       "status": "in-progress",
       "assigneeId": 3,
-      "priority": [{ "type": "MEDIUM", "color": "#b45309" }],
+      "priority": [
+        {
+          "type": "MEDIUM",
+          "color": "#b45309"
+        }
+      ],
       "tags": [
-        { "type": "Auth", "color": "#ef4444" },
-        { "type": "Security", "color": "#f97316" },
-        { "type": "Backend", "color": "#14b8a6" }
+        {
+          "type": "Auth",
+          "color": "#ef4444"
+        },
+        {
+          "type": "Security",
+          "color": "#f97316"
+        },
+        {
+          "type": "Backend",
+          "color": "#14b8a6"
+        }
       ]
     },
     {
@@ -173,11 +302,25 @@
       "title": "Optimize queries",
       "status": "in-progress",
       "assigneeId": 4,
-      "priority": [{ "type": "LOW", "color": "#374151" }],
+      "priority": [
+        {
+          "type": "LOW",
+          "color": "#374151"
+        }
+      ],
       "tags": [
-        { "type": "Performance", "color": "#22c55e" },
-        { "type": "Database", "color": "#3b82f6" },
-        { "type": "TechDebt", "color": "#6b7280" }
+        {
+          "type": "Performance",
+          "color": "#22c55e"
+        },
+        {
+          "type": "Database",
+          "color": "#3b82f6"
+        },
+        {
+          "type": "TechDebt",
+          "color": "#6b7280"
+        }
       ]
     },
     {
@@ -188,11 +331,25 @@
       "title": "Improve performance",
       "status": "in-progress",
       "assigneeId": 5,
-      "priority": [{ "type": "MEDIUM", "color": "#b45309" }],
+      "priority": [
+        {
+          "type": "MEDIUM",
+          "color": "#b45309"
+        }
+      ],
       "tags": [
-        { "type": "Performance", "color": "#22c55e" },
-        { "type": "Frontend", "color": "#3b82f6" },
-        { "type": "Monitoring", "color": "#a855f7" }
+        {
+          "type": "Performance",
+          "color": "#22c55e"
+        },
+        {
+          "type": "Frontend",
+          "color": "#3b82f6"
+        },
+        {
+          "type": "Monitoring",
+          "color": "#a855f7"
+        }
       ]
     },
     {
@@ -203,14 +360,27 @@
       "title": "Refactor components",
       "status": "in-progress",
       "assigneeId": 6,
-      "priority": [{ "type": "LOW", "color": "#374151" }],
+      "priority": [
+        {
+          "type": "LOW",
+          "color": "#374151"
+        }
+      ],
       "tags": [
-        { "type": "Refactor", "color": "#a855f7" },
-        { "type": "Frontend", "color": "#3b82f6" },
-        { "type": "Cleanup", "color": "#22c55e" }
+        {
+          "type": "Refactor",
+          "color": "#a855f7"
+        },
+        {
+          "type": "Frontend",
+          "color": "#3b82f6"
+        },
+        {
+          "type": "Cleanup",
+          "color": "#22c55e"
+        }
       ]
     },
-
     {
       "id": "row-13",
       "boardId": "board-1",
@@ -219,11 +389,25 @@
       "title": "Deploy first version",
       "status": "done",
       "assigneeId": 1,
-      "priority": [{ "type": "HIGH", "color": "#b91c1c" }],
+      "priority": [
+        {
+          "type": "HIGH",
+          "color": "#b91c1c"
+        }
+      ],
       "tags": [
-        { "type": "Release", "color": "#22c55e" },
-        { "type": "Production", "color": "#14b8a6" },
-        { "type": "Milestone", "color": "#a855f7" }
+        {
+          "type": "Release",
+          "color": "#22c55e"
+        },
+        {
+          "type": "Production",
+          "color": "#14b8a6"
+        },
+        {
+          "type": "Milestone",
+          "color": "#a855f7"
+        }
       ]
     },
     {
@@ -234,11 +418,25 @@
       "title": "Setup project structure",
       "status": "done",
       "assigneeId": 2,
-      "priority": [{ "type": "MEDIUM", "color": "#b45309" }],
+      "priority": [
+        {
+          "type": "MEDIUM",
+          "color": "#b45309"
+        }
+      ],
       "tags": [
-        { "type": "Setup", "color": "#3b82f6" },
-        { "type": "Architecture", "color": "#a855f7" },
-        { "type": "Foundation", "color": "#6b7280" }
+        {
+          "type": "Setup",
+          "color": "#3b82f6"
+        },
+        {
+          "type": "Architecture",
+          "color": "#a855f7"
+        },
+        {
+          "type": "Foundation",
+          "color": "#6b7280"
+        }
       ]
     },
     {
@@ -249,11 +447,25 @@
       "title": "Fix production bug",
       "status": "done",
       "assigneeId": 3,
-      "priority": [{ "type": "HIGH", "color": "#b91c1c" }],
+      "priority": [
+        {
+          "type": "HIGH",
+          "color": "#b91c1c"
+        }
+      ],
       "tags": [
-        { "type": "Bug", "color": "#f97316" },
-        { "type": "Production", "color": "#14b8a6" },
-        { "type": "Hotfix", "color": "#ef4444" }
+        {
+          "type": "Bug",
+          "color": "#f97316"
+        },
+        {
+          "type": "Production",
+          "color": "#14b8a6"
+        },
+        {
+          "type": "Hotfix",
+          "color": "#ef4444"
+        }
       ]
     },
     {
@@ -264,11 +476,25 @@
       "title": "Release patch v1.1",
       "status": "done",
       "assigneeId": 4,
-      "priority": [{ "type": "LOW", "color": "#374151" }],
+      "priority": [
+        {
+          "type": "LOW",
+          "color": "#374151"
+        }
+      ],
       "tags": [
-        { "type": "Release", "color": "#22c55e" },
-        { "type": "Patch", "color": "#3b82f6" },
-        { "type": "Maintenance", "color": "#6b7280" }
+        {
+          "type": "Release",
+          "color": "#22c55e"
+        },
+        {
+          "type": "Patch",
+          "color": "#3b82f6"
+        },
+        {
+          "type": "Maintenance",
+          "color": "#6b7280"
+        }
       ]
     },
     {
@@ -279,11 +505,25 @@
       "title": "Write final report",
       "status": "done",
       "assigneeId": 5,
-      "priority": [{ "type": "MEDIUM", "color": "#b45309" }],
+      "priority": [
+        {
+          "type": "MEDIUM",
+          "color": "#b45309"
+        }
+      ],
       "tags": [
-        { "type": "Docs", "color": "#a16207" },
-        { "type": "Report", "color": "#a855f7" },
-        { "type": "Team", "color": "#22c55e" }
+        {
+          "type": "Docs",
+          "color": "#a16207"
+        },
+        {
+          "type": "Report",
+          "color": "#a855f7"
+        },
+        {
+          "type": "Team",
+          "color": "#22c55e"
+        }
       ]
     },
     {
@@ -294,35 +534,26 @@
       "title": "Archive old version",
       "status": "done",
       "assigneeId": 6,
-      "priority": [{ "type": "LOW", "color": "#374151" }],
+      "priority": [
+        {
+          "type": "LOW",
+          "color": "#374151"
+        }
+      ],
       "tags": [
-        { "type": "Archive", "color": "#6b7280" },
-        { "type": "Cleanup", "color": "#22c55e" },
-        { "type": "Maintenance", "color": "#a16207" }
+        {
+          "type": "Archive",
+          "color": "#6b7280"
+        },
+        {
+          "type": "Cleanup",
+          "color": "#22c55e"
+        },
+        {
+          "type": "Maintenance",
+          "color": "#a16207"
+        }
       ]
-    },
-
-    {
-      "id": "task-19",
-      "boardId": "board-1",
-      "columnId": "col-1",
-      "position": 7,
-      "title": "jfihei",
-      "status": "TO_DO",
-      "assigneeId": 0,
-      "priority": [{ "type": "LOW", "color": "#374151" }],
-      "tags": [{ "type": "eijfi", "color": "#3b82f6" }]
-    },
-    {
-      "id": "task-20",
-      "boardId": "board-1",
-      "columnId": "col-1",
-      "position": 8,
-      "title": "oifjo",
-      "status": "TO_DO",
-      "assigneeId": 11,
-      "priority": [{ "type": "LOW", "color": "#374151" }],
-      "tags": [{ "type": "fnie", "color": "#3b82f6" }]
     }
   ]
 }
