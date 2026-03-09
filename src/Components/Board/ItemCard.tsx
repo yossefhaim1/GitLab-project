@@ -8,6 +8,7 @@ type ItemCardProps = {
   column: Columns;
   ondeleteItems: (id: string) => void;
   updateItem: (id: string, changes: Partial<Items>) => void;
+  allItems: Items[];
   columns: Columns[];
 };
 
@@ -16,6 +17,7 @@ export default function ItemCard({
   column,
   ondeleteItems,
   updateItem,
+  allItems,
   columns,
 }: ItemCardProps) {
   return (
@@ -77,7 +79,7 @@ export default function ItemCard({
               ml: 0.5,
             }}
           >
-            <UpdateItem item={item} updateItem={updateItem} columns={columns} />
+            <UpdateItem item={item} allItems={allItems} updateItem={updateItem} columns={columns} />
           </Box>
         </Box>
 

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import {
   Box,
   Button,
- Drawer,
+  Drawer,
   IconButton,
   TextField,
   Typography,
@@ -25,12 +25,14 @@ type TagInput = { type: string; color: string };
 interface UpdateItemProps {
   item: Items;
   columns: Columns[];
+  allItems: Items[];
   updateItem: (id: string, changes: Partial<Items>) => void;
 }
 
 export default function UpdateItem({
   item,
   columns,
+  allItems,
   updateItem,
 }: UpdateItemProps) {
   const [open, setOpen] = useState<boolean>(false);
@@ -91,6 +93,16 @@ export default function UpdateItem({
 
       if (targetColumn && targetColumn.id !== item.columnId) {
         changes.columnId = targetColumn.id;
+
+        const itemsInTargetColumn = allItems.filter(
+          (currentItem) => currentItem.columnId === targetColumn.id
+        );
+
+        const maxPosition = itemsInTargetColumn.length
+          ? Math.max(...itemsInTargetColumn.map((currentItem) => currentItem.position))
+          : 0;
+
+        changes.position = maxPosition + 1;
       }
     }
 

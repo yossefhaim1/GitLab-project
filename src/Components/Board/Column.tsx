@@ -67,7 +67,7 @@ export default function Column({column, items, allItems, boardId, ondeleteItems,
         }}
       >
         {items.map((item) => (
-          <ItemCard key={item.id} item={item} column={column} ondeleteItems={ondeleteItems} updateItem={updateItem} columns={columns}/>
+          <ItemCard key={item.id} item={item} allItems={allItems} column={column} ondeleteItems={ondeleteItems} updateItem={updateItem} columns={columns}/>
         ))}
       </Box>
     </Box>

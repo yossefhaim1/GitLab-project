@@ -2,8 +2,7 @@ import { useState, useEffect } from "react";
 import Table from "./Board/Board";
 import { Box } from "@mui/material";
 import type { Boards, Items, Columns } from "../Type";
-import axios from "axios";
-import Board from "./Board/Board";
+
 
 export default function BoardPage() {
   const [, setBoards] = useState<Boards[]>([]);
