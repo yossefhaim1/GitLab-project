@@ -183,13 +183,13 @@
       "boardId": "board-1",
       "columnId": "col-1",
       "position": 6,
-      "title": "Refactor helpers",
+      "title": "Refactor",
       "status": "TO_DO",
       "assigneeId": 6,
       "priority": [
         {
-          "type": "LOW",
-          "color": "#374151"
+          "type": "HIGH",
+          "color": "#b91c1c"
         }
       ],
       "tags": [
@@ -532,7 +532,7 @@
       "columnId": "col-3",
       "position": 6,
       "title": "Archive old version",
-      "status": "done",
+      "status": "DONE",
       "assigneeId": 6,
       "priority": [
         {

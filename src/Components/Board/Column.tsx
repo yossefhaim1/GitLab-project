@@ -10,9 +10,11 @@ type ColumnProps = {
   boardId: string;     // אם אין column.boardId תמיד
   ondeleteItems: (id: string) => void;
   onaddItem: (item: Items) => void;
+  updateItem: (id: string, changes: Partial<Items>) => void; 
+  columns: Columns[];
 };
 
-export default function Column({column, items, allItems, boardId, ondeleteItems, onaddItem,}: ColumnProps) {
+export default function Column({column, items, allItems, boardId, ondeleteItems, onaddItem, updateItem , columns}: ColumnProps) {
   return (
     <Box
       sx={{
@@ -65,7 +67,7 @@ export default function Column({column, items, allItems, boardId, ondeleteItems,
         }}
       >
         {items.map((item) => (
-          <ItemCard key={item.id} item={item} column={column} ondeleteItems={ondeleteItems} />
+          <ItemCard key={item.id} item={item} column={column} ondeleteItems={ondeleteItems} updateItem={updateItem} columns={columns}/>
         ))}
       </Box>
     </Box>

@@ -8,6 +8,7 @@ type BoardProps = {
   ondeleteItems: (id: string) => void;
   onaddItem: (item: Items) => void;
   boardId: string; // 👈 תוסיף אם אין ל-column boardId קבוע
+  updateItem: (id: string, changes: Partial<Items>) => void; 
 };
 
 export default function Board({
@@ -16,6 +17,7 @@ export default function Board({
   ondeleteItems,
   onaddItem,
   boardId,
+  updateItem
 }: BoardProps) {
   return (
     <Box
@@ -45,6 +47,8 @@ export default function Board({
             boardId={boardId}     // ✅ אם צריך
             ondeleteItems={ondeleteItems}
             onaddItem={onaddItem}
+            updateItem={updateItem}
+            columns={columns}
           />
         );
       })}

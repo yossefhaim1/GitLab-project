@@ -1,14 +1,23 @@
 import { Box, Paper, Tooltip, Typography } from "@mui/material";
 import type { Columns, Items } from "../../Type";
 import DeleteItem from "./DeleteItem";
+import UpdateItem from "./UpdateItem";
 
 type ItemCardProps = {
   item: Items;
   column: Columns;
   ondeleteItems: (id: string) => void;
+  updateItem: (id: string, changes: Partial<Items>) => void;
+  columns: Columns[];
 };
 
-export default function ItemCard({ item, column, ondeleteItems  }: ItemCardProps) {
+export default function ItemCard({
+  item,
+  column,
+  ondeleteItems,
+  updateItem,
+  columns,
+}: ItemCardProps) {
   return (
     <Paper
       elevation={1}
@@ -22,30 +31,57 @@ export default function ItemCard({ item, column, ondeleteItems  }: ItemCardProps
         flexDirection: "column",
         justifyContent: "space-between",
         minHeight: 150,
+
         "&:hover": {
           boxShadow: 4,
         },
+
+        /* הופעת כפתור edit רק ב-hover */
+        "&:hover .edit-btn": {
+          opacity: 1,
+        },
       }}
     >
-      {/* Top row: title + meta */}
+      {/* Title row */}
       <Box
         sx={{
           display: "flex",
-          alignItems: "flex-start",
+          alignItems: "center",
           justifyContent: "space-between",
           gap: 1,
         }}
       >
-        <Typography
+        {/* Title + edit */}
+        <Box
           sx={{
-            fontSize: "15px",
-            fontWeight: 800,
-            lineHeight: 1.25,
+            display: "flex",
+            alignItems: "center",
+            gap: 0.5,
           }}
         >
-          {item.title}
-        </Typography>
+          <Typography
+            sx={{
+              fontSize: "15px",
+              fontWeight: 800,
+              lineHeight: 1.25,
+            }}
+          >
+            {item.title}
+          </Typography>
 
+          <Box
+            className="edit-btn"
+            sx={{
+              opacity: 0,
+              transition: "0.15s",
+              ml: 0.5,
+            }}
+          >
+            <UpdateItem item={item} updateItem={updateItem} columns={columns} />
+          </Box>
+        </Box>
+
+        {/* Right meta */}
         <Box
           sx={{
             display: "flex",
@@ -112,10 +148,6 @@ export default function ItemCard({ item, column, ondeleteItems  }: ItemCardProps
               display: "inline-flex",
               alignItems: "center",
               lineHeight: 1,
-              "&:hover": {
-                textDecoration: "underline",
-                cursor: "default",
-              },
             }}
           >
             {tag.type}
@@ -149,7 +181,6 @@ export default function ItemCard({ item, column, ondeleteItems  }: ItemCardProps
             borderRadius: "25px",
             border: `1px solid ${column.color}30`,
             boxShadow: `0 2px 6px ${column.color}20`,
-            transition: "transform 0.2s ease",
           }}
         >
           <Box

@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import Table from "./Board/Board";
 import { Box } from "@mui/material";
 import type { Boards, Items, Columns } from "../Type";
+import axios from "axios";
+import Board from "./Board/Board";
 
 export default function BoardPage() {
   const [, setBoards] = useState<Boards[]>([]);
@@ -63,6 +65,27 @@ export default function BoardPage() {
       });
   }
 
+  async function updateItem(id: string, changes: Partial<Items>) {
+    try {
+      const res = await fetch(`/api/items/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(changes),
+      });
+      if (!res.ok) {
+        throw new Error("Failed to update item");
+      }
+      const updatedItem: Items = await res.json();
+      setItems((prev) =>
+        prev.map((item) => (item.id === id ? updatedItem : item)),
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   return (
     <Box>
       <Table
@@ -71,6 +94,7 @@ export default function BoardPage() {
         ondeleteItems={deleteItem}
         onaddItem={aadItem}
         boardId={activeBoardId!}
+        updateItem={updateItem}
       />
     </Box>
   );
