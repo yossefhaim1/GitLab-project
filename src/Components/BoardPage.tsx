@@ -2,7 +2,14 @@ import { useState, useEffect } from "react";
 import Table from "./Board/Board";
 import { Box } from "@mui/material";
 import type { Boards, Items, Columns } from "../Type";
-
+import {
+  getBoards,
+  getColumns,
+  getItems,
+  deleteItemById,
+  addItemRequest,
+  updateItemRequest,
+} from "../Api/boardPageApi";
 
 export default function BoardPage() {
   const [, setBoards] = useState<Boards[]>([]);
@@ -10,36 +17,43 @@ export default function BoardPage() {
   const [columns, setColumns] = useState<Columns[]>([]);
   const [items, setItems] = useState<Items[]>([]);
 
-  // 1️⃣ טוען boards
   useEffect(() => {
-    fetch("/api/boards")
-      .then((res) => res.json())
-      .then((data: Boards[]) => {
+    getBoards()
+      .then((res) => {
+        const data = res.data;
         setBoards(data);
+
         const defaultBoard = data.find((b) => b.isDefault);
         setActiveBoardId(defaultBoard?.id || null);
+      })
+      .catch((err) => {
+        console.log(err);
       });
   }, []);
 
-  // 2️⃣ טוען columns + items לפי activeBoardId
   useEffect(() => {
     if (!activeBoardId) return;
 
-    fetch(`/api/columns?boardId=${activeBoardId}`)
-      .then((res) => res.json())
-      .then(setColumns);
+    getColumns(activeBoardId)
+      .then((res) => {
+        setColumns(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 
-    fetch(`/api/items?boardId=${activeBoardId}`)
-      .then((res) => res.json())
-      .then(setItems);
+    getItems(activeBoardId)
+      .then((res) => {
+        setItems(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, [activeBoardId]);
 
   function deleteItem(id: string) {
-    fetch(`/api/items/${id}`, {
-      method: "DELETE",
-    })
+    deleteItemById(id)
       .then(() => {
-        console.log("Item deleted");
         setItems((prev) => prev.filter((item) => item.id !== id));
       })
       .catch((err) => {
@@ -47,17 +61,10 @@ export default function BoardPage() {
       });
   }
 
-  function aadItem(item: Items) {
-    fetch("/api/items", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(item),
-    })
-      .then(() => {
-        console.log("Item added");
-        setItems((prev) => [...prev, item]);
+  function addItem(item: Items) {
+    addItemRequest(item)
+      .then((res) => {
+        setItems((prev) => [...prev, res.data]);
       })
       .catch((err) => {
         console.log(err);
@@ -66,19 +73,11 @@ export default function BoardPage() {
 
   async function updateItem(id: string, changes: Partial<Items>) {
     try {
-      const res = await fetch(`/api/items/${id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(changes),
-      });
-      if (!res.ok) {
-        throw new Error("Failed to update item");
-      }
-      const updatedItem: Items = await res.json();
+      const res = await updateItemRequest(id, changes);
+      const updatedItem = res.data;
+
       setItems((prev) =>
-        prev.map((item) => (item.id === id ? updatedItem : item)),
+        prev.map((item) => (item.id === id ? updatedItem : item))
       );
     } catch (err) {
       console.error(err);
@@ -91,7 +90,7 @@ export default function BoardPage() {
         columns={columns}
         items={items}
         ondeleteItems={deleteItem}
-        onaddItem={aadItem}
+        onaddItem={addItem}
         boardId={activeBoardId!}
         updateItem={updateItem}
       />
