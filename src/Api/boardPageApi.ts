@@ -1,4 +1,4 @@
-import  api  from "./Axios"; 
+import  api  from "./Axios-Api" 
 import type { Boards, Items, Columns } from "../Type";
 
 // הוספתי פונקציות API ל-boards, columns, items
