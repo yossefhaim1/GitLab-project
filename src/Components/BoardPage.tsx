@@ -1,87 +1,33 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import Table from "./Board/Board";
 import { Box } from "@mui/material";
-import type { Boards, Items, Columns } from "../Type";
-import {
-  getBoards,
-  getColumns,
-  getItems,
-  deleteItemById,
-  addItemRequest,
-  updateItemRequest,
-} from "../Api/boardPageApi";
+import { useBoardStore } from "../store/boardStore";
 
 export default function BoardPage() {
-  const [, setBoards] = useState<Boards[]>([]);
-  const [activeBoardId, setActiveBoardId] = useState<string | null>(null);
-  const [columns, setColumns] = useState<Columns[]>([]);
-  const [items, setItems] = useState<Items[]>([]);
+  const activeBoardId = useBoardStore((state) => state.activeBoardId);
+  const columns = useBoardStore((state) => state.columns);
+  const items = useBoardStore((state) => state.items);
+  const loading = useBoardStore((state) => state.loading);
+  const error = useBoardStore((state) => state.error);
+  const fetchBoards = useBoardStore((state) => state.fetchBoards);
+  const addItem = useBoardStore((state) => state.addItem);
+  const updateItem = useBoardStore((state) => state.updateItem);
+  const deleteItem = useBoardStore((state) => state.deleteItem);
 
   useEffect(() => {
-    getBoards()
-      .then((res) => {
-        const data = res.data;
-        setBoards(data);
+    fetchBoards();
+  }, [fetchBoards]);
 
-        const defaultBoard = data.find((b) => b.isDefault);
-        setActiveBoardId(defaultBoard?.id || null);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
-
-  useEffect(() => {
-    if (!activeBoardId) return;
-
-    getColumns(activeBoardId)
-      .then((res) => {
-        setColumns(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-
-    getItems(activeBoardId)
-      .then((res) => {
-        setItems(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [activeBoardId]);
-
-  function deleteItem(id: string) {
-    deleteItemById(id)
-      .then(() => {
-        setItems((prev) => prev.filter((item) => item.id !== id));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  if (loading && !activeBoardId) {
+    return <div>Loading...</div>;
   }
 
-  function addItem(item: Items) {
-    addItemRequest(item)
-      .then((res) => {
-        setItems((prev) => [...prev, res.data]);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  if (error) {
+    return <div>{error}</div>;
   }
 
-  async function updateItem(id: string, changes: Partial<Items>) {
-    try {
-      const res = await updateItemRequest(id, changes);
-      const updatedItem = res.data;
-
-      setItems((prev) =>
-        prev.map((item) => (item.id === id ? updatedItem : item))
-      );
-    } catch (err) {
-      console.error(err);
-    }
+  if (!activeBoardId) {
+    return <div>No board selected</div>;
   }
 
   return (
@@ -91,7 +37,7 @@ export default function BoardPage() {
         items={items}
         ondeleteItems={deleteItem}
         onaddItem={addItem}
-        boardId={activeBoardId!}
+        boardId={activeBoardId}
         updateItem={updateItem}
       />
     </Box>
