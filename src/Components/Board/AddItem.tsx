@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import Add from "@mui/icons-material/Add";
 import type { Items } from "../../Type";
+import { useBoardStore } from "../../store/boardStore";
 
 type PriorityType = "LOW" | "MEDIUM" | "HIGH";
 
@@ -20,53 +21,58 @@ const PRIORITY_COLOR: Record<PriorityType, string> = {
   HIGH: "#b91c1c",
 };
 
-type TagInput = { type: string; color: string };
+type TagInput = {
+  type: string;
+  color: string;
+};
 
-interface AddItemProps {
-  boardId: string;
+type AddItemProps = {
   columnId: string;
-  status: string;
-  allItems: Items[];
-  onaddItem: (item: Items) => void;
-}
+};
 
-export default function AddItem({
-  boardId,
-  columnId,
-  status,
-  allItems,
-  onaddItem,
-}: AddItemProps) {
+export default function AddItem({ columnId }: AddItemProps) {
+  const items = useBoardStore((state) => state.items);
+  const columns = useBoardStore((state) => state.columns);
+  const activeBoardId = useBoardStore((state) => state.activeBoardId);
+  const addItem = useBoardStore((state) => state.addItem);
+
   const [open, setOpen] = useState(false);
-  const [title, setTitle] = useState<string>("");
-  const [assigneeId, setAssigneeId] = useState<number>(0);
+  const [title, setTitle] = useState("");
+  const [assigneeId, setAssigneeId] = useState(0);
   const [priority, setPriority] = useState<PriorityType>("LOW");
-
-  const [tagText, setTagText] = useState<string>("");
-  const [tagColor, setTagColor] = useState<string>("#3b82f6"); // צבע ברירת מחדל
+  const [tagText, setTagText] = useState("");
+  const [tagColor, setTagColor] = useState("#3b82f6");
   const [tags, setTags] = useState<TagInput[]>([]);
 
+  const column = columns.find((col) => col.id === columnId);
+
   const nextId = useMemo(() => {
-    const nums = allItems
-      .map((i) => Number(String(i.id).split("-")[1]))
-      .filter((n) => Number.isFinite(n));
+    const nums = items
+      .map((item) => Number(String(item.id).split("-")[1]))
+      .filter((num) => Number.isFinite(num));
+
     const max = nums.length ? Math.max(...nums) : 0;
     return `task-${max + 1}`;
-  }, [allItems]);
+  }, [items]);
 
   const nextPosition = useMemo(() => {
-    const positions = allItems
+    const positions = items
       .filter((item) => item.columnId === columnId)
       .map((item) => item.position);
 
     return Math.max(0, ...positions) + 1;
-  }, [allItems, columnId]);
+  }, [items, columnId]);
 
   function addTag() {
     const value = tagText.trim();
+
     if (!value) return;
 
-    if (tags.some((t) => t.type.toLowerCase() === value.toLowerCase())) {
+    const alreadyExists = tags.some(
+      (tag) => tag.type.toLowerCase() === value.toLowerCase()
+    );
+
+    if (alreadyExists) {
       setTagText("");
       return;
     }
@@ -76,33 +82,44 @@ export default function AddItem({
   }
 
   function removeTag(type: string) {
-    setTags((prev) => prev.filter((t) => t.type !== type));
+    setTags((prev) => prev.filter((tag) => tag.type !== type));
   }
 
-  function handleCreate() {
+  async function handleCreate() {
     const cleanTitle = title.trim();
-    if (!cleanTitle) return;
+
+    if (!cleanTitle || !activeBoardId || !column) return;
 
     const newItem: Items = {
       id: nextId,
-      boardId,
+      boardId: activeBoardId,
       columnId,
       position: nextPosition,
       title: cleanTitle,
-      status,
+      status: column.statusKey,
       assigneeId,
-      priority: [{ type: priority, color: PRIORITY_COLOR[priority] }],
+      priority: [
+        {
+          type: priority,
+          color: PRIORITY_COLOR[priority],
+        },
+      ],
       tags,
     };
 
-    onaddItem(newItem);
+    await addItem(newItem);
 
     setTitle("");
     setAssigneeId(0);
     setPriority("LOW");
     setTags([]);
     setTagText("");
+    setTagColor("#3b82f6");
     setOpen(false);
+  }
+
+  if (!activeBoardId || !column) {
+    return null;
   }
 
   return (
@@ -153,7 +170,6 @@ export default function AddItem({
             sx={{ mb: 2 }}
           />
 
-          {/* Tags */}
           <Box sx={{ display: "flex", gap: 1, mb: 1, alignItems: "center" }}>
             <TextField
               fullWidth
@@ -165,14 +181,12 @@ export default function AddItem({
               }}
             />
 
-            {/* בוחר צבע מובנה */}
-            {/* בוחר צבע כעיגול נקי */}
             <Box
               sx={{
                 width: 32,
                 height: 32,
                 borderRadius: "500px",
-                backgroundColor: tagColor, // הצבע ממלא את כל העיגול
+                backgroundColor: tagColor,
                 border: "2px solid #e5e7eb",
                 position: "relative",
                 cursor: "pointer",
@@ -188,7 +202,7 @@ export default function AddItem({
                   left: 0,
                   width: "100%",
                   height: "100%",
-                  opacity: 0, // שקוף לגמרי
+                  opacity: 0,
                   cursor: "pointer",
                   border: "none",
                 }}
@@ -201,15 +215,15 @@ export default function AddItem({
           </Box>
 
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
-            {tags.map((t) => (
+            {tags.map((tag) => (
               <Chip
-                key={t.type}
-                label={t.type}
-                onDelete={() => removeTag(t.type)}
+                key={tag.type}
+                label={tag.type}
+                onDelete={() => removeTag(tag.type)}
                 sx={{
-                  backgroundColor: `${t.color}33`,
-                  color: t.color,
-                  border: `1px solid ${t.color}`,
+                  backgroundColor: `${tag.color}33`,
+                  color: tag.color,
+                  border: `1px solid ${tag.color}`,
                 }}
               />
             ))}

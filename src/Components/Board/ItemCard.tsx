@@ -1,25 +1,30 @@
 import { Box, Paper, Tooltip, Typography } from "@mui/material";
-import type { Columns, Items } from "../../Type";
 import DeleteItem from "./DeleteItem";
 import UpdateItem from "./UpdateItem";
+import { useBoardStore } from "../../store/boardStore";
 
 type ItemCardProps = {
-  item: Items;
-  column: Columns;
-  ondeleteItems: (id: string) => void;
-  updateItem: (id: string, changes: Partial<Items>) => void;
-  allItems: Items[];
-  columns: Columns[];
+  itemId: string;
 };
 
-export default function ItemCard({
-  item,
-  column,
-  ondeleteItems,
-  updateItem,
-  allItems,
-  columns,
-}: ItemCardProps) {
+export default function ItemCard({ itemId }: ItemCardProps) {
+  const items = useBoardStore((state) => state.items);
+  const columns = useBoardStore((state) => state.columns);
+
+  const item = items.find((currentItem) => currentItem.id === itemId);
+
+  if (!item) {
+    return null;
+  }
+
+  const column = columns.find(
+    (currentColumn) => currentColumn.id === item.columnId,
+  );
+
+  if (!column) {
+    return null;
+  }
+
   return (
     <Paper
       elevation={1}
@@ -33,18 +38,14 @@ export default function ItemCard({
         flexDirection: "column",
         justifyContent: "space-between",
         minHeight: 150,
-
         "&:hover": {
           boxShadow: 4,
         },
-
-        /* הופעת כפתור edit רק ב-hover */
         "&:hover .edit-btn": {
           opacity: 1,
         },
       }}
     >
-      {/* Title row */}
       <Box
         sx={{
           display: "flex",
@@ -53,7 +54,6 @@ export default function ItemCard({
           gap: 1,
         }}
       >
-        {/* Title + edit */}
         <Box
           sx={{
             display: "flex",
@@ -79,11 +79,10 @@ export default function ItemCard({
               ml: 0.5,
             }}
           >
-            <UpdateItem item={item} allItems={allItems} updateItem={updateItem} columns={columns} />
+            <UpdateItem itemId={item.id} />
           </Box>
         </Box>
 
-        {/* Right meta */}
         <Box
           sx={{
             display: "flex",
@@ -125,7 +124,6 @@ export default function ItemCard({
         </Box>
       </Box>
 
-      {/* Tags */}
       <Box
         sx={{
           mt: 1.25,
@@ -157,7 +155,6 @@ export default function ItemCard({
         ))}
       </Box>
 
-      {/* Bottom actions */}
       <Box
         sx={{
           display: "flex",
@@ -167,10 +164,9 @@ export default function ItemCard({
         }}
       >
         <Tooltip title="Delete User" placement="bottom">
-          <DeleteItem item={item} ondeleteItems={ondeleteItems} />
+          <DeleteItem itemId={item.id} />
         </Tooltip>
 
-        {/* Status */}
         <Box
           sx={{
             display: "inline-flex",

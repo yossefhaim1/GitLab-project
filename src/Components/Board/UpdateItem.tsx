@@ -10,7 +10,8 @@ import {
   Chip,
 } from "@mui/material";
 import { Edit } from "@mui/icons-material";
-import type { Items, Columns } from "../../Type";
+import type { Items } from "../../Type";
+import { useBoardStore } from "../../store/boardStore";
 
 type PriorityType = "LOW" | "MEDIUM" | "HIGH";
 
@@ -20,37 +21,33 @@ const PRIORITY_COLOR: Record<PriorityType, string> = {
   HIGH: "#b91c1c",
 };
 
-type TagInput = { type: string; color: string };
+type TagInput = {
+  type: string;
+  color: string;
+};
 
-interface UpdateItemProps {
-  item: Items;
-  columns: Columns[];
-  allItems: Items[];
-  updateItem: (id: string, changes: Partial<Items>) => void;
-}
+type UpdateItemProps = {
+  itemId: string;
+};
 
-export default function UpdateItem({
-  item,
-  columns,
-  allItems,
-  updateItem,
-}: UpdateItemProps) {
-  const [open, setOpen] = useState<boolean>(false);
+export default function UpdateItem({ itemId }: UpdateItemProps) {
+  const items = useBoardStore((state) => state.items);
+  const columns = useBoardStore((state) => state.columns);
+  const updateItem = useBoardStore((state) => state.updateItem);
 
-  const [title, setTitle] = useState<string>(item.title);
-  const [status, setStatus] = useState<string>(item.status);
-  const [assigneeId, setAssigneeId] = useState<number>(item.assigneeId);
+  const item = items.find((currentItem) => currentItem.id === itemId);
 
-  const [priority, setPriority] = useState<PriorityType>(
-    (item.priority?.[0]?.type as PriorityType) || "LOW"
-  );
-
-  const [tagText, setTagText] = useState<string>("");
-  const [tagColor, setTagColor] = useState<string>("#3b82f6");
-  const [tags, setTags] = useState<TagInput[]>(item.tags || []);
+  const [open, setOpen] = useState(false);
+  const [title, setTitle] = useState("");
+  const [status, setStatus] = useState("");
+  const [assigneeId, setAssigneeId] = useState(0);
+  const [priority, setPriority] = useState<PriorityType>("LOW");
+  const [tagText, setTagText] = useState("");
+  const [tagColor, setTagColor] = useState("#3b82f6");
+  const [tags, setTags] = useState<TagInput[]>([]);
 
   useEffect(() => {
-    if (open) {
+    if (open && item) {
       setTitle(item.title);
       setStatus(item.status);
       setAssigneeId(item.assigneeId);
@@ -63,9 +60,14 @@ export default function UpdateItem({
 
   function addTag() {
     const value = tagText.trim();
+
     if (!value) return;
 
-    if (tags.some((t) => t.type.toLowerCase() === value.toLowerCase())) {
+    const alreadyExists = tags.some(
+      (tag) => tag.type.toLowerCase() === value.toLowerCase()
+    );
+
+    if (alreadyExists) {
       setTagText("");
       return;
     }
@@ -75,10 +77,12 @@ export default function UpdateItem({
   }
 
   function removeTag(type: string) {
-    setTags((prev) => prev.filter((t) => t.type !== type));
+    setTags((prev) => prev.filter((tag) => tag.type !== type));
   }
 
-  function handleSave() {
+  async function handleSave() {
+    if (!item) return;
+
     const changes: Partial<Items> = {};
     const cleanTitle = title.trim();
 
@@ -89,17 +93,19 @@ export default function UpdateItem({
     if (status !== item.status) {
       changes.status = status;
 
-      const targetColumn = columns.find((col) => col.statusKey === status);
+      const targetColumn = columns.find((column) => column.statusKey === status);
 
       if (targetColumn && targetColumn.id !== item.columnId) {
         changes.columnId = targetColumn.id;
 
-        const itemsInTargetColumn = allItems.filter(
+        const itemsInTargetColumn = items.filter(
           (currentItem) => currentItem.columnId === targetColumn.id
         );
 
         const maxPosition = itemsInTargetColumn.length
-          ? Math.max(...itemsInTargetColumn.map((currentItem) => currentItem.position))
+          ? Math.max(
+              ...itemsInTargetColumn.map((currentItem) => currentItem.position)
+            )
           : 0;
 
         changes.position = maxPosition + 1;
@@ -130,8 +136,12 @@ export default function UpdateItem({
       return;
     }
 
-    updateItem(item.id, changes);
+    await updateItem(item.id, changes);
     setOpen(false);
+  }
+
+  if (!item) {
+    return null;
   }
 
   return (
@@ -242,15 +252,15 @@ export default function UpdateItem({
           </Box>
 
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
-            {tags.map((t) => (
+            {tags.map((tag) => (
               <Chip
-                key={t.type}
-                label={t.type}
-                onDelete={() => removeTag(t.type)}
+                key={tag.type}
+                label={tag.type}
+                onDelete={() => removeTag(tag.type)}
                 sx={{
-                  backgroundColor: `${t.color}33`,
-                  color: t.color,
-                  border: `1px solid ${t.color}`,
+                  backgroundColor: `${tag.color}33`,
+                  color: tag.color,
+                  border: `1px solid ${tag.color}`,
                 }}
               />
             ))}
