@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { Boards, Columns, Items } from "../Type";
+import type { Boards, Columns, Items, Statuses } from "../Type";
 import { API } from "../Api/boardPageApi";
 
 interface BoardStore {
@@ -9,6 +9,7 @@ interface BoardStore {
   items: Items[];
   loading: boolean;
   error: string | null;
+  statuses: Statuses[];
 
   setActiveBoardId: (boardId: string) => void;
   fetchBoards: () => Promise<void>;
@@ -18,6 +19,8 @@ interface BoardStore {
   addItem: (item: Items) => Promise<void>;
   updateItem: (id: string, changes: Partial<Items>) => Promise<void>;
   deleteItem: (id: string) => Promise<void>;
+  fetchStatuses: () => Promise<void>;
+  addStatus: (status: Statuses) => Promise<void>;
 }
 
 export const useBoardStore = create<BoardStore>((set, get) => ({
@@ -27,6 +30,7 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
   items: [],
   loading: false,
   error: null,
+  statuses: [],
 
   setActiveBoardId: (boardId) => {
     set({ activeBoardId: boardId });
@@ -89,6 +93,36 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
     }
   },
 
+  updateItem: async (id, changes) => {
+    try {
+      const res = await API.updateItemRequest(id, changes);
+      const updatedItem = res.data;
+
+      set((state) => ({
+        items: state.items.map((item) => (item.id === id ? updatedItem : item)),
+      }));
+    } catch (err) {
+      console.error(err);
+      set({
+        error: "Failed to update item",
+      });
+    }
+  },
+
+  deleteItem: async (id) => {
+    try {
+      await API.deleteItemById(id);
+
+      set((state) => ({
+        items: state.items.filter((item) => item.id !== id),
+      }));
+    } catch (err) {
+      console.error(err);
+      set({
+        error: "Failed to delete item",
+      });
+    }
+  },
   fetchBoardData: async (boardId) => {
     set({ loading: true, error: null });
 
@@ -113,6 +147,25 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
     }
   },
 
+  fetchStatuses: async () => {
+    set({ loading: true, error: null });
+
+    try {
+      const statusesRes = await API.getStatuses();
+
+      set({
+        statuses: statusesRes.data,
+        loading: false,
+      });
+    } catch (err) {
+      console.error(err);
+      set({
+        error: "Failed to fetch statuses",
+        loading: false,
+      });
+    }
+  },
+
   addItem: async (item) => {
     try {
       const res = await API.addItemRequest(item);
@@ -128,37 +181,18 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
     }
   },
 
-  updateItem: async (id, changes) => {
+  addStatus: async (status) => {
     try {
-      const res = await API.updateItemRequest(id, changes);
-      const updatedItem = res.data;
+      const res = await API.addStatus(status);
 
       set((state) => ({
-        items: state.items.map((item) =>
-          item.id === id ? updatedItem : item
-        ),
+        statuses: [...state.statuses, res.data],
       }));
     } catch (err) {
       console.error(err);
       set({
-        error: "Failed to update item",
+        error: "Failed to add status",
       });
     }
   },
-
-  deleteItem: async (id) => {
-    try {
-      await API.deleteItemById(id);
-
-      set((state) => ({
-        items: state.items.filter((item) => item.id !== id),
-      }));
-    } catch (err) {
-      console.error(err);
-      set({
-        error: "Failed to delete item",
-      });
-    }
-  },
-
 }));

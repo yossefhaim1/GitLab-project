@@ -30,7 +30,7 @@ export interface Columns {
     color: string;
 }
 
-interface Priority{
+interface Priority {
     type: string;
     color: string
 }
@@ -48,4 +48,11 @@ export interface Items {
     assigneeId: number;
     priority: Priority[];
     tags: Tag[];
+}
+
+export interface Statuses {
+    id: string;
+    key: string;
+    value: string;
+    order: number;
 }

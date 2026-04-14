@@ -1,5 +1,5 @@
 import  api  from "./Axios-Api" 
-import type { Boards, Items, Columns } from "../Type";
+import type { Boards, Items, Columns , Statuses} from "../Type";
 
 // הוספתי פונקציות API ל-boards, columns, items
 function getBoards() {
@@ -33,11 +33,20 @@ function updateItemRequest(id: string, changes: Partial<Items>) {
   return api.patch<Items>(`/items/${id}`, changes);
 }
 
+function getStatuses() {
+  return api.get<Statuses[]>("/statuses");
+}
+function addStatus(status: Statuses) {
+  return api.post("/statuses", { status });
+}
+
 export const API = {
   getBoards,
   getColumns,
   getItems,
+  getStatuses,
   deleteItemById,
   addItemRequest,
   updateItemRequest,
+  addStatus,
 };

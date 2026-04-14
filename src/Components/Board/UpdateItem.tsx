@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -34,6 +34,10 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
   const items = useBoardStore((state) => state.items);
   const columns = useBoardStore((state) => state.columns);
   const updateItem = useBoardStore((state) => state.updateItem);
+  const statuses = useBoardStore((state) => state.statuses);
+  const fetchStatuses = useBoardStore((state) => state.fetchStatuses);
+
+  
 
   const item = items.find((currentItem) => currentItem.id === itemId);
 
@@ -43,18 +47,19 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
   const [assigneeId, setAssigneeId] = useState(0);
   const [priority, setPriority] = useState<PriorityType>("LOW");
   const [tagText, setTagText] = useState("");
-  const [tagColor, setTagColor] = useState("#3b82f6");
+  const [tagColor, setTagColor] = useState("#3bf63e");
   const [tags, setTags] = useState<TagInput[]>([]);
 
   useEffect(() => {
     if (open && item) {
+      fetchStatuses();
       setTitle(item.title);
       setStatus(item.status);
       setAssigneeId(item.assigneeId);
       setPriority((item.priority?.[0]?.type as PriorityType) || "LOW");
       setTags(item.tags || []);
       setTagText("");
-      setTagColor("#3b82f6");
+      setTagColor("#3bf63e");
     }
   }, [open, item]);
 
@@ -64,7 +69,7 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
     if (!value) return;
 
     const alreadyExists = tags.some(
-      (tag) => tag.type.toLowerCase() === value.toLowerCase()
+      (tag) => tag.type.toLowerCase() === value.toLowerCase(),
     );
 
     if (alreadyExists) {
@@ -93,18 +98,20 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
     if (status !== item.status) {
       changes.status = status;
 
-      const targetColumn = columns.find((column) => column.statusKey === status);
+      const targetColumn = columns.find(
+        (column) => column.statusKey === status,
+      );
 
       if (targetColumn && targetColumn.id !== item.columnId) {
         changes.columnId = targetColumn.id;
 
         const itemsInTargetColumn = items.filter(
-          (currentItem) => currentItem.columnId === targetColumn.id
+          (currentItem) => currentItem.columnId === targetColumn.id,
         );
 
         const maxPosition = itemsInTargetColumn.length
           ? Math.max(
-              ...itemsInTargetColumn.map((currentItem) => currentItem.position)
+              ...itemsInTargetColumn.map((currentItem) => currentItem.position),
             )
           : 0;
 
@@ -143,7 +150,7 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
   if (!item) {
     return null;
   }
-
+console.log({statuses})
   return (
     <>
       <IconButton
@@ -176,9 +183,14 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
             onChange={(e) => setStatus(e.target.value)}
             sx={{ mb: 2 }}
           >
-            <MenuItem value="TO_DO">TO_DO</MenuItem>
-            <MenuItem value="IN_PROGRESS">IN_PROGRESS</MenuItem>
-            <MenuItem value="DONE">DONE</MenuItem>
+            {statuses.map((statusOption) => {
+              console.log({statusOption})
+              return (
+                <MenuItem key={statusOption.key} value={statusOption.key}>
+                  {statusOption.value}
+                </MenuItem>
+              );
+            })}
           </TextField>
 
           <TextField

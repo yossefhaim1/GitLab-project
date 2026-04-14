@@ -15,7 +15,7 @@ export default function Column({ columnId }: ColumnProps) {
 
   const columnItems = items
     .filter((item) => item.columnId === columnId)
-    .sort((a, b) => a.position - b.position);
+    .sort((b, a) => b.position - a.position);
 
   if (!column) {
     return null;
