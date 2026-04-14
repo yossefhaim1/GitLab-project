@@ -59,7 +59,7 @@
       "columnId": "col-1",
       "position": 1,
       "title": "Fix login bug",
-      "status": "IN_PROGRESS",
+      "status": "TO_DO",
       "assigneeId": 1,
       "priority": [
         {

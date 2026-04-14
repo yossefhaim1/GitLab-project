@@ -1,4 +1,4 @@
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -34,10 +34,7 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
   const items = useBoardStore((state) => state.items);
   const columns = useBoardStore((state) => state.columns);
   const updateItem = useBoardStore((state) => state.updateItem);
-  const statuses = useBoardStore((state) => state.statuses);
-  const fetchStatuses = useBoardStore((state) => state.fetchStatuses);
-
-  
+  const statuses = useBoardStore((state) => state.statuses);  
 
   const item = items.find((currentItem) => currentItem.id === itemId);
 
@@ -50,18 +47,17 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
   const [tagColor, setTagColor] = useState("#3bf63e");
   const [tags, setTags] = useState<TagInput[]>([]);
 
-  useEffect(() => {
-    if (open && item) {
-      fetchStatuses();
-      setTitle(item.title);
-      setStatus(item.status);
-      setAssigneeId(item.assigneeId);
-      setPriority((item.priority?.[0]?.type as PriorityType) || "LOW");
-      setTags(item.tags || []);
-      setTagText("");
-      setTagColor("#3bf63e");
-    }
-  }, [open, item]);
+useEffect(() => {
+  if (!open || !item || statuses.length === 0) return;
+
+  setTitle(item.title);
+  setStatus(item.status);
+  setAssigneeId(item.assigneeId);
+  setPriority((item.priority?.[0]?.type as PriorityType) || "LOW");
+  setTags(item.tags || []);
+  setTagText("");
+  setTagColor("#3bf63e");
+}, [open, item, statuses]);
 
   function addTag() {
     const value = tagText.trim();

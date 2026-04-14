@@ -6,6 +6,22 @@ function getBoards() {
   return api.get<Boards[]>("/boards");
 }
 
+// הוספת BOARD חדש לאתר 
+function addBoard(board: Boards) {
+  return api.post<Boards>("/boards", board);
+
+}
+
+// הוספתי פונקציה ל-get של board לפי id
+function getBoardById(boardId: string) {
+  return api.get<Boards>(`/boards/${boardId}`);
+}
+
+// הוספת עמודה חדשה לאתר 
+function addColumn(column: Columns) {
+  return api.post<Columns>("/columns", column);
+}
+
 // הוספתי פונקציה ל-get של columns לפי boardId
 function getColumns(boardId: string) {
   return api.get<Columns[]>("/columns", {
@@ -41,6 +57,9 @@ function addStatus(status: Statuses) {
 }
 
 export const API = {
+  addBoard,
+  addColumn,
+  getBoardById,
   getBoards,
   getColumns,
   getItems,

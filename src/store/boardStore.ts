@@ -19,8 +19,8 @@ interface BoardStore {
   addItem: (item: Items) => Promise<void>;
   updateItem: (id: string, changes: Partial<Items>) => Promise<void>;
   deleteItem: (id: string) => Promise<void>;
-  fetchStatuses: () => Promise<void>;
   addStatus: (status: Statuses) => Promise<void>;
+  addBoard: (board: Boards) => Promise<void>;
 }
 
 export const useBoardStore = create<BoardStore>((set, get) => ({
@@ -34,6 +34,7 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
 
   setActiveBoardId: (boardId) => {
     set({ activeBoardId: boardId });
+    get().fetchBoardData(boardId);
   },
 
   fetchBoards: async () => {
@@ -93,6 +94,47 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
     }
   },
 
+  fetchBoardData: async (boardId) => {
+    set({ loading: true, error: null });
+
+    try {
+      const [columnsRes, itemsRes, statusesRes] = await Promise.all([
+        API.getColumns(boardId),
+        API.getItems(boardId),
+        API.getStatuses(),
+      ]);
+
+      set({
+        activeBoardId: boardId,
+        columns: columnsRes.data,
+        items: itemsRes.data,
+        statuses: statusesRes.data,
+        loading: false,
+      });
+    } catch (err) {
+      console.error(err);
+      set({
+        error: "Failed to fetch board data",
+        loading: false,
+      });
+    }
+  },
+
+  addItem: async (item) => {
+    try {
+      const res = await API.addItemRequest(item);
+
+      set((state) => ({
+        items: [...state.items, res.data],
+      }));
+    } catch (err) {
+      console.error(err);
+      set({
+        error: "Failed to add item",
+      });
+    }
+  },
+
   updateItem: async (id, changes) => {
     try {
       const res = await API.updateItemRequest(id, changes);
@@ -123,63 +165,6 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
       });
     }
   },
-  fetchBoardData: async (boardId) => {
-    set({ loading: true, error: null });
-
-    try {
-      const [columnsRes, itemsRes] = await Promise.all([
-        API.getColumns(boardId),
-        API.getItems(boardId),
-      ]);
-
-      set({
-        activeBoardId: boardId,
-        columns: columnsRes.data,
-        items: itemsRes.data,
-        loading: false,
-      });
-    } catch (err) {
-      console.error(err);
-      set({
-        error: "Failed to fetch board data",
-        loading: false,
-      });
-    }
-  },
-
-  fetchStatuses: async () => {
-    set({ loading: true, error: null });
-
-    try {
-      const statusesRes = await API.getStatuses();
-
-      set({
-        statuses: statusesRes.data,
-        loading: false,
-      });
-    } catch (err) {
-      console.error(err);
-      set({
-        error: "Failed to fetch statuses",
-        loading: false,
-      });
-    }
-  },
-
-  addItem: async (item) => {
-    try {
-      const res = await API.addItemRequest(item);
-
-      set((state) => ({
-        items: [...state.items, res.data],
-      }));
-    } catch (err) {
-      console.error(err);
-      set({
-        error: "Failed to add item",
-      });
-    }
-  },
 
   addStatus: async (status) => {
     try {
@@ -192,6 +177,21 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
       console.error(err);
       set({
         error: "Failed to add status",
+      });
+    }
+  },
+
+  addBoard: async (board) => {
+    try {
+      const res = await API.addBoard(board);
+
+      set((state) => ({
+        boards: [...state.boards, res.data],
+      }));
+    } catch (err) {
+      console.error(err);
+      set({
+        error: "Failed to add board",
       });
     }
   },

@@ -52,7 +52,7 @@ export default function AddItem({ columnId }: AddItemProps) {
       .filter((num) => Number.isFinite(num));
 
     const max = nums.length ? Math.max(...nums) : 0;
-    return `task-${max + 1}`;
+    return `row-${max + 1}`;
   }, [items]);
 
   const nextPosition = useMemo(() => {
