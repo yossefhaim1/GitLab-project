@@ -27,7 +27,7 @@ type TagInput = {
 };
 
 type UpdateItemProps = {
-  itemId: string;
+  itemId: number;
 };
 
 export default function UpdateItem({ itemId }: UpdateItemProps) {
@@ -38,13 +38,13 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
 
   const item = items.find((currentItem) => currentItem.id === itemId);
 
-  const [open, setOpen] = useState(false);
-  const [title, setTitle] = useState("");
-  const [status, setStatus] = useState("");
-  const [assigneeId, setAssigneeId] = useState(0);
+  const [open, setOpen] = useState<boolean>(false);
+  const [title, setTitle] = useState<string | "">("");
+  const [status, setStatus] = useState<string>("");
+  const [assigneeId, setAssigneeId] = useState<number>(0);
   const [priority, setPriority] = useState<PriorityType>("LOW");
-  const [tagText, setTagText] = useState("");
-  const [tagColor, setTagColor] = useState("#3bf63e");
+  const [tagText, setTagText] = useState<string>("");
+  const [tagColor, setTagColor] = useState<string>("#3bf63e");
   const [tags, setTags] = useState<TagInput[]>([]);
 
 useEffect(() => {
@@ -86,7 +86,8 @@ useEffect(() => {
 
     const changes: Partial<Items> = {};
     const cleanTitle = title.trim();
-
+    if (cleanTitle === "") return;
+    
     if (cleanTitle !== item.title) {
       changes.title = cleanTitle;
     }
@@ -146,7 +147,7 @@ useEffect(() => {
   if (!item) {
     return null;
   }
-console.log({statuses})
+
   return (
     <>
       <IconButton
@@ -160,7 +161,7 @@ console.log({statuses})
       <Drawer anchor="left" open={open} onClose={() => setOpen(false)}>
         <Box sx={{ width: 360, p: 2.5 }}>
           <Typography sx={{ fontWeight: 800, mb: 2 }}>
-            Edit Task #{item.id.split("-")[1]}
+            Edit Task #{item.id}
           </Typography>
 
           <TextField
@@ -180,7 +181,6 @@ console.log({statuses})
             sx={{ mb: 2 }}
           >
             {statuses.map((statusOption) => {
-              console.log({statusOption})
               return (
                 <MenuItem key={statusOption.key} value={statusOption.key}>
                   {statusOption.value}

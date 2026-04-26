@@ -1,29 +1,12 @@
-export interface Data {
-    icon: any;
-    username: string;
-    email: string;
-    type: Type;
-}
-
-export type Type = "developer" | "designer" | "manager";
-
-export interface SearchData {
-    id: number;
-    icon: string;
-    username: string;
-    email: string;
-    type: Type;
-}
-
 export interface Boards {
-    id: string;
+    id: number;
     name: string;
     isDefault: boolean;
 }
 
 export interface Columns {
-    id: string;
-    boardId: string;
+    id: number;
+    boardId: number;
     title: string;
     order: number;
     statusKey: string;
@@ -39,9 +22,9 @@ interface Tag {
     color: string
 }
 export interface Items {
-    id: string;
-    boardId: string;
-    columnId: string;
+    id: number;
+    boardId: number;
+    columnId: number;
     position: number;
     title: string;
     status: string;
@@ -51,8 +34,13 @@ export interface Items {
 }
 
 export interface Statuses {
-    id: string;
+    id: number;
     key: string;
     value: string;
     order: number;
 }
+
+export type CreateItemPayload = Omit<Items, "id">;
+export type CreateColumnPayload = Omit<Columns, "id">;
+export type CreateBoardPayload = Omit<Boards, "id" | "isDefault">;
+export type CreateStatusPayload = Omit<Statuses, "id">;

@@ -2,8 +2,6 @@ import { useEffect } from "react";
 import Table from "./Board/Board";
 import { Box } from "@mui/material";
 import { useBoardStore } from "../store/boardStore";
-import { AddNewBoard } from "./TopAddNewBoard/AddNewBoard";
-
 export default function BoardPage() {
   const activeBoardId = useBoardStore((state) => state.activeBoardId);
   const loading = useBoardStore((state) => state.loading);
@@ -28,7 +26,6 @@ export default function BoardPage() {
 
   return (
     <Box>
-      <AddNewBoard />
       <Table/>
     </Box>
   );

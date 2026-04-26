@@ -4,7 +4,7 @@ import UpdateItem from "./UpdateItem";
 import { useBoardStore } from "../../store/boardStore";
 
 type ItemCardProps = {
-  itemId: string;
+  itemId: number;
 };
 
 export default function ItemCard({ itemId }: ItemCardProps) {
@@ -99,7 +99,7 @@ export default function ItemCard({ itemId }: ItemCardProps) {
               }}
             >
               p{item.position}
-              - #{item.id.split("-")[1]}
+              - #{item.id}
             </Typography>
 
             {item.priority.map((priority, index) => (

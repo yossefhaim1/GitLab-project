@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Box,
   Button,
@@ -10,7 +10,7 @@ import {
   Chip,
 } from "@mui/material";
 import Add from "@mui/icons-material/Add";
-import type { Items } from "../../Type";
+import type { CreateItemPayload } from "../../Type";
 import { useBoardStore } from "../../store/boardStore";
 
 type PriorityType = "LOW" | "MEDIUM" | "HIGH";
@@ -27,7 +27,7 @@ type TagInput = {
 };
 
 type AddItemProps = {
-  columnId: string;
+  columnId: number;
 };
 
 export default function AddItem({ columnId }: AddItemProps) {
@@ -35,24 +35,21 @@ export default function AddItem({ columnId }: AddItemProps) {
   const columns = useBoardStore((state) => state.columns);
   const activeBoardId = useBoardStore((state) => state.activeBoardId);
   const addItem = useBoardStore((state) => state.addItem);
+  const nextItemId = useBoardStore((state) => state.nextItemId);
+  const fetchNextItemId = useBoardStore((state) => state.fetchNextItemId);
 
-  const [open, setOpen] = useState(false);
-  const [title, setTitle] = useState("");
-  const [assigneeId, setAssigneeId] = useState(0);
+  const [open, setOpen] = useState<boolean>(false);
+  const [title, setTitle] = useState<string>("");
+  const [assigneeId, setAssigneeId] = useState<number>(0);
   const [priority, setPriority] = useState<PriorityType>("LOW");
-  const [tagText, setTagText] = useState("");
-  const [tagColor, setTagColor] = useState("#3b82f6");
+  const [tagText, setTagText] = useState<string>("");
+  const [tagColor, setTagColor] = useState<string>("#3b82f6");
   const [tags, setTags] = useState<TagInput[]>([]);
 
   const column = columns.find((col) => col.id === columnId);
 
-  const nextId = useMemo(() => {
-    const nums = items
-      .map((item) => Number(String(item.id).split("-")[1]))
-      .filter((num) => Number.isFinite(num));
-
-    const max = nums.length ? Math.max(...nums) : 0;
-    return `row-${max + 1}`;
+  useEffect(() => {
+    fetchNextItemId();
   }, [items]);
 
   const nextPosition = useMemo(() => {
@@ -69,7 +66,7 @@ export default function AddItem({ columnId }: AddItemProps) {
     if (!value) return;
 
     const alreadyExists = tags.some(
-      (tag) => tag.type.toLowerCase() === value.toLowerCase()
+      (tag) => tag.type.toLowerCase() === value.toLowerCase(),
     );
 
     if (alreadyExists) {
@@ -86,42 +83,44 @@ export default function AddItem({ columnId }: AddItemProps) {
   }
 
   async function handleCreate() {
-    const cleanTitle = title.trim();
+    try {
+      const cleanTitle = title.trim();
 
-    if (!cleanTitle || !activeBoardId || !column) return;
+      if (!cleanTitle || !activeBoardId || !column) return;
 
-    const newItem: Items = {
-      id: nextId,
-      boardId: activeBoardId,
-      columnId,
-      position: nextPosition,
-      title: cleanTitle,
-      status: column.statusKey,
-      assigneeId,
-      priority: [
-        {
-          type: priority,
-          color: PRIORITY_COLOR[priority],
-        },
-      ],
-      tags,
-    };
+      const newItem: CreateItemPayload = {
+        boardId: activeBoardId,
+        columnId,
+        position: nextPosition,
+        title: cleanTitle,
+        status: column.statusKey,
+        assigneeId,
+        priority: [
+          {
+            type: priority,
+            color: PRIORITY_COLOR[priority],
+          },
+        ],
+        tags,
+      };
 
-    await addItem(newItem);
+      await addItem(newItem);
+      console.log("seccses to add item");
 
-    setTitle("");
-    setAssigneeId(0);
-    setPriority("LOW");
-    setTags([]);
-    setTagText("");
-    setTagColor("#3b82f6");
-    setOpen(false);
+      setTitle("");
+      setAssigneeId(0);
+      setPriority("LOW");
+      setTags([]);
+      setTagText("");
+      setTagColor("#3b82f6");
+      setOpen(false);
+    } catch (err) {
+      console.error(err);
+    }
+    if (!activeBoardId || !column) {
+      return null;
+    }
   }
-
-  if (!activeBoardId || !column) {
-    return null;
-  }
-
   return (
     <>
       <IconButton
@@ -230,7 +229,7 @@ export default function AddItem({ columnId }: AddItemProps) {
           </Box>
 
           <Typography sx={{ fontSize: 12, color: "#6b7280", mb: 2 }}>
-            Will create: <b>{nextId}</b> • position: <b>{nextPosition}</b>
+            Will create: <b>{nextItemId}</b> • position: <b>{nextPosition}</b>
           </Typography>
 
           <Button fullWidth variant="contained" onClick={handleCreate}>

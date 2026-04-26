@@ -3,7 +3,7 @@ import IconButton from "@mui/material/IconButton";
 import { useBoardStore } from "../../store/boardStore";
 
 type DeleteItemProps = {
-  itemId: string;
+  itemId: number;
 };
 
 export default function DeleteItem({ itemId }: DeleteItemProps) {

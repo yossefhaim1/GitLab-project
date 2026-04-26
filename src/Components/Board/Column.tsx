@@ -4,7 +4,7 @@ import AddItem from "./AddItem";
 import { useBoardStore } from "../../store/boardStore";
 
 type ColumnProps = {
-  columnId: string;
+  columnId: number;
 };
 
 export default function Column({ columnId }: ColumnProps) {
