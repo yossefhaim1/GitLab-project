@@ -8,6 +8,7 @@ import {
   Typography,
   MenuItem,
   Chip,
+  Tooltip,
 } from "@mui/material";
 import Add from "@mui/icons-material/Add";
 import type { CreateItemPayload } from "../../Type";
@@ -122,14 +123,16 @@ export default function AddItem({ columnId }: AddItemProps) {
     }
   }
   return (
-    <>
-      <IconButton
-        size="small"
-        sx={{ width: 34, height: 34 }}
-        onClick={() => setOpen(true)}
-      >
-        <Add fontSize="small" />
-      </IconButton>
+    <Box>
+      <Tooltip title="Add Task" placement="bottom" arrow enterDelay={200}>
+        <IconButton
+          size="small"
+          sx={{ width: 34, height: 34 }}
+          onClick={() => setOpen(true)}
+        >
+          <Add fontSize="small" />
+        </IconButton>
+      </Tooltip>
 
       <Drawer anchor="right" open={open} onClose={() => setOpen(false)}>
         <Box sx={{ width: 360, p: 2.5 }}>
@@ -237,6 +240,6 @@ export default function AddItem({ columnId }: AddItemProps) {
           </Button>
         </Box>
       </Drawer>
-    </>
+    </Box>
   );
 }

@@ -93,7 +93,7 @@ function getStatuses() {
   return api.get<Statuses[]>("/statuses");
 }
 function addStatus(status: CreateStatusPayload) {
-  return api.post("/statuses", { status });
+  return api.post("/statuses", status);
 }
 
 function getNextColumnId() {

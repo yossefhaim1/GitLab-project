@@ -2,31 +2,45 @@ import { useEffect } from "react";
 import Table from "./Board/Board";
 import { Box } from "@mui/material";
 import { useBoardStore } from "../store/boardStore";
+import { FirstBoardForNewUser } from "./FirstBoardForNewUser";
 export default function BoardPage() {
-  const activeBoardId = useBoardStore((state) => state.activeBoardId);
   const loading = useBoardStore((state) => state.loading);
   const error = useBoardStore((state) => state.error);
   const fetchBoards = useBoardStore((state) => state.fetchBoards);
+  const boards = useBoardStore((state) => state.boards);
+  const setActiveBoardId = useBoardStore((state) => state.setActiveBoardId);
 
-  useEffect(() => {
-    fetchBoards();
-  }, [fetchBoards]);
+   useEffect(() => {
+    const load = async () => {
+      await fetchBoards();
 
-  if (loading && !activeBoardId) {
-    return <div>Loading...</div>;
-  }
+      const state = useBoardStore.getState();
+      const boards = state.boards;
 
-  if (error) {
-    return <div>{error}</div>;
-  }
+      if (boards.length > 0 && !state.activeBoardId) {
+        const defaultBoard =
+          boards.find((b) => b.isDefault) ?? boards[0];
 
-  if (!activeBoardId) {
-    return <div>No board selected</div>;
-  }
+        setActiveBoardId(defaultBoard.id);
+      }
+    };
 
+    load();
+  }, [fetchBoards, setActiveBoardId]);
+if (loading) {
+  return <div>Loading...</div>;
+}
+
+if (error && boards.length > 0) {
+  return <div>{error}</div>;
+}
+
+if (boards.length === 0) {
+  return <FirstBoardForNewUser />;
+}
   return (
     <Box>
-      <Table/>
+      <Table />
     </Box>
   );
 }

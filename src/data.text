@@ -9,10 +9,6 @@
       "id": 2,
       "name": "Development Board Copy",
       "isDefault": false
-    },
-    {
-      "name": "1322132",
-      "id": 3
     }
   ],
   "columns": [
@@ -63,42 +59,38 @@
       "order": 3,
       "statusKey": "DONE",
       "color": "#2dab3c"
-    },
-    {
-      "title": "1213",
-      "boardId": 1,
-      "order": 4,
-      "statusKey": "2123",
-      "color": "#3b82f6",
-      "id": 7
-    },
-    {
-      "title": "21321",
-      "boardId": 1,
-      "order": 5,
-      "statusKey": "1321",
-      "color": "#3b82f6",
-      "id": 8
     }
   ],
   "statuses": [
     {
       "id": 1,
       "key": "TO_DO",
-      "value": "To Do",
-      "order": 1
+      "value": "To Do"
     },
     {
       "id": 2,
       "key": "IN_PROGRESS",
-      "value": "In Progress",
-      "order": 2
+      "value": "In Progress"
     },
     {
       "id": 3,
       "key": "DONE",
-      "value": "Done",
-      "order": 3
+      "value": "Done"
+    },
+    {
+      "key": "132456",
+      "value": "132456",
+      "id": 4
+    },
+    {
+      "key": "6545",
+      "value": "6545",
+      "id": 5
+    },
+    {
+      "key": "2514654",
+      "value": "2514654",
+      "id": 6
     }
   ],
   "items": [
@@ -1116,22 +1108,6 @@
           "color": "#a16207"
         }
       ]
-    },
-    {
-      "boardId": 1,
-      "columnId": 7,
-      "position": 1,
-      "title": "321",
-      "status": "2123",
-      "assigneeId": 0,
-      "priority": [
-        {
-          "type": "LOW",
-          "color": "#374151"
-        }
-      ],
-      "tags": [],
-      "id": 38
     }
   ]
 }

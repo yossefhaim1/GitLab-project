@@ -8,6 +8,7 @@ import {
   Typography,
   MenuItem,
   Chip,
+  Tooltip,
 } from "@mui/material";
 import { Edit } from "@mui/icons-material";
 import type { Items } from "../../Type";
@@ -34,7 +35,7 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
   const items = useBoardStore((state) => state.items);
   const columns = useBoardStore((state) => state.columns);
   const updateItem = useBoardStore((state) => state.updateItem);
-  const statuses = useBoardStore((state) => state.statuses);  
+  const statuses = useBoardStore((state) => state.statuses);
 
   const item = items.find((currentItem) => currentItem.id === itemId);
 
@@ -47,17 +48,17 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
   const [tagColor, setTagColor] = useState<string>("#3bf63e");
   const [tags, setTags] = useState<TagInput[]>([]);
 
-useEffect(() => {
-  if (!open || !item || statuses.length === 0) return;
+  useEffect(() => {
+    if (!open || !item || statuses.length === 0) return;
 
-  setTitle(item.title);
-  setStatus(item.status);
-  setAssigneeId(item.assigneeId);
-  setPriority((item.priority?.[0]?.type as PriorityType) || "LOW");
-  setTags(item.tags || []);
-  setTagText("");
-  setTagColor("#3bf63e");
-}, [open, item, statuses]);
+    setTitle(item.title);
+    setStatus(item.status);
+    setAssigneeId(item.assigneeId);
+    setPriority((item.priority?.[0]?.type as PriorityType) || "LOW");
+    setTags(item.tags || []);
+    setTagText("");
+    setTagColor("#3bf63e");
+  }, [open, item, statuses]);
 
   function addTag() {
     const value = tagText.trim();
@@ -87,7 +88,7 @@ useEffect(() => {
     const changes: Partial<Items> = {};
     const cleanTitle = title.trim();
     if (cleanTitle === "") return;
-    
+
     if (cleanTitle !== item.title) {
       changes.title = cleanTitle;
     }
@@ -150,13 +151,15 @@ useEffect(() => {
 
   return (
     <>
-      <IconButton
-        size="small"
-        sx={{ width: 34, height: 34, p: 0.5 }}
-        onClick={() => setOpen(true)}
-      >
-        <Edit fontSize="small" />
-      </IconButton>
+      <Tooltip title="Edit Task" placement="bottom" arrow enterDelay={200}>
+        <IconButton
+          size="small"
+          sx={{ width: 34, height: 34, p: 0.5 }}
+          onClick={() => setOpen(true)}
+        >
+          <Edit fontSize="small" />
+        </IconButton>
+      </Tooltip>
 
       <Drawer anchor="left" open={open} onClose={() => setOpen(false)}>
         <Box sx={{ width: 360, p: 2.5 }}>
@@ -180,13 +183,15 @@ useEffect(() => {
             onChange={(e) => setStatus(e.target.value)}
             sx={{ mb: 2 }}
           >
-            {statuses.map((statusOption) => {
-              return (
+            {statuses
+              .filter((s) =>
+                columns.some((column) => column.statusKey === s.key),
+              )
+              .map((statusOption) => (
                 <MenuItem key={statusOption.key} value={statusOption.key}>
                   {statusOption.value}
                 </MenuItem>
-              );
-            })}
+              ))}
           </TextField>
 
           <TextField

@@ -9,18 +9,19 @@ import {
 import Add from "@mui/icons-material/Add";
 import { useMemo, useState } from "react";
 import { useBoardStore } from "../../store/boardStore";
-import type { CreateColumnPayload } from "../../Type";
+import type { CreateColumnPayload, CreateStatusPayload } from "../../Type";
 
 export function AddColum() {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
-  const [statusValue, setStatusValue] = useState("");
   const [tagColor, setTagColor] = useState("#3b82f6");
 
   const statuses = useBoardStore((state) => state.statuses);
   const addColumn = useBoardStore((state) => state.addColumn);
   const activeBoardId = useBoardStore((state) => state.activeBoardId);
   const columns = useBoardStore((state) => state.columns);
+  const addStatus = useBoardStore((state) => state.addStatus);
+
 
   const nextOrder = useMemo(() => {
     const orders = columns
@@ -32,15 +33,14 @@ export function AddColum() {
 
   function handleCreate() {
     const cleanTitle = title.trim();
-    const cleanStatus = statusValue.trim();
-
-    if (!cleanTitle || !cleanStatus || !activeBoardId) return;
+    
+    if (!cleanTitle || !activeBoardId) return;
 
     const isStatusExists = statuses.some(
-      (status) =>
-        status.value.toLowerCase() === cleanStatus.toLowerCase() ||
-        status.key.toLowerCase() === cleanStatus.toLowerCase()
-    );
+  (status) =>
+    (status.value ?? "").toLowerCase() === title.toLowerCase() ||
+    (status.key ?? "").toLowerCase() === title.toLowerCase()
+);
 
     if (isStatusExists) {
       alert("Status already exists");
@@ -51,14 +51,18 @@ export function AddColum() {
       title: cleanTitle,
       boardId: activeBoardId,
       order: nextOrder,
-      statusKey: cleanStatus.toUpperCase().replaceAll(" ", "_"),
+      statusKey: title.toUpperCase().replaceAll(" ", "_"),
       color: tagColor,
     };
-
+    const newStatus : CreateStatusPayload = {
+      key: newColumn.statusKey,
+      value: title,
+    };
     addColumn(newColumn);
+    addStatus(newStatus);
 
     setTitle("");
-    setStatusValue("");
+    
     setTagColor("#3b82f6");
     setOpen(false);
   }
@@ -159,15 +163,6 @@ export function AddColum() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             sx={{ mb: 2 }}
-          />
-
-          <TextField
-            fullWidth
-            label="Status key"
-            placeholder="Example: REVIEW"
-            value={statusValue}
-            onChange={(e) => setStatusValue(e.target.value)}
-            sx={{ mb: 3 }}
           />
 
           <Typography sx={{ fontWeight: 800, mb: 1, color: "#0f172a" }}>

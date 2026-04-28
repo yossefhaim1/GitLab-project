@@ -20,6 +20,14 @@ export function AddNewBoard({ open, onClose }: AddNewBoardProps) {
   const addBoard = useBoardStore((state) => state.addBoard);
   const setActiveBoardId = useBoardStore((state) => state.setActiveBoardId);
 
+  function handleCloseDrawer() {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+
+    onClose();
+  }
+
   async function handelCreate() {
     const NameBoard = boardName.trim();
 
@@ -32,7 +40,7 @@ export function AddNewBoard({ open, onClose }: AddNewBoardProps) {
     const createdBoard = await addBoard(newBoard);
 
     setBoardName("");
-    onClose();
+    handleCloseDrawer();
 
     if (!createdBoard) return;
 
@@ -40,7 +48,14 @@ export function AddNewBoard({ open, onClose }: AddNewBoardProps) {
   }
 
   return (
-    <Drawer anchor="right" open={open} onClose={onClose}>
+    <Drawer
+      anchor="right"
+      open={open}
+      onClose={handleCloseDrawer}
+      ModalProps={{
+        keepMounted: false,
+      }}
+    >
       <Box sx={{ width: 360, p: 2.5 }}>
         <Typography sx={{ fontWeight: 800, mb: 2 }}>
           Add new board

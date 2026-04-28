@@ -26,184 +26,183 @@ export default function ItemCard({ itemId }: ItemCardProps) {
   }
 
   return (
-      <Paper
-        elevation={1}
+    <Paper
+      elevation={1}
+      sx={{
+        p: 2.25,
+        mb: 2,
+        borderRadius: 3,
+        backgroundColor: "#ffffff",
+        transition: "0.15s",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        minHeight: 150,
+        "&:hover": {
+          boxShadow: 4,
+        },
+        "&:hover .edit-btn": {
+          opacity: 1,
+        },
+      }}
+    >
+      <Box
         sx={{
-          p: 2.25,
-          mb: 2,
-          borderRadius: 3,
-          backgroundColor: "#ffffff",
-          transition: "0.15s",
           display: "flex",
-          flexDirection: "column",
+          alignItems: "center",
           justifyContent: "space-between",
-          minHeight: 150,
-          "&:hover": {
-            boxShadow: 4,
-          },
-          "&:hover .edit-btn": {
-            opacity: 1,
-          },
+          gap: 1,
         }}
       >
         <Box
           sx={{
             display: "flex",
             alignItems: "center",
-            justifyContent: "space-between",
-            gap: 1,
+            gap: 0.5,
           }}
         >
-          <Box
+          <Typography
             sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 0.5,
+              fontSize: "15px",
+              fontWeight: 800,
+              lineHeight: 1.25,
             }}
           >
-            <Typography
-              sx={{
-                fontSize: "15px",
-                fontWeight: 800,
-                lineHeight: 1.25,
-              }}
-            >
-              {item.title}
-            </Typography>
-
-            <Box
-              className="edit-btn"
-              sx={{
-                opacity: 0,
-                transition: "0.15s",
-                ml: 0.5,
-              }}
-            >
-              <UpdateItem itemId={item.id} />
-            </Box>
-          </Box>
+            {item.title}
+          </Typography>
 
           <Box
+            className="edit-btn"
             sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 1,
-              flexShrink: 0,
+              opacity: 0,
+              transition: "0.15s",
+              ml: 0.5,
             }}
           >
-            <Typography
-              sx={{
-                fontSize: "12px",
-                fontWeight: 700,
-                color: "#6b7280",
-              }}
-            >
-              p{item.position}
-              - #{item.id}
-            </Typography>
-
-            {item.priority.map((priority, index) => (
-              <Box
-                key={index}
-                sx={{
-                  fontSize: "11px",
-                  fontWeight: 800,
-                  backgroundColor: `${priority.color}98`,
-                  color: "#ffffff",
-                  px: 1,
-                  height: 22,
-                  borderRadius: 999,
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  lineHeight: 1,
-                }}
-              >
-                {priority.type[0].toUpperCase()}
-              </Box>
-            ))}
+            <UpdateItem itemId={item.id} />
           </Box>
-        </Box>
-
-        <Box
-          sx={{
-            mt: 1.25,
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 1,
-          }}
-        >
-          {item.tags.map((tag, index) => (
-            <Box
-              key={index}
-              sx={{
-                fontSize: "11px",
-                fontWeight: 700,
-                backgroundColor: `${tag.color}98`,
-                color: "#ffffff",
-                border: `1px solid ${tag.color}90`,
-                textShadow: "0 0 3px rgba(0,0,0,0.6)",
-                px: 1,
-                height: 24,
-                borderRadius: 999,
-                display: "inline-flex",
-                alignItems: "center",
-                lineHeight: 1,
-              }}
-            >
-              {tag.type}
-            </Box>
-          ))}
         </Box>
 
         <Box
           sx={{
             display: "flex",
             alignItems: "center",
-            justifyContent: "space-between",
-            mt: 1.5,
+            gap: 1,
+            flexShrink: 0,
           }}
         >
-          <Tooltip title="Delete User" placement="bottom">
-            <DeleteItem itemId={item.id} />
-          </Tooltip>
-
-          <Box
+          <Typography
             sx={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 1,
-              px: 1.25,
-              py: 0.5,
-              height: "24px",
-              backgroundColor: `${column.color}33`,
-              borderRadius: "25px",
-              border: `1px solid ${column.color}30`,
-              boxShadow: `0 2px 6px ${column.color}20`,
+              fontSize: "12px",
+              fontWeight: 700,
+              color: "#6b7280",
             }}
           >
-            <Box
-              sx={{
-                width: 8,
-                height: 8,
-                borderRadius: "50%",
-                backgroundColor: column.color,
-              }}
-            />
+            p{item.position}- #{item.id}
+          </Typography>
 
-            <Typography
+          {item.priority.map((priority, index) => (
+            <Box
+              key={index}
               sx={{
-                fontSize: "10px",
-                fontWeight: 600,
-                color: column.color,
+                fontSize: "11px",
+                fontWeight: 800,
+                backgroundColor: `${priority.color}98`,
+                color: "#ffffff",
+                px: 1,
+                height: 22,
+                borderRadius: 999,
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
                 lineHeight: 1,
-                textTransform: "uppercase",
               }}
             >
-              {column.statusKey.replace("_", " ")}
-            </Typography>
-          </Box>
+              {priority.type[0].toUpperCase()}
+            </Box>
+          ))}
         </Box>
-      </Paper>
+      </Box>
+
+      <Box
+        sx={{
+          mt: 1.25,
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 1,
+        }}
+      >
+        {item.tags.map((tag, index) => (
+          <Box
+            key={index}
+            sx={{
+              fontSize: "11px",
+              fontWeight: 700,
+              backgroundColor: `${tag.color}98`,
+              color: "#ffffff",
+              border: `1px solid ${tag.color}90`,
+              textShadow: "0 0 3px rgba(0,0,0,0.6)",
+              px: 1,
+              height: 24,
+              borderRadius: 999,
+              display: "inline-flex",
+              alignItems: "center",
+              lineHeight: 1,
+            }}
+          >
+            {tag.type}
+          </Box>
+        ))}
+      </Box>
+
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          mt: 1.5,
+        }}
+      >
+        <Tooltip title="Delete Item" placement="bottom" arrow enterDelay={200}>
+          <DeleteItem itemId={item.id} />
+        </Tooltip>
+
+        <Box
+          sx={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 1,
+            px: 1.25,
+            py: 0.5,
+            height: "24px",
+            backgroundColor: `${column.color}33`,
+            borderRadius: "25px",
+            border: `1px solid ${column.color}30`,
+            boxShadow: `0 2px 6px ${column.color}20`,
+          }}
+        >
+          <Box
+            sx={{
+              width: 8,
+              height: 8,
+              borderRadius: "50%",
+              backgroundColor: column.color,
+            }}
+          />
+
+          <Typography
+            sx={{
+              fontSize: "10px",
+              fontWeight: 600,
+              color: column.color,
+              lineHeight: 1,
+              textTransform: "uppercase",
+            }}
+          >
+            {column.statusKey.replace("_", " ")}
+          </Typography>
+        </Box>
+      </Box>
+    </Paper>
   );
 }

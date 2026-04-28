@@ -21,6 +21,7 @@ interface BoardStore {
   statuses: Statuses[];
   nextItemId: number | null;
   nextColumnId: number | null;
+  searchItem : string ;
   // פה זה עושה פאצ לכל הייטם והכולום לפי ה ID   ולסטטוס בכללי
   fetchBoardData: (boardId: number) => Promise<void>;
   // משנה מצב קיים לבורד אחר שהוא יהיה מעכשיו ה DEFAULT
@@ -63,6 +64,8 @@ interface BoardStore {
   deleteBoard: (boardId: number) => Promise<void>;
 
   deleteColumn: (columnId: number) => Promise<void>;
+  // מגדיר את ה SEARCH ITEM
+  setSearchItem: (value: string) => void;
 }
 
 export const useBoardStore = create<BoardStore>((set, get) => ({
@@ -75,6 +78,13 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
   statuses: [],
   nextItemId: null,
   nextColumnId: null,
+  searchItem: "",
+
+
+  setSearchItem: (value) => {
+    set({ searchItem: value });
+  },
+
 
   deleteColumn: async (columnId) => {
     const prevColumns = get().columns;
@@ -97,54 +107,53 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
   },
 
   deleteBoard: async (boardId: number) => {
-    const prevBoards = get().boards;
-    const prevColumns = get().columns;
-    const prevItems = get().items;
-    const prevActiveBoardId = get().activeBoardId;
+  const prevBoards = get().boards;
+  const prevColumns = get().columns;
+  const prevItems = get().items;
+  const prevActiveBoardId = get().activeBoardId;
 
-    let nextBoardId: number | null = null;
+  let nextBoardId: number | null = null;
 
-    set((state) => {
-      const boardsAfterDelete = state.boards.filter(
-        (board) => board.id !== boardId,
-      );
+  set((state) => {
+    const boardsAfterDelete = state.boards.filter(
+      (board) => board.id !== boardId
+    );
 
-      const nextActiveBoard =
-        boardsAfterDelete.find((board) => board.isDefault) ??
-        boardsAfterDelete[0] ??
-        null;
+    const nextActiveBoard = boardsAfterDelete[0] ?? null;
+    nextBoardId = nextActiveBoard?.id ?? null;
 
-      nextBoardId =
-        state.activeBoardId === boardId
-          ? (nextActiveBoard?.id ?? null)
-          : state.activeBoardId;
+    return {
+      boards: boardsAfterDelete.map((board) => ({
+        ...board,
+        isDefault: board.id === nextBoardId,
+      })),
 
-      return {
-        boards: boardsAfterDelete,
-        activeBoardId: nextBoardId,
-        columns: state.columns.filter((col) => col.boardId !== boardId),
-        items: state.items.filter((item) => item.boardId !== boardId),
-      };
-    });
+      activeBoardId: nextBoardId,
 
-    try {
-      await API.deleteBoardById(boardId);
+      columns: state.columns.filter((col) => col.boardId !== boardId),
+      items: state.items.filter((item) => item.boardId !== boardId),
+    };
+  });
 
-      if (nextBoardId !== null) {
-        await get().fetchBoardData(nextBoardId);
-      }
-    } catch (err) {
-      console.error(err);
+  try {
+    await API.deleteBoardById(boardId);
 
-      set({
-        boards: prevBoards,
-        columns: prevColumns,
-        items: prevItems,
-        activeBoardId: prevActiveBoardId,
-        error: "Failed to delete board",
-      });
+    if (nextBoardId !== null) {
+      await API.updateBoardById(nextBoardId, { isDefault: true });
+      await get().setActiveBoardId(nextBoardId);
     }
-  },
+  } catch (err) {
+    console.error(err);
+
+    set({
+      boards: prevBoards,
+      columns: prevColumns,
+      items: prevItems,
+      activeBoardId: prevActiveBoardId,
+      error: "Failed to delete board",
+    });
+  }
+},
 
   fetchNextItemId: async () => {
     try {
@@ -345,21 +354,32 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
     }
   },
 
-  addBoard: async (boardData: CreateBoardPayload) => {
-    try {
-      const res = await API.addBoard(boardData);
+ addBoard: async (boardData: CreateBoardPayload) => {
+  try {
+    const isFirstBoard = get().boards.length === 0;
 
-      set((state) => ({
-        boards: [...state.boards, res.data],
-      }));
+    const res = await API.addBoard({
+      ...boardData,
+      isDefault: isFirstBoard,
+    });
 
-      return res.data; // מחזיר את הבורד החדש עם ה-id
-    } catch (err) {
-      console.error(err);
-      set({ error: "Failed to add board" });
-      return null;
-    }
-  },
+    const createdBoard = res.data;
+
+    set((state) => ({
+      boards: [...state.boards, createdBoard],
+      activeBoardId: createdBoard.id,
+      error: null,
+    }));
+
+    await get().fetchBoardData(createdBoard.id);
+
+    return createdBoard;
+  } catch (err) {
+    console.error(err);
+    set({ error: "Failed to add board" });
+    return null;
+  }
+},
 
   setDefaultBoard: async (boardId) => {
     try {

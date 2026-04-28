@@ -1,7 +1,8 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import ItemCard from "./ItemCard";
 import AddItem from "./AddItem";
 import { useBoardStore } from "../../store/boardStore";
+import { DeleteColumn } from "../TopColum/DeletColumn";
 
 type ColumnProps = {
   columnId: number;
@@ -10,13 +11,24 @@ type ColumnProps = {
 export default function Column({ columnId }: ColumnProps) {
   const columns = useBoardStore((state) => state.columns);
   const items = useBoardStore((state) => state.items);
+  const searchItem = useBoardStore((state) => state.searchItem);
 
   const column = columns.find((col) => col.id === columnId);
 
-  const columnItems = items
-    .filter((item) => item.columnId === columnId)
-    .sort((b, a) => b.position - a.position);
+ const columnItems = items
+  .filter((item) => {
+    const search = searchItem.toLowerCase().trim();
 
+    const isSameColumn = item.columnId === columnId;
+
+    const isMatchSearch =
+      search === "" ||
+      item.title.toLowerCase().includes(search);
+
+    return isSameColumn && isMatchSearch;
+  })
+  .sort((b, a) => b.position - a.position);
+  
   if (!column) {
     return null;
   }
@@ -64,8 +76,10 @@ export default function Column({ columnId }: ColumnProps) {
             }}
           />
         </Box>
-
-        <AddItem columnId={column.id} />
+        <Stack direction="row" gap={1}>
+          <DeleteColumn columnId={column.id} />
+          <AddItem columnId={column.id} />
+        </Stack>
       </Box>
 
       <Box

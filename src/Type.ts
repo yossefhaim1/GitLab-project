@@ -37,7 +37,6 @@ export interface Statuses {
     id: number;
     key: string;
     value: string;
-    order: number;
 }
 
 export type CreateItemPayload = Omit<Items, "id">;
