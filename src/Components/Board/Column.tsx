@@ -17,18 +17,24 @@ export default function Column({ columnId }: ColumnProps) {
 
  const columnItems = items
   .filter((item) => {
-    const search = searchItem.toLowerCase().trim();
+    const searchWords = searchItem
+      .toLowerCase()
+      .trim()
+      .split(" ")
+      .filter(Boolean);
+
+    const title = item.title.toLowerCase();
 
     const isSameColumn = item.columnId === columnId;
 
     const isMatchSearch =
-      search === "" ||
-      item.title.toLowerCase().includes(search);
+      searchWords.length === 0 ||
+      searchWords.every((word) => title.includes(word));
 
     return isSameColumn && isMatchSearch;
   })
-  .sort((b, a) => b.position - a.position);
-  
+  .sort((a, b) => a.position - b.position);
+
   if (!column) {
     return null;
   }
