@@ -3,10 +3,8 @@ import type {
   Boards,
   Columns,
   Items,
-  Statuses,
   CreateItemPayload,
   CreateColumnPayload,
-  CreateStatusPayload,
   CreateBoardPayload,
 } from "../Type";
 import { API } from "../Api/boardPageApi";
@@ -18,7 +16,6 @@ interface BoardStore {
   items: Items[];
   loading: boolean;
   error: string | null;
-  statuses: Statuses[];
   nextColumnId: number | null;
   searchItem: string;
 
@@ -48,9 +45,6 @@ interface BoardStore {
   // מוחק ITEM קיים
   deleteItem: (id: number) => Promise<void>;
 
-  // מוסיף סטטוס חדש ל DATABASE של STATUSES
-  addStatus: (status: CreateStatusPayload) => Promise<void>;
-
   // מוסיף בורד חדש ל DATABASE של BOARDS
   addBoard: (board: CreateBoardPayload) => Promise<Boards | null>;
 
@@ -75,7 +69,6 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
   items: [],
   loading: false,
   error: null,
-  statuses: [],
   nextColumnId: null,
   searchItem: "",
 
@@ -83,8 +76,6 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
   setItems: (items) => {
     set({ items });
   },
-
-
 
   setSearchItem: (value) => {
     set({ searchItem: value });
@@ -247,17 +238,15 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
     set({ loading: true, error: null });
 
     try {
-      const [columnsRes, itemsRes, statusesRes] = await Promise.all([
+      const [columnsRes, itemsRes] = await Promise.all([
         API.getColumns(boardId),
         API.getItems(boardId),
-        API.getStatuses(),
       ]);
 
       set({
         activeBoardId: boardId,
         columns: columnsRes.data,
         items: itemsRes.data,
-        statuses: statusesRes.data,
         loading: false,
       });
     } catch (err) {
@@ -325,21 +314,6 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
       console.error(err);
       set({
         error: "Failed to delete item",
-      });
-    }
-  },
-
-  addStatus: async (status: CreateStatusPayload) => {
-    try {
-      const res = await API.addStatus(status);
-
-      set((state) => ({
-        statuses: [...state.statuses, res.data],
-      }));
-    } catch (err) {
-      console.error(err);
-      set({
-        error: "Failed to add status",
       });
     }
   },

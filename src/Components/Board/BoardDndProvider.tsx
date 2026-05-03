@@ -17,9 +17,16 @@ type BoardDndProviderProps = {
 export default function BoardDndProvider({ children }: BoardDndProviderProps) {
   const [activeItemId, setActiveItemId] = useState<number | null>(null);
 
+  function getItemId(id: string | number) {
+    return Number(String(id).replace("item-", ""));
+  }
+
+  function getColumnId(id: string | number) {
+    return Number(String(id).replace("column-", ""));
+  }
+
   function handleDragStart(event: DragStartEvent) {
-    const id = Number(String(event.active.id).replace("item-", ""));
-    setActiveItemId(id);
+    setActiveItemId(getItemId(event.active.id));
   }
 
   async function handleDragEnd(event: DragEndEvent) {
@@ -27,13 +34,13 @@ export default function BoardDndProvider({ children }: BoardDndProviderProps) {
 
     setActiveItemId(null);
 
-    if (!over || active.id === over.id) return;
+    if (!over) return;
 
     const items = useBoardStore.getState().items;
     const setItems = useBoardStore.getState().setItems;
     const updateItem = useBoardStore.getState().updateItem;
 
-    const activeItemId = Number(String(active.id).replace("item-", ""));
+    const activeItemId = getItemId(active.id);
     const overId = String(over.id);
 
     const activeItem = items.find((item) => item.id === activeItemId);
@@ -45,9 +52,11 @@ export default function BoardDndProvider({ children }: BoardDndProviderProps) {
     let overItemId: number | null = null;
 
     if (overId.startsWith("column-")) {
-      targetColumnId = Number(overId.replace("column-", ""));
-    } else if (overId.startsWith("item-")) {
-      overItemId = Number(overId.replace("item-", ""));
+      targetColumnId = getColumnId(over.id);
+    }
+
+    if (overId.startsWith("item-")) {
+      overItemId = getItemId(over.id);
 
       const overItem = items.find((item) => item.id === overItemId);
       if (!overItem) return;
@@ -66,18 +75,17 @@ export default function BoardDndProvider({ children }: BoardDndProviderProps) {
     if (sourceColumnId === targetColumnId) {
       if (overItemId === null) return;
 
-      const oldIndex = sourceItems.findIndex(
-        (item) => item.id === activeItemId,
-      );
+      const oldIndex = sourceItems.findIndex((item) => item.id === activeItemId);
       const newIndex = sourceItems.findIndex((item) => item.id === overItemId);
 
       if (oldIndex === -1 || newIndex === -1) return;
+      if (oldIndex === newIndex) return;
 
       const reorderedItems = arrayMove(sourceItems, oldIndex, newIndex).map(
         (item, index) => ({
           ...item,
           position: index + 1,
-        }),
+        })
       );
 
       const updatedItems = items.map((item) => {
@@ -85,6 +93,7 @@ export default function BoardDndProvider({ children }: BoardDndProviderProps) {
       });
 
       setItems(updatedItems);
+
       for (const item of reorderedItems) {
         await updateItem(item.id, {
           position: item.position,
@@ -109,13 +118,12 @@ export default function BoardDndProvider({ children }: BoardDndProviderProps) {
     let insertIndex = targetItems.length;
 
     if (overItemId !== null) {
-      const foundIndex = targetItems.findIndex(
-        (item) => item.id === overItemId,
-      );
+      const foundIndex = targetItems.findIndex((item) => item.id === overItemId);
       insertIndex = foundIndex === -1 ? targetItems.length : foundIndex;
     }
 
     const updatedTargetItems = [...targetItems];
+
     updatedTargetItems.splice(insertIndex, 0, movedItem);
 
     const fixedTargetItems = updatedTargetItems.map((item, index) => ({
@@ -126,13 +134,13 @@ export default function BoardDndProvider({ children }: BoardDndProviderProps) {
 
     const updatedItems = items.map((item) => {
       const sourceChanged = updatedSourceItems.find(
-        (changed) => changed.id === item.id,
+        (changed) => changed.id === item.id
       );
 
       if (sourceChanged) return sourceChanged;
 
       const targetChanged = fixedTargetItems.find(
-        (changed) => changed.id === item.id,
+        (changed) => changed.id === item.id
       );
 
       if (targetChanged) return targetChanged;

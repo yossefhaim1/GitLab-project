@@ -9,19 +9,16 @@ import {
 import Add from "@mui/icons-material/Add";
 import { useMemo, useState } from "react";
 import { useBoardStore } from "../../store/boardStore";
-import type { CreateColumnPayload, CreateStatusPayload } from "../../Type";
+import type { CreateColumnPayload } from "../../Type";
 
 export function AddColum() {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [tagColor, setTagColor] = useState("#3b82f6");
 
-  const statuses = useBoardStore((state) => state.statuses);
   const addColumn = useBoardStore((state) => state.addColumn);
   const activeBoardId = useBoardStore((state) => state.activeBoardId);
   const columns = useBoardStore((state) => state.columns);
-  const addStatus = useBoardStore((state) => state.addStatus);
-
 
   const nextOrder = useMemo(() => {
     const orders = columns
@@ -33,36 +30,30 @@ export function AddColum() {
 
   function handleCreate() {
     const cleanTitle = title.trim();
-    
+
     if (!cleanTitle || !activeBoardId) return;
 
-    const isStatusExists = statuses.some(
-  (status) =>
-    (status.value ?? "").toLowerCase() === title.toLowerCase() ||
-    (status.key ?? "").toLowerCase() === title.toLowerCase()
-);
+    const isColumnExists = columns.some(
+      (column) =>
+        column.boardId === activeBoardId &&
+        column.title.trim().toLowerCase() === cleanTitle.toLowerCase()
+    );
 
-    if (isStatusExists) {
-      alert("Status already exists");
+    if (isColumnExists) {
+      alert("Column already exists");
       return;
     }
 
     const newColumn: CreateColumnPayload = {
+       boardId: activeBoardId,
       title: cleanTitle,
-      boardId: activeBoardId,
       order: nextOrder,
-      statusKey: title.toUpperCase().replaceAll(" ", "_"),
       color: tagColor,
     };
-    const newStatus : CreateStatusPayload = {
-      key: newColumn.statusKey,
-      value: title,
-    };
+
     addColumn(newColumn);
-    addStatus(newStatus);
 
     setTitle("");
-    
     setTagColor("#3b82f6");
     setOpen(false);
   }
@@ -85,7 +76,7 @@ export function AddColum() {
         transition: "0.25s",
         cursor: "pointer",
         "&:hover": {
-          borderColor: "#6366f1",
+          borderColor: "#8b8cf1",
           background:
             "linear-gradient(180deg, rgba(239,246,255,0.95), rgba(224,231,255,0.75))",
         },
@@ -112,7 +103,7 @@ export function AddColum() {
             width: 54,
             height: 54,
             borderRadius: "50%",
-            background: "linear-gradient(135deg, #2563eb, #7c3aed)",
+            background: "linear-gradient(135deg, #87acfb, #bb99f4)",
             color: "white",
             display: "flex",
             alignItems: "center",
@@ -128,7 +119,7 @@ export function AddColum() {
         </Typography>
 
         <Typography sx={{ fontSize: 12, color: "#64748b", textAlign: "center" }}>
-          New status
+          New column
         </Typography>
       </Box>
 

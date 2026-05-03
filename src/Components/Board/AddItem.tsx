@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Box,
   Button,
@@ -88,7 +88,6 @@ export default function AddItem({ columnId }: AddItemProps) {
         columnId,
         position: nextPosition,
         title: cleanTitle,
-        status: column.statusKey,
         assigneeId,
         priority: [
           {
@@ -100,7 +99,7 @@ export default function AddItem({ columnId }: AddItemProps) {
       };
 
       await addItem(newItem);
-      console.log("seccses to add item");
+      console.log("success to add item");
 
       setTitle("");
       setAssigneeId(0);

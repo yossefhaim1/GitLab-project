@@ -9,17 +9,16 @@ export interface Columns {
     boardId: number;
     title: string;
     order: number;
-    statusKey: string;
     color: string;
 }
 
 interface Priority {
     type: string;
-    color: string
+    color: string;
 }
 interface Tag {
     type: string;
-    color: string
+    color: string;
 }
 export interface Items {
     id: number;
@@ -27,19 +26,11 @@ export interface Items {
     columnId: number;
     position: number;
     title: string;
-    status: string;
     assigneeId: number;
     priority: Priority[];
     tags: Tag[];
 }
 
-export interface Statuses {
-    id: number;
-    key: string;
-    value: string;
-}
-
 export type CreateItemPayload = Omit<Items, "id">;
 export type CreateColumnPayload = Omit<Columns, "id">;
 export type CreateBoardPayload = Omit<Boards, "id" | "isDefault">;
-export type CreateStatusPayload = Omit<Statuses, "id">;

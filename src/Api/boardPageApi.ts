@@ -1,5 +1,5 @@
 import  api  from "./Axios-Api" 
-import type { Boards, Items, Columns , Statuses, CreateItemPayload, CreateStatusPayload, CreateColumnPayload} from "../Type";
+import type { Boards, Items, Columns , CreateItemPayload, CreateColumnPayload} from "../Type";
 
 // הוספתי פונקציות API ל-boards, columns, items
 function getBoards() {
@@ -89,13 +89,6 @@ function updateItemRequest(id: number, changes: Partial<Items>) {
   return api.patch<Items>(`/items/${id}`, changes);
 }
 
-function getStatuses() {
-  return api.get<Statuses[]>("/statuses");
-}
-function addStatus(status: CreateStatusPayload) {
-  return api.post("/statuses", status);
-}
-
 function getNextColumnId() {
   return api.get("/columns",{
     params:{
@@ -114,11 +107,9 @@ export const API = {
   getBoards,
   getColumns,
   getItems,
-  getStatuses,
   deleteItemById,
   addItemRequest,
   updateItemRequest,
-  addStatus,
   updateBoardById,
   getNextColumnId,
   deleteBoardById,

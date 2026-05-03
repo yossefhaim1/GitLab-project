@@ -3,12 +3,17 @@
     {
       "id": 1,
       "name": "Development Board",
-      "isDefault": true
+      "isDefault": false
     },
     {
       "id": 2,
       "name": "Development Board Copy",
       "isDefault": false
+    },
+    {
+      "name": "132546",
+      "isDefault": true,
+      "id": 3
     }
   ],
   "columns": [
@@ -17,7 +22,6 @@
       "boardId": 1,
       "title": "To Do",
       "order": 1,
-      "statusKey": "TO_DO",
       "color": "#747474"
     },
     {
@@ -25,7 +29,6 @@
       "boardId": 1,
       "title": "In Progress",
       "order": 2,
-      "statusKey": "IN_PROGRESS",
       "color": "#7897ff"
     },
     {
@@ -33,7 +36,6 @@
       "boardId": 1,
       "title": "Done",
       "order": 3,
-      "statusKey": "DONE",
       "color": "#2dab3c"
     },
     {
@@ -41,7 +43,6 @@
       "boardId": 2,
       "title": "To Do",
       "order": 1,
-      "statusKey": "TO_DO",
       "color": "#747474"
     },
     {
@@ -49,7 +50,6 @@
       "boardId": 2,
       "title": "In Progress",
       "order": 2,
-      "statusKey": "IN_PROGRESS",
       "color": "#7897ff"
     },
     {
@@ -57,40 +57,42 @@
       "boardId": 2,
       "title": "Done",
       "order": 3,
-      "statusKey": "DONE",
       "color": "#2dab3c"
-    }
-  ],
-  "statuses": [
-    {
-      "id": 1,
-      "key": "TO_DO",
-      "value": "To Do"
     },
     {
-      "id": 2,
-      "key": "IN_PROGRESS",
-      "value": "In Progress"
+      "title": "354",
+      "boardId": 3,
+      "order": 1,
+      "color": "#3b82f6",
+      "id": 7
     },
     {
-      "id": 3,
-      "key": "DONE",
-      "value": "Done"
+      "title": "14877",
+      "boardId": 3,
+      "order": 2,
+      "color": "#3b82f6",
+      "id": 8
     },
     {
-      "key": "132456",
-      "value": "132456",
-      "id": 4
+      "title": "6514",
+      "boardId": 3,
+      "order": 3,
+      "color": "#3b82f6",
+      "id": 9
     },
     {
-      "key": "6545",
-      "value": "6545",
-      "id": 5
+      "title": "6584",
+      "boardId": 3,
+      "order": 4,
+      "color": "#3b82f6",
+      "id": 10
     },
     {
-      "key": "2514654",
-      "value": "2514654",
-      "id": 6
+      "boardId": 3,
+      "title": "64",
+      "order": 5,
+      "color": "#3b82f6",
+      "id": 11
     }
   ],
   "items": [
@@ -100,7 +102,6 @@
       "columnId": 1,
       "position": 1,
       "title": "Fix login bug",
-      "status": "IN_PROGRESS",
       "assigneeId": 1,
       "priority": [
         {
@@ -129,7 +130,6 @@
       "columnId": 1,
       "position": 2,
       "title": "Improve UI design",
-      "status": "TO_DO",
       "assigneeId": 2,
       "priority": [
         {
@@ -158,7 +158,6 @@
       "columnId": 1,
       "position": 3,
       "title": "Add validation",
-      "status": "TO_DO",
       "assigneeId": 3,
       "priority": [
         {
@@ -187,7 +186,6 @@
       "columnId": 1,
       "position": 4,
       "title": "Create landing page",
-      "status": "TO_DO",
       "assigneeId": 4,
       "priority": [
         {
@@ -216,7 +214,6 @@
       "columnId": 1,
       "position": 5,
       "title": "Update documentation",
-      "status": "TO_DO",
       "assigneeId": 5,
       "priority": [
         {
@@ -245,7 +242,6 @@
       "columnId": 1,
       "position": 6,
       "title": "Refactor helpers",
-      "status": "TO_DO",
       "assigneeId": 6,
       "priority": [
         {
@@ -274,7 +270,6 @@
       "columnId": 2,
       "position": 1,
       "title": "Build API integration",
-      "status": "IN_PROGRESS",
       "assigneeId": 1,
       "priority": [
         {
@@ -303,7 +298,6 @@
       "columnId": 2,
       "position": 2,
       "title": "Setup CI/CD",
-      "status": "IN_PROGRESS",
       "assigneeId": 2,
       "priority": [
         {
@@ -332,7 +326,6 @@
       "columnId": 2,
       "position": 3,
       "title": "Implement auth",
-      "status": "IN_PROGRESS",
       "assigneeId": 3,
       "priority": [
         {
@@ -361,7 +354,6 @@
       "columnId": 2,
       "position": 4,
       "title": "Optimize queries",
-      "status": "IN_PROGRESS",
       "assigneeId": 4,
       "priority": [
         {
@@ -390,7 +382,6 @@
       "columnId": 2,
       "position": 5,
       "title": "Improve performance",
-      "status": "IN_PROGRESS",
       "assigneeId": 5,
       "priority": [
         {
@@ -419,7 +410,6 @@
       "columnId": 2,
       "position": 6,
       "title": "Refactor components",
-      "status": "IN_PROGRESS",
       "assigneeId": 6,
       "priority": [
         {
@@ -448,7 +438,6 @@
       "columnId": 3,
       "position": 1,
       "title": "Deploy first version",
-      "status": "DONE",
       "assigneeId": 1,
       "priority": [
         {
@@ -477,7 +466,6 @@
       "columnId": 3,
       "position": 2,
       "title": "Setup project structure",
-      "status": "DONE",
       "assigneeId": 2,
       "priority": [
         {
@@ -506,7 +494,6 @@
       "columnId": 3,
       "position": 3,
       "title": "Fix production bug",
-      "status": "DONE",
       "assigneeId": 3,
       "priority": [
         {
@@ -535,7 +522,6 @@
       "columnId": 3,
       "position": 4,
       "title": "Release patch v1.1",
-      "status": "DONE",
       "assigneeId": 4,
       "priority": [
         {
@@ -564,7 +550,6 @@
       "columnId": 3,
       "position": 5,
       "title": "Write final report",
-      "status": "DONE",
       "assigneeId": 5,
       "priority": [
         {
@@ -593,7 +578,6 @@
       "columnId": 3,
       "position": 6,
       "title": "Archive old version",
-      "status": "DONE",
       "assigneeId": 6,
       "priority": [
         {
@@ -622,7 +606,6 @@
       "columnId": 4,
       "position": 1,
       "title": "Fix login bug",
-      "status": "IN_PROGRESS",
       "assigneeId": 1,
       "priority": [
         {
@@ -651,7 +634,6 @@
       "columnId": 4,
       "position": 2,
       "title": "Improve UI design",
-      "status": "TO_DO",
       "assigneeId": 2,
       "priority": [
         {
@@ -680,7 +662,6 @@
       "columnId": 4,
       "position": 3,
       "title": "Add validation",
-      "status": "TO_DO",
       "assigneeId": 3,
       "priority": [
         {
@@ -709,7 +690,6 @@
       "columnId": 4,
       "position": 4,
       "title": "Create landing page",
-      "status": "TO_DO",
       "assigneeId": 4,
       "priority": [
         {
@@ -738,7 +718,6 @@
       "columnId": 4,
       "position": 5,
       "title": "Update documentation",
-      "status": "TO_DO",
       "assigneeId": 5,
       "priority": [
         {
@@ -767,7 +746,6 @@
       "columnId": 4,
       "position": 6,
       "title": "Refactor helpers",
-      "status": "TO_DO",
       "assigneeId": 6,
       "priority": [
         {
@@ -796,7 +774,6 @@
       "columnId": 5,
       "position": 1,
       "title": "Build API integration",
-      "status": "IN_PROGRESS",
       "assigneeId": 1,
       "priority": [
         {
@@ -825,7 +802,6 @@
       "columnId": 5,
       "position": 2,
       "title": "Setup CI/CD",
-      "status": "IN_PROGRESS",
       "assigneeId": 2,
       "priority": [
         {
@@ -854,7 +830,6 @@
       "columnId": 5,
       "position": 3,
       "title": "Implement auth",
-      "status": "IN_PROGRESS",
       "assigneeId": 3,
       "priority": [
         {
@@ -883,7 +858,6 @@
       "columnId": 5,
       "position": 4,
       "title": "Optimize queries",
-      "status": "IN_PROGRESS",
       "assigneeId": 4,
       "priority": [
         {
@@ -912,7 +886,6 @@
       "columnId": 5,
       "position": 5,
       "title": "Improve performance",
-      "status": "IN_PROGRESS",
       "assigneeId": 5,
       "priority": [
         {
@@ -941,7 +914,6 @@
       "columnId": 5,
       "position": 6,
       "title": "Refactor components",
-      "status": "IN_PROGRESS",
       "assigneeId": 6,
       "priority": [
         {
@@ -970,7 +942,6 @@
       "columnId": 6,
       "position": 1,
       "title": "Deploy first version",
-      "status": "DONE",
       "assigneeId": 1,
       "priority": [
         {
@@ -999,7 +970,6 @@
       "columnId": 6,
       "position": 2,
       "title": "Setup project structure",
-      "status": "DONE",
       "assigneeId": 2,
       "priority": [
         {
@@ -1028,7 +998,6 @@
       "columnId": 6,
       "position": 3,
       "title": "Fix production bug",
-      "status": "DONE",
       "assigneeId": 3,
       "priority": [
         {
@@ -1057,7 +1026,6 @@
       "columnId": 6,
       "position": 4,
       "title": "Release patch v1.1",
-      "status": "DONE",
       "assigneeId": 4,
       "priority": [
         {
@@ -1086,7 +1054,6 @@
       "columnId": 6,
       "position": 6,
       "title": "Archive old version",
-      "status": "DONE",
       "assigneeId": 6,
       "priority": [
         {
@@ -1108,6 +1075,178 @@
           "color": "#a16207"
         }
       ]
+    },
+    {
+      "boardId": 3,
+      "columnId": 9,
+      "position": 2,
+      "title": "544654684",
+      "assigneeId": 45,
+      "priority": [
+        {
+          "type": "MEDIUM",
+          "color": "#b45309"
+        }
+      ],
+      "tags": [
+        {
+          "type": "654",
+          "color": "#3b82f6"
+        },
+        {
+          "type": "hrt",
+          "color": "#3b82f6"
+        },
+        {
+          "type": "rthyr",
+          "color": "#3b82f6"
+        }
+      ],
+      "id": 38
+    },
+    {
+      "boardId": 3,
+      "columnId": 7,
+      "position": 1,
+      "title": "tyuu",
+      "assigneeId": 0,
+      "priority": [
+        {
+          "type": "MEDIUM",
+          "color": "#b45309"
+        }
+      ],
+      "tags": [
+        {
+          "type": "yj",
+          "color": "#3b82f6"
+        },
+        {
+          "type": "48984",
+          "color": "#3bf63e"
+        }
+      ],
+      "id": 39
+    },
+    {
+      "boardId": 3,
+      "columnId": 8,
+      "position": 3,
+      "title": "654",
+      "assigneeId": 0,
+      "priority": [
+        {
+          "type": "LOW",
+          "color": "#374151"
+        }
+      ],
+      "tags": [],
+      "id": 40
+    },
+    {
+      "boardId": 3,
+      "columnId": 7,
+      "position": 3,
+      "title": "tyui",
+      "assigneeId": 0,
+      "priority": [
+        {
+          "type": "LOW",
+          "color": "#374151"
+        }
+      ],
+      "tags": [],
+      "id": 41
+    },
+    {
+      "boardId": 3,
+      "columnId": 9,
+      "position": 1,
+      "title": "645",
+      "assigneeId": 25,
+      "priority": [
+        {
+          "type": "LOW",
+          "color": "#374151"
+        }
+      ],
+      "tags": [],
+      "id": 42
+    },
+    {
+      "boardId": 3,
+      "columnId": 8,
+      "position": 2,
+      "title": "6514654",
+      "assigneeId": 0,
+      "priority": [
+        {
+          "type": "LOW",
+          "color": "#374151"
+        }
+      ],
+      "tags": [],
+      "id": 43
+    },
+    {
+      "boardId": 3,
+      "columnId": 10,
+      "position": 1,
+      "title": "5641",
+      "assigneeId": 0,
+      "priority": [
+        {
+          "type": "LOW",
+          "color": "#374151"
+        }
+      ],
+      "tags": [],
+      "id": 44
+    },
+    {
+      "boardId": 3,
+      "columnId": 9,
+      "position": 3,
+      "title": "65",
+      "assigneeId": 0,
+      "priority": [
+        {
+          "type": "LOW",
+          "color": "#374151"
+        }
+      ],
+      "tags": [],
+      "id": 45
+    },
+    {
+      "boardId": 3,
+      "columnId": 7,
+      "position": 2,
+      "title": "54",
+      "assigneeId": 0,
+      "priority": [
+        {
+          "type": "LOW",
+          "color": "#374151"
+        }
+      ],
+      "tags": [],
+      "id": 47
+    },
+    {
+      "boardId": 3,
+      "columnId": 11,
+      "position": 1,
+      "title": "6+5",
+      "assigneeId": 0,
+      "priority": [
+        {
+          "type": "LOW",
+          "color": "#374151"
+        }
+      ],
+      "tags": [],
+      "id": 48
     }
   ]
 }

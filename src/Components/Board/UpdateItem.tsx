@@ -6,9 +6,9 @@ import {
   IconButton,
   TextField,
   Typography,
-  MenuItem,
   Chip,
   Tooltip,
+  MenuItem,
 } from "@mui/material";
 import { Edit } from "@mui/icons-material";
 import type { Items } from "../../Type";
@@ -33,15 +33,12 @@ type UpdateItemProps = {
 
 export default function UpdateItem({ itemId }: UpdateItemProps) {
   const items = useBoardStore((state) => state.items);
-  const columns = useBoardStore((state) => state.columns);
   const updateItem = useBoardStore((state) => state.updateItem);
-  const statuses = useBoardStore((state) => state.statuses);
 
   const item = items.find((currentItem) => currentItem.id === itemId);
 
   const [open, setOpen] = useState<boolean>(false);
-  const [title, setTitle] = useState<string | "">("");
-  const [status, setStatus] = useState<string>("");
+  const [title, setTitle] = useState<string>("");
   const [assigneeId, setAssigneeId] = useState<number>(0);
   const [priority, setPriority] = useState<PriorityType>("LOW");
   const [tagText, setTagText] = useState<string>("");
@@ -49,16 +46,15 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
   const [tags, setTags] = useState<TagInput[]>([]);
 
   useEffect(() => {
-    if (!open || !item || statuses.length === 0) return;
+    if (!open || !item) return;
 
     setTitle(item.title);
-    setStatus(item.status);
     setAssigneeId(item.assigneeId);
     setPriority((item.priority?.[0]?.type as PriorityType) || "LOW");
     setTags(item.tags || []);
     setTagText("");
     setTagColor("#3bf63e");
-  }, [open, item, statuses]);
+  }, [open, item]);
 
   function addTag() {
     const value = tagText.trim();
@@ -66,7 +62,7 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
     if (!value) return;
 
     const alreadyExists = tags.some(
-      (tag) => tag.type.toLowerCase() === value.toLowerCase(),
+      (tag) => tag.type.toLowerCase() === value.toLowerCase()
     );
 
     if (alreadyExists) {
@@ -87,34 +83,11 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
 
     const changes: Partial<Items> = {};
     const cleanTitle = title.trim();
+
     if (cleanTitle === "") return;
 
     if (cleanTitle !== item.title) {
       changes.title = cleanTitle;
-    }
-
-    if (status !== item.status) {
-      changes.status = status;
-
-      const targetColumn = columns.find(
-        (column) => column.statusKey === status,
-      );
-
-      if (targetColumn && targetColumn.id !== item.columnId) {
-        changes.columnId = targetColumn.id;
-
-        const itemsInTargetColumn = items.filter(
-          (currentItem) => currentItem.columnId === targetColumn.id,
-        );
-
-        const maxPosition = itemsInTargetColumn.length
-          ? Math.max(
-              ...itemsInTargetColumn.map((currentItem) => currentItem.position),
-            )
-          : 0;
-
-        changes.position = maxPosition + 1;
-      }
     }
 
     if (assigneeId !== item.assigneeId) {
@@ -145,9 +118,7 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
     setOpen(false);
   }
 
-  if (!item) {
-    return null;
-  }
+  if (!item) return null;
 
   return (
     <>
@@ -174,25 +145,6 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
             onChange={(e) => setTitle(e.target.value)}
             sx={{ mb: 2 }}
           />
-
-          <TextField
-            select
-            fullWidth
-            label="Status"
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            sx={{ mb: 2 }}
-          >
-            {statuses
-              .filter((s) =>
-                columns.some((column) => column.statusKey === s.key),
-              )
-              .map((statusOption) => (
-                <MenuItem key={statusOption.key} value={statusOption.key}>
-                  {statusOption.value}
-                </MenuItem>
-              ))}
-          </TextField>
 
           <TextField
             select

@@ -111,6 +111,16 @@ export default function ItemCard({ itemId }: ItemCardProps) {
             flexShrink: 0,
           }}
         >
+          <Typography
+            sx={{
+              fontSize: "12px",
+              fontWeight: 700,
+              color: "#6b7280",
+            }}
+          >
+            p{item.position}-#{item.id}
+          </Typography>
+
           {item.priority.map((priority, index) => (
             <Box
               key={index}
@@ -131,16 +141,6 @@ export default function ItemCard({ itemId }: ItemCardProps) {
               {priority.type[0].toUpperCase()}
             </Box>
           ))}
-
-          <Typography
-            sx={{
-              fontSize: "12px",
-              fontWeight: 700,
-              color: "#6b7280",
-            }}
-          >
-            p{item.position}-#{item.id}
-          </Typography>
         </Box>
       </Box>
 
@@ -224,7 +224,7 @@ export default function ItemCard({ itemId }: ItemCardProps) {
               textTransform: "uppercase",
             }}
           >
-            {column.statusKey.replace("_", " ")}
+            {column.title.replace("_", " ")}
           </Typography>
         </Box>
       </Box>
