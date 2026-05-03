@@ -13,26 +13,34 @@ export default function Board() {
   const boardScrollRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const board = boardScrollRef.current;
-    if (!board) return;
+  const board = boardScrollRef.current;
+  if (!board) return;
 
-    const handleWheel = (e: WheelEvent) => {
-      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-        e.preventDefault();
+  const handleWheel = (e: WheelEvent) => {
+    const rect = board.getBoundingClientRect();
 
-        board.scrollBy({
-          left: e.deltaY * 5,
-          behavior: "smooth",
-        });
-      }
-    };
+    const isMouseNearBottom = e.clientY >= rect.bottom - 35;
 
-    board.addEventListener("wheel", handleWheel, { passive: false });
+    if (!isMouseNearBottom) {
+      return;
+    }
 
-    return () => {
-      board.removeEventListener("wheel", handleWheel);
-    };
-  }, []);
+    if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+      e.preventDefault();
+
+      board.scrollBy({
+        left: e.deltaY * 5,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  board.addEventListener("wheel", handleWheel, { passive: false });
+
+  return () => {
+    board.removeEventListener("wheel", handleWheel);
+  };
+}, []);
 
   if (!activeBoardId) return null;
 

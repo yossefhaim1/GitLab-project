@@ -88,6 +88,14 @@
       "statusKey": "6514",
       "color": "#3b82f6",
       "id": 9
+    },
+    {
+      "title": "6584",
+      "boardId": 3,
+      "order": 4,
+      "statusKey": "6584",
+      "color": "#3b82f6",
+      "id": 10
     }
   ],
   "statuses": [
@@ -180,6 +188,11 @@
       "key": "6514",
       "value": "6514",
       "id": 18
+    },
+    {
+      "key": "6584",
+      "value": "6584",
+      "id": 19
     }
   ],
   "items": [
@@ -1200,8 +1213,8 @@
     },
     {
       "boardId": 3,
-      "columnId": 7,
-      "position": 1,
+      "columnId": 9,
+      "position": 2,
       "title": "544654684",
       "status": "45",
       "assigneeId": 45,
@@ -1250,7 +1263,7 @@
     },
     {
       "boardId": 3,
-      "columnId": 8,
+      "columnId": 7,
       "position": 1,
       "title": "654",
       "status": "354",
@@ -1266,8 +1279,8 @@
     },
     {
       "boardId": 3,
-      "columnId": 9,
-      "position": 1,
+      "columnId": 8,
+      "position": 2,
       "title": "tyui",
       "status": "45",
       "assigneeId": 0,
@@ -1282,8 +1295,8 @@
     },
     {
       "boardId": 3,
-      "columnId": 8,
-      "position": 2,
+      "columnId": 9,
+      "position": 1,
       "title": "645",
       "status": "45",
       "assigneeId": 25,
@@ -1298,7 +1311,7 @@
     },
     {
       "boardId": 3,
-      "columnId": 8,
+      "columnId": 7,
       "position": 3,
       "title": "6514654",
       "status": "14877",
@@ -1314,8 +1327,8 @@
     },
     {
       "boardId": 3,
-      "columnId": 9,
-      "position": 3,
+      "columnId": 8,
+      "position": 1,
       "title": "5641",
       "status": "6514",
       "assigneeId": 0,
@@ -1331,7 +1344,7 @@
     {
       "boardId": 3,
       "columnId": 9,
-      "position": 4,
+      "position": 3,
       "title": "65",
       "status": "6514",
       "assigneeId": 0,
@@ -1346,8 +1359,8 @@
     },
     {
       "boardId": 3,
-      "columnId": 9,
-      "position": 2,
+      "columnId": 8,
+      "position": 3,
       "title": "62",
       "status": "14877",
       "assigneeId": 0,
@@ -1359,6 +1372,22 @@
       ],
       "tags": [],
       "id": 46
+    },
+    {
+      "boardId": 3,
+      "columnId": 9,
+      "position": 4,
+      "title": "54",
+      "status": "6514",
+      "assigneeId": 0,
+      "priority": [
+        {
+          "type": "LOW",
+          "color": "#374151"
+        }
+      ],
+      "tags": [],
+      "id": 47
     }
   ]
 }
