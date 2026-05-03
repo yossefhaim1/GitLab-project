@@ -106,15 +106,6 @@ function getNextColumnId() {
   })
 }
 
-function getLastItem() {
-  return api.get<Items[]>("/items", {
-    params: {
-      _sort: "id",
-      _order: "desc",
-      _limit: 1,
-    },
-  });
-}
 
 export const API = {
   addBoard,
@@ -129,7 +120,6 @@ export const API = {
   updateItemRequest,
   addStatus,
   updateBoardById,
-  getLastItem,
   getNextColumnId,
   deleteBoardById,
   DeleteColumnById,

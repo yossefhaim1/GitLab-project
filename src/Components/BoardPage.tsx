@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import Table from "./Board/Board";
+import Board from "./Board/Board";
 import { Box } from "@mui/material";
 import { useBoardStore } from "../store/boardStore";
 import { FirstBoardForNewUser } from "./FirstBoardForNewUser";
@@ -40,7 +40,7 @@ if (boards.length === 0) {
 }
   return (
     <Box>
-      <Table />
+      <Board />
     </Box>
   );
 }

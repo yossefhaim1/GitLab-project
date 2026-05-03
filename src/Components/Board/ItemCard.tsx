@@ -2,6 +2,8 @@ import { Box, Paper, Tooltip, Typography } from "@mui/material";
 import DeleteItem from "./DeleteItem";
 import UpdateItem from "./UpdateItem";
 import { useBoardStore } from "../../store/boardStore";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 type ItemCardProps = {
   itemId: number;
@@ -13,27 +15,39 @@ export default function ItemCard({ itemId }: ItemCardProps) {
 
   const item = items.find((currentItem) => currentItem.id === itemId);
 
-  if (!item) {
-    return null;
-  }
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: `item-${itemId}`,
+  });
+
+  if (!item) return null;
 
   const column = columns.find(
-    (currentColumn) => currentColumn.id === item.columnId,
+    (currentColumn) => currentColumn.id === item.columnId
   );
 
-  if (!column) {
-    return null;
-  }
+  if (!column) return null;
 
   return (
     <Paper
+      ref={setNodeRef}
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.25 : 1,
+      }}
       elevation={1}
       sx={{
         p: 2.25,
         mb: 2,
         borderRadius: 3,
         backgroundColor: "#ffffff",
-        transition: "0.15s",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
@@ -62,10 +76,14 @@ export default function ItemCard({ itemId }: ItemCardProps) {
           }}
         >
           <Typography
+            {...attributes}
+            {...listeners}
             sx={{
               fontSize: "15px",
               fontWeight: 800,
               lineHeight: 1.25,
+              cursor: isDragging ? "grabbing" : "grab",
+              userSelect: "none",
             }}
           >
             {item.title}
@@ -73,6 +91,8 @@ export default function ItemCard({ itemId }: ItemCardProps) {
 
           <Box
             className="edit-btn"
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
             sx={{
               opacity: 0,
               transition: "0.15s",
@@ -91,16 +111,6 @@ export default function ItemCard({ itemId }: ItemCardProps) {
             flexShrink: 0,
           }}
         >
-          <Typography
-            sx={{
-              fontSize: "12px",
-              fontWeight: 700,
-              color: "#6b7280",
-            }}
-          >
-            p{item.position}- #{item.id}
-          </Typography>
-
           {item.priority.map((priority, index) => (
             <Box
               key={index}
@@ -121,6 +131,16 @@ export default function ItemCard({ itemId }: ItemCardProps) {
               {priority.type[0].toUpperCase()}
             </Box>
           ))}
+
+          <Typography
+            sx={{
+              fontSize: "12px",
+              fontWeight: 700,
+              color: "#6b7280",
+            }}
+          >
+            p{item.position}-#{item.id}
+          </Typography>
         </Box>
       </Box>
 
@@ -164,7 +184,12 @@ export default function ItemCard({ itemId }: ItemCardProps) {
         }}
       >
         <Tooltip title="Delete Item" placement="bottom" arrow enterDelay={200}>
-          <DeleteItem itemId={item.id} />
+          <Box
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <DeleteItem itemId={item.id} />
+          </Box>
         </Tooltip>
 
         <Box

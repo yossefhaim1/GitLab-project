@@ -3,6 +3,11 @@ import ItemCard from "./ItemCard";
 import AddItem from "./AddItem";
 import { useBoardStore } from "../../store/boardStore";
 import { DeleteColumn } from "../TopColum/DeletColumn";
+import { useDroppable } from "@dnd-kit/core";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 
 type ColumnProps = {
   columnId: number;
@@ -15,25 +20,29 @@ export default function Column({ columnId }: ColumnProps) {
 
   const column = columns.find((col) => col.id === columnId);
 
- const columnItems = items
-  .filter((item) => {
-    const searchWords = searchItem
-      .toLowerCase()
-      .trim()
-      .split(" ")
-      .filter(Boolean);
+  const { setNodeRef } = useDroppable({
+    id: `column-${columnId}`,
+  });
 
-    const title = item.title.toLowerCase();
+  const columnItems = items
+    .filter((item) => {
+      const searchWords = searchItem
+        .toLowerCase()
+        .trim()
+        .split(" ")
+        .filter(Boolean);
 
-    const isSameColumn = item.columnId === columnId;
+      const title = item.title.toLowerCase();
 
-    const isMatchSearch =
-      searchWords.length === 0 ||
-      searchWords.every((word) => title.includes(word));
+      const isSameColumn = item.columnId === columnId;
 
-    return isSameColumn && isMatchSearch;
-  })
-  .sort((a, b) => a.position - b.position);
+      const isMatchSearch =
+        searchWords.length === 0 ||
+        searchWords.every((word) => title.includes(word));
+
+      return isSameColumn && isMatchSearch;
+    })
+    .sort((a, b) => a.position - b.position);
 
   if (!column) {
     return null;
@@ -42,10 +51,11 @@ export default function Column({ columnId }: ColumnProps) {
   return (
     <Box
       sx={{
-        flex: 1,
-        minWidth: 360,
+        flex: "0 0 calc((100% - 48px) /3.5)",
+        minWidth: "calc((100% - 48px) / 3.5)",
+        maxWidth: "calc((100% - 48px) / 3.5)",
         backgroundColor: "#ebecf0",
-        borderRadius: 3,
+        borderRadius: 3.5,
         p: 2.25,
         display: "flex",
         flexDirection: "column",
@@ -82,6 +92,7 @@ export default function Column({ columnId }: ColumnProps) {
             }}
           />
         </Box>
+
         <Stack direction="row" gap={1}>
           <DeleteColumn columnId={column.id} />
           <AddItem columnId={column.id} />
@@ -89,6 +100,7 @@ export default function Column({ columnId }: ColumnProps) {
       </Box>
 
       <Box
+        ref={setNodeRef}
         sx={{
           flexGrow: 1,
           overflowY: "auto",
@@ -105,9 +117,14 @@ export default function Column({ columnId }: ColumnProps) {
           },
         }}
       >
-        {columnItems.map((item) => (
-          <ItemCard key={item.id} itemId={item.id} />
-        ))}
+        <SortableContext
+          items={columnItems.map((item) => `item-${item.id}`)}
+          strategy={verticalListSortingStrategy}
+        >
+          {columnItems.map((item) => (
+            <ItemCard key={item.id} itemId={item.id} />
+          ))}
+        </SortableContext>
       </Box>
     </Box>
   );

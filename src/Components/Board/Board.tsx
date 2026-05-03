@@ -3,10 +3,36 @@ import Column from "./Column";
 import { useBoardStore } from "../../store/boardStore";
 import { AllTopBoard } from "../TopBoard/AllTopBoard";
 import { AddColum } from "../TopColum/AddColum";
+import { useEffect, useRef } from "react";
+import BoardDndProvider from "./BoardDndProvider";
 
 export default function Board() {
   const columns = useBoardStore((state) => state.columns);
   const activeBoardId = useBoardStore((state) => state.activeBoardId);
+
+  const boardScrollRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const board = boardScrollRef.current;
+    if (!board) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        e.preventDefault();
+
+        board.scrollBy({
+          left: e.deltaY * 5,
+          behavior: "smooth",
+        });
+      }
+    };
+
+    board.addEventListener("wheel", handleWheel, { passive: false });
+
+    return () => {
+      board.removeEventListener("wheel", handleWheel);
+    };
+  }, []);
 
   if (!activeBoardId) return null;
 
@@ -54,47 +80,25 @@ export default function Board() {
           overflow: "hidden",
         }}
       >
-        <Box
-          sx={{
-            display: "flex",
-            gap: 2.5,
-            alignItems: "flex-start",
-            height: "100%",
-            overflowX: "auto",
-            overflowY: "hidden",
-            pb: 1, // קצת רווח קטן
+        <BoardDndProvider>
+          <Box
+            ref={boardScrollRef}
+            sx={{
+              display: "flex",
+              gap: 3,
+              overflowX: "auto",
+              overflowY: "hidden",
+              height: "100%",
+              scrollBehavior: "smooth",
+            }}
+          >
+            {columns.map((col) => (
+              <Column key={col.id} columnId={col.id} />
+            ))}
 
-            "& > *": {
-              flexShrink: 0,
-            },
-
-            // 🔥 זה מה שמקטין את הפס
-            scrollbarWidth: "thin", // Firefox
-
-            "&::-webkit-scrollbar": {
-              height: "6px", // 👈 הגובה של הפס (תשחק עם זה)
-            },
-
-            "&::-webkit-scrollbar-track": {
-              background: "transparent", // שלא יהיה בלוק אפור גדול
-            },
-
-            "&::-webkit-scrollbar-thumb": {
-              backgroundColor: "#94a3b8",
-              borderRadius: "999px",
-            },
-
-            "&::-webkit-scrollbar-thumb:hover": {
-              backgroundColor: "#64748b",
-            },
-          }}
-        >
-          {columns.map((column) => (
-            <Column key={column.id} columnId={column.id} />
-          ))}
-
-          <AddColum />
-        </Box>
+            <AddColum />
+          </Box>
+        </BoardDndProvider>
       </Box>
     </Box>
   );

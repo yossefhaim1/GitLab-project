@@ -36,8 +36,6 @@ export default function AddItem({ columnId }: AddItemProps) {
   const columns = useBoardStore((state) => state.columns);
   const activeBoardId = useBoardStore((state) => state.activeBoardId);
   const addItem = useBoardStore((state) => state.addItem);
-  const nextItemId = useBoardStore((state) => state.nextItemId);
-  const fetchNextItemId = useBoardStore((state) => state.fetchNextItemId);
 
   const [open, setOpen] = useState<boolean>(false);
   const [title, setTitle] = useState<string>("");
@@ -48,10 +46,6 @@ export default function AddItem({ columnId }: AddItemProps) {
   const [tags, setTags] = useState<TagInput[]>([]);
 
   const column = columns.find((col) => col.id === columnId);
-
-  useEffect(() => {
-    fetchNextItemId();
-  }, [items]);
 
   const nextPosition = useMemo(() => {
     const positions = items
@@ -232,7 +226,7 @@ export default function AddItem({ columnId }: AddItemProps) {
           </Box>
 
           <Typography sx={{ fontSize: 12, color: "#6b7280", mb: 2 }}>
-            Will create: <b>{nextItemId}</b> • position: <b>{nextPosition}</b>
+            enter to * CREATE * new task 
           </Typography>
 
           <Button fullWidth variant="contained" onClick={handleCreate}>
