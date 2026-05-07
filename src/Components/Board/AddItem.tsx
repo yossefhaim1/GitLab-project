@@ -9,6 +9,7 @@ import {
   MenuItem,
   Chip,
   Tooltip,
+  Autocomplete,
 } from "@mui/material";
 import Add from "@mui/icons-material/Add";
 import type { CreateItemPayload } from "../../Type";
@@ -17,9 +18,9 @@ import { useBoardStore } from "../../store/boardStore";
 type PriorityType = "LOW" | "MEDIUM" | "HIGH";
 
 const PRIORITY_COLOR: Record<PriorityType, string> = {
-  LOW: "#374151",
-  MEDIUM: "#b45309",
-  HIGH: "#b91c1c",
+  LOW: "#38A169",
+  MEDIUM: "#ECC94B",
+  HIGH: "#E53E3E",
 };
 
 type TagInput = {
@@ -36,13 +37,13 @@ export default function AddItem({ columnId }: AddItemProps) {
   const columns = useBoardStore((state) => state.columns);
   const activeBoardId = useBoardStore((state) => state.activeBoardId);
   const addItem = useBoardStore((state) => state.addItem);
-
+  const AllUsers = useBoardStore((state) => state.users);
   const [open, setOpen] = useState<boolean>(false);
   const [title, setTitle] = useState<string>("");
-  const [assigneeId, setAssigneeId] = useState<number>(0);
+  const [assigneeId, setAssigneeId] = useState<string>("");
   const [priority, setPriority] = useState<PriorityType>("LOW");
   const [tagText, setTagText] = useState<string>("");
-  const [tagColor, setTagColor] = useState<string>("#3b82f6");
+  const [tagColor, setTagColor] = useState<string>("#3bf63e");
   const [tags, setTags] = useState<TagInput[]>([]);
 
   const column = columns.find((col) => col.id === columnId);
@@ -81,7 +82,7 @@ export default function AddItem({ columnId }: AddItemProps) {
     try {
       const cleanTitle = title.trim();
 
-      if (!cleanTitle || !activeBoardId || !column) return;
+      if (!cleanTitle || !activeBoardId || !column || !assigneeId) return;
 
       const newItem: CreateItemPayload = {
         boardId: activeBoardId,
@@ -102,7 +103,7 @@ export default function AddItem({ columnId }: AddItemProps) {
       console.log("success to add item");
 
       setTitle("");
-      setAssigneeId(0);
+      setAssigneeId("");
       setPriority("LOW");
       setTags([]);
       setTagText("");
@@ -130,83 +131,94 @@ export default function AddItem({ columnId }: AddItemProps) {
       <Drawer anchor="right" open={open} onClose={() => setOpen(false)}>
         <Box sx={{ width: 360, p: 2.5 }}>
           <Typography sx={{ fontWeight: 800, mb: 2 }}>Add task</Typography>
-
-          <TextField
-            fullWidth
-            label="Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            sx={{ mb: 2 }}
-          />
-
-          <TextField
-            select
-            fullWidth
-            label="Priority"
-            value={priority}
-            onChange={(e) => setPriority(e.target.value as PriorityType)}
-            sx={{ mb: 2 }}
-          >
-            <MenuItem value="LOW">LOW</MenuItem>
-            <MenuItem value="MEDIUM">MEDIUM</MenuItem>
-            <MenuItem value="HIGH">HIGH</MenuItem>
-          </TextField>
-
-          <TextField
-            fullWidth
-            label="Assignee Id"
-            type="number"
-            value={assigneeId}
-            onChange={(e) => setAssigneeId(Number(e.target.value))}
-            onFocus={(e) => {
-              if (assigneeId === 0) e.target.select();
-            }}
-            inputProps={{ min: 0 }}
-            sx={{ mb: 2 }}
-          />
-
-          <Box sx={{ display: "flex", gap: 1, mb: 1, alignItems: "center" }}>
+          <Tooltip title="Title" placement="left" arrow>
             <TextField
               fullWidth
-              label="Add tag"
-              value={tagText}
-              onChange={(e) => setTagText(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") addTag();
-              }}
+              label="Title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              sx={{ mb: 2 }}
             />
-
-            <Box
-              sx={{
-                width: 32,
-                height: 32,
-                borderRadius: "500px",
-                backgroundColor: tagColor,
-                border: "2px solid #e5e7eb",
-                position: "relative",
-                cursor: "pointer",
-              }}
+          </Tooltip>
+          <Tooltip title="Priority" placement="left" arrow>
+            <TextField
+              select
+              fullWidth
+              label="Priority"
+              value={priority}
+              onChange={(e) => setPriority(e.target.value as PriorityType)}
+              sx={{ mb: 2 }}
             >
-              <input
-                type="color"
-                value={tagColor}
-                onChange={(e) => setTagColor(e.target.value)}
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: "100%",
-                  height: "100%",
-                  opacity: 0,
-                  cursor: "pointer",
-                  border: "none",
+              <MenuItem value="LOW">LOW</MenuItem>
+              <MenuItem value="MEDIUM">MEDIUM</MenuItem>
+              <MenuItem value="HIGH">HIGH</MenuItem>
+            </TextField>
+          </Tooltip>
+          <Tooltip title="Assign task" placement="left" arrow>
+            <Autocomplete
+              options={AllUsers}
+              getOptionLabel={(option) => option.name}
+              renderInput={(params) => (
+                <TextField {...params} label="Assign task" />
+              )}
+              value={
+                AllUsers.find((user) => user.name === assigneeId) ||
+                null
+              }
+              onChange={(_, newValue) => {
+                setAssigneeId(newValue ? newValue.name : "");
+              }}
+              sx={{ mb: 2 }}
+            />
+          </Tooltip>
+
+          <Box sx={{ display: "flex", gap: 1, mb: 1, alignItems: "center" }}>
+            <Tooltip title="Add tag" placement="left" arrow>
+              <TextField
+                fullWidth
+                label="Add tag"
+                value={tagText}
+                onChange={(e) => setTagText(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") addTag();
                 }}
               />
-            </Box>
+            </Tooltip>
 
-            <Button onClick={addTag} variant="contained">
-              Add
-            </Button>
+            <Tooltip title="Pick tag color" placement="bottom" arrow>
+              <Box
+                sx={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: "500px",
+                  backgroundColor: tagColor,
+                  border: "2px solid #e5e7eb",
+                  position: "relative",
+                  cursor: "pointer",
+                }}
+              >
+                <input
+                  type="color"
+                  value={tagColor}
+                  onChange={(e) => setTagColor(e.target.value)}
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    opacity: 0,
+                    cursor: "pointer",
+                    border: "none",
+                  }}
+                />
+              </Box>
+            </Tooltip>
+            <Tooltip title="Add tag" placement="bottom" arrow>
+              <Button onClick={addTag} variant="contained">
+                Add
+              </Button>
+            </Tooltip>
           </Box>
 
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
@@ -225,12 +237,13 @@ export default function AddItem({ columnId }: AddItemProps) {
           </Box>
 
           <Typography sx={{ fontSize: 12, color: "#6b7280", mb: 2 }}>
-            enter to * CREATE * new task 
+            enter to * CREATE * new task
           </Typography>
-
-          <Button fullWidth variant="contained" onClick={handleCreate}>
-            Create
-          </Button>
+          <Tooltip title="Create task" placement="bottom" arrow>
+            <Button fullWidth variant="contained" onClick={handleCreate}>
+              Create
+            </Button>
+          </Tooltip>
         </Box>
       </Drawer>
     </Box>

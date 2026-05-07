@@ -41,6 +41,8 @@ export function AddColum() {
 
     if (isColumnExists) {
       alert("Column already exists");
+      setTitle("");
+      setOpen(false);
       return;
     }
 

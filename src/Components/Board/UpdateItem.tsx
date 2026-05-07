@@ -9,6 +9,7 @@ import {
   Chip,
   Tooltip,
   MenuItem,
+  Autocomplete,
 } from "@mui/material";
 import { Edit } from "@mui/icons-material";
 import type { Items } from "../../Type";
@@ -17,9 +18,9 @@ import { useBoardStore } from "../../store/boardStore";
 type PriorityType = "LOW" | "MEDIUM" | "HIGH";
 
 const PRIORITY_COLOR: Record<PriorityType, string> = {
-  LOW: "#374151",
-  MEDIUM: "#b45309",
-  HIGH: "#b91c1c",
+  LOW: "#38A169",
+  MEDIUM: "#ECC94B",
+  HIGH: "#E53E3E",
 };
 
 type TagInput = {
@@ -34,12 +35,12 @@ type UpdateItemProps = {
 export default function UpdateItem({ itemId }: UpdateItemProps) {
   const items = useBoardStore((state) => state.items);
   const updateItem = useBoardStore((state) => state.updateItem);
-
+  const AllUsers = useBoardStore((state) => state.users);
   const item = items.find((currentItem) => currentItem.id === itemId);
 
   const [open, setOpen] = useState<boolean>(false);
   const [title, setTitle] = useState<string>("");
-  const [assigneeId, setAssigneeId] = useState<number>(0);
+  const [assigneeId, setAssigneeId] = useState<string>("");
   const [priority, setPriority] = useState<PriorityType>("LOW");
   const [tagText, setTagText] = useState<string>("");
   const [tagColor, setTagColor] = useState<string>("#3bf63e");
@@ -62,7 +63,7 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
     if (!value) return;
 
     const alreadyExists = tags.some(
-      (tag) => tag.type.toLowerCase() === value.toLowerCase()
+      (tag) => tag.type.toLowerCase() === value.toLowerCase(),
     );
 
     if (alreadyExists) {
@@ -90,8 +91,10 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
       changes.title = cleanTitle;
     }
 
-    if (assigneeId !== item.assigneeId) {
-      changes.assigneeId = assigneeId;
+    const cleanAssigneeId = assigneeId.trim();
+    if (cleanAssigneeId === "") return;
+    if (cleanAssigneeId !== item.assigneeId) {
+      changes.assigneeId = cleanAssigneeId;
     }
 
     const nextPriority = [
@@ -159,16 +162,18 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
             <MenuItem value="HIGH">HIGH</MenuItem>
           </TextField>
 
-          <TextField
-            fullWidth
-            label="Assignee Id"
-            type="number"
-            value={assigneeId}
-            onChange={(e) => setAssigneeId(Number(e.target.value))}
-            onFocus={(e) => {
-              if (assigneeId === 0) e.target.select();
+          <Autocomplete
+            options={AllUsers}
+            getOptionLabel={(option) => option.name}
+            renderInput={(params) => (
+              <TextField {...params} label="Assign task" />
+            )}
+            value={
+              AllUsers.find((user) => user.name === assigneeId) || null
+            }
+            onChange={(_, newValue) => {
+              setAssigneeId(newValue ? newValue.name : "");
             }}
-            inputProps={{ min: 0 }}
             sx={{ mb: 2 }}
           />
 

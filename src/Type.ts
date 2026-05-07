@@ -26,11 +26,17 @@ export interface Items {
     columnId: number;
     position: number;
     title: string;
-    assigneeId: number;
+    assigneeId: string;
     priority: Priority[];
     tags: Tag[];
 }
 
+export interface User{
+    id: number;
+    name: string;
+}
+
+export type CreateUserPayload = Omit<User, "id">;
 export type CreateItemPayload = Omit<Items, "id">;
 export type CreateColumnPayload = Omit<Columns, "id">;
 export type CreateBoardPayload = Omit<Boards, "id" | "isDefault">;

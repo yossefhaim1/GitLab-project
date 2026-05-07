@@ -1,5 +1,4 @@
 import {
-    
   Button,
   Dialog,
   DialogActions,
@@ -20,29 +19,22 @@ export function DeleteBoard({ open, onClose }: DeleteBoardProps) {
 
   async function handleDelete() {
     if (!activeBoardId) return;
-
     await deleteBoard(activeBoardId);
     onClose();
   }
 
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={open} onClose={onClose} sx={{}}>
       <DialogTitle>Delete Board</DialogTitle>
 
       <DialogContent>
-        <Typography>
-          Are you sure you want to delete this board?
-        </Typography>
+        <Typography>Are you sure you want to delete this board?</Typography>
       </DialogContent>
 
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
 
-        <Button
-          onClick={handleDelete}
-          color="error"
-          variant="contained"
-        >
+        <Button onClick={handleDelete} color="error" variant="contained">
           Delete
         </Button>
       </DialogActions>

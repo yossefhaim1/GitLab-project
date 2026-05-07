@@ -11,20 +11,20 @@ import {
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
-// import EditIcon from "@mui/icons-material/Edit";
+import PersonIcon from '@mui/icons-material/Person';
 import { useState } from "react";
 import type { MouseEvent } from "react";
 
+import { TableOfUsers} from "../Users/AllUsers";
 import { AddNewBoard } from "./AddNewBoard";
 import { DeleteBoard } from "./DeletBoard";
-// import { UpdateBoard } from "./UpdateBoard";
 
 export function BoardActionsMenu() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  const [openAddBoard, setOpenAddBoard] = useState(false);
-  const [openDeleteBoard, setOpenDeleteBoard] = useState(false);
-  //   const [openUpdateBoard, setOpenUpdateBoard] = useState(false);
+  const [openAddBoard, setOpenAddBoard] = useState<boolean>(false);
+  const [openDeleteBoard, setOpenDeleteBoard] = useState<boolean>(false);
+  const [openBoardUserBoard, setOpenBoardUserBoard] = useState<boolean>(false);
 
   const openMenu = Boolean(anchorEl);
 
@@ -78,13 +78,25 @@ export function BoardActionsMenu() {
             elevation: 4,
             sx: {
               mt: 1,
-              minWidth: 190,
-              borderRadius: "14px",
+              minWidth: 215,
+              borderRadius: "25px",
               border: "1px solid #e5e7eb",
               overflow: "hidden",
             },
           }}
         >
+            <MenuItem
+            onClick={() => {
+              handleCloseMenu();
+              setOpenBoardUserBoard(true);
+            }}
+          >
+            <ListItemIcon>
+              <PersonIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText primary="Table all users" />
+          </MenuItem> 
+          
           <MenuItem
             onClick={() => {
               handleCloseMenu();
@@ -97,20 +109,8 @@ export function BoardActionsMenu() {
             <ListItemIcon>
               <AddIcon fontSize="small" />
             </ListItemIcon>
-            <ListItemText primary="הוספת Board" />
+            <ListItemText primary="Add New Board" />
           </MenuItem>
-
-          {/* <MenuItem
-            onClick={() => {
-              handleCloseMenu();
-              setOpenUpdateBoard(true);
-            }}
-          >
-            <ListItemIcon>
-              <EditIcon fontSize="small" />
-            </ListItemIcon>
-            <ListItemText primary="עדכון Board" />
-          </MenuItem> */}
 
           <Divider />
 
@@ -127,7 +127,7 @@ export function BoardActionsMenu() {
             <ListItemIcon>
               <DeleteIcon fontSize="small" color="error" />
             </ListItemIcon>
-            <ListItemText primary="מחיקת Board" />
+            <ListItemText primary="Delete Board" />
           </MenuItem>
         </Menu>
       </Box>
@@ -137,6 +137,10 @@ export function BoardActionsMenu() {
       <DeleteBoard
         open={openDeleteBoard}
         onClose={() => setOpenDeleteBoard(false)}
+      />
+      <TableOfUsers
+        open={openBoardUserBoard}
+        onClose={() => setOpenBoardUserBoard(false)}
       />
     </>
   );

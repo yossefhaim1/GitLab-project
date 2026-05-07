@@ -6,6 +6,8 @@ import type {
   CreateItemPayload,
   CreateColumnPayload,
   CreateBoardPayload,
+  CreateUserPayload,
+  User,
 } from "../Type";
 import { API } from "../Api/boardPageApi";
 
@@ -18,6 +20,7 @@ interface BoardStore {
   error: string | null;
   nextColumnId: number | null;
   searchItem: string;
+  users: User[];
 
   // פונקציות שמעדכנות את הסטייט של הסטור
   setItems: (items: Items[]) => void;
@@ -60,6 +63,17 @@ interface BoardStore {
   deleteColumn: (columnId: number) => Promise<void>;
   // מגדיר את ה SEARCH ITEM
   setSearchItem: (value: string) => void;
+
+  // הצגת כל המשתמשים
+  fetchUsers: () => Promise<void>;
+  // הוספת משתמש חדש
+  addUser: (user: CreateUserPayload) => Promise<void>;
+
+  // מחיקת משתמש קיים
+  deleteUser: (id: number) => Promise<void>;
+
+  // עדכון משתמש קיים
+  updateUser: (id: number, changes: Partial<User>) => Promise<void>;
 }
 
 export const useBoardStore = create<BoardStore>((set, get) => ({
@@ -71,8 +85,104 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
   error: null,
   nextColumnId: null,
   searchItem: "",
+  users: [],
 
-  // ✅ נוסף בשביל Drag And Drop: מעדכן את כל ה-items ב-Zustand
+  fetchBoards: async () => {
+    set({ loading: true, error: null });
+
+    try {
+      const res = await API.getBoards();
+      const boards = res.data;
+
+      const defaultBoard = boards.find((board) => board.isDefault);
+
+      set({
+        boards,
+        activeBoardId: defaultBoard?.id || null,
+        loading: false,
+      });
+
+      if (defaultBoard?.id) {
+        await get().fetchBoardData(defaultBoard.id);
+      }
+    } catch (err) {
+      console.error(err);
+      set({
+        error: "Failed to fetch boards",
+        loading: false,
+      });
+    }
+  },
+
+  fetchUsers: async () => {
+    set({ loading: true, error: null });
+
+    try {
+      const res = await API.getUsers();
+      const Users = res.data;
+      set({
+        users: Users,
+        loading: false,
+      });
+    } catch (err) {
+      console.error(err);
+      set({
+        error: "Failed to fetch users",
+        loading: false,
+      });
+    }
+  },
+
+  addUser: async (user: CreateUserPayload) => {
+    try {
+      const res = await API.addUser(user);
+      const newUser = res.data;
+      set((state) => ({
+        users: [...state.users, newUser],
+      }));
+    } catch (err) {
+      console.error(err);
+      set({
+        error: "Failed to add user",
+      });
+    }
+  },
+
+  deleteUser: async (id: number) => {
+    const prevUsers = get().users;
+    set((state) => ({
+      users: state.users.filter((user) => user.id !== id),
+    }));
+    try {
+      await API.deleteUserById(id);
+    } catch (err) {
+      console.error(err);
+      set({
+        users: prevUsers,
+        error: "Failed to delete user",
+      });
+    }
+  },
+
+  updateUser: async (id: number, changes: Partial<User>) => {
+    const prevUsers = get().users;
+    set((state) => ({
+      users: state.users.map((user) =>
+        user.id === id ? { ...user, ...changes } : user,
+      ),
+    }));
+    try {
+      await API.updateUserById(id, changes);
+    } catch (err) {
+      console.error(err);
+      set({
+        users: prevUsers,
+        error: "Failed to update user",
+      });
+    }
+  },
+
+  //  נוסף בשביל Drag And Drop: מעדכן את כל ה-items ב-Zustand
   setItems: (items) => {
     set({ items });
   },
@@ -85,7 +195,7 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
     const prevColumns = get().columns;
     const prevItems = get().items;
 
-    // 🔥 עדכון מיידי UI
+    //  עדכון מיידי UI
     set((state) => ({
       columns: state.columns.filter((c) => c.id !== columnId),
       items: state.items.filter((i) => i.columnId !== columnId),
@@ -150,8 +260,6 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
     }
   },
 
-  
-
   setActiveBoardId: async (boardId) => {
     try {
       const selectedBoard = get().boards.find((board) => board.id === boardId);
@@ -173,33 +281,6 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
       console.error(err);
       set({
         error: "Failed to set active board",
-      });
-    }
-  },
-
-  fetchBoards: async () => {
-    set({ loading: true, error: null });
-
-    try {
-      const res = await API.getBoards();
-      const boards = res.data;
-
-      const defaultBoard = boards.find((board) => board.isDefault);
-
-      set({
-        boards,
-        activeBoardId: defaultBoard?.id || null,
-        loading: false,
-      });
-
-      if (defaultBoard?.id) {
-        await get().fetchBoardData(defaultBoard.id);
-      }
-    } catch (err) {
-      console.error(err);
-      set({
-        error: "Failed to fetch boards",
-        loading: false,
       });
     }
   },
@@ -238,15 +319,17 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
     set({ loading: true, error: null });
 
     try {
-      const [columnsRes, itemsRes] = await Promise.all([
+      const [columnsRes, itemsRes, usersRes] = await Promise.all([
         API.getColumns(boardId),
         API.getItems(boardId),
+        API.getUsers(),
       ]);
 
       set({
         activeBoardId: boardId,
         columns: columnsRes.data,
         items: itemsRes.data,
+        users: usersRes.data,
         loading: false,
       });
     } catch (err) {

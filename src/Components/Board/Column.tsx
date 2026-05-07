@@ -33,12 +33,19 @@ export default function Column({ columnId }: ColumnProps) {
         .filter(Boolean);
 
       const title = item.title.toLowerCase();
+      const assigneeId = item.assigneeId.toLowerCase();
+      const priority = item.priority[0]?.type.toLowerCase() || "";
 
       const isSameColumn = item.columnId === columnId;
 
       const isMatchSearch =
         searchWords.length === 0 ||
-        searchWords.every((word) => title.includes(word));
+        searchWords.every(
+          (word) =>
+            title.includes(word) ||
+            assigneeId.includes(word) ||
+            priority.includes(word),
+        );
 
       return isSameColumn && isMatchSearch;
     })

@@ -1,5 +1,29 @@
-import  api  from "./Axios-Api" 
-import type { Boards, Items, Columns , CreateItemPayload, CreateColumnPayload} from "../Type";
+import api from "./Axios-Api";
+import type {
+  Boards,
+  Items,
+  Columns,
+  CreateItemPayload,
+  CreateColumnPayload,
+  User,
+  CreateUserPayload,
+} from "../Type";
+
+function getUsers(){
+  return api.get<User[]>("/users");
+}
+
+function addUser(user: CreateUserPayload){
+  return api.post<User>("/users", user);
+}
+
+function deleteUserById(id: number){
+  return api.delete(`/users/${id}`);
+}
+
+function updateUserById(id:number, changes: Partial<User>){
+  return api.patch<User>(`/users/${id}`, changes);
+}
 
 // הוספתי פונקציות API ל-boards, columns, items
 function getBoards() {
@@ -16,7 +40,7 @@ function getBoardById(boardId: number) {
   return api.get<Boards>(`/boards/${boardId}`);
 }
 
-function updateBoardById(boardId: number,  changes: Partial<Boards>) {
+function updateBoardById(boardId: number, changes: Partial<Boards>) {
   return api.patch<Boards>(`/boards/${boardId}`, changes);
 }
 
@@ -29,9 +53,7 @@ async function DeleteColumnById(columnId: number) {
   const items = res.data;
 
   // מוחק את כל האייטמים
-  await Promise.all(
-    items.map((item: any) => api.delete(`/items/${item.id}`))
-  );
+  await Promise.all(items.map((item: any) => api.delete(`/items/${item.id}`)));
   // מוחק את הקולום
   await api.delete(`/columns/${columnId}`);
 }
@@ -42,22 +64,41 @@ async function deleteBoardById(boardId: number) {
   });
 
   const items = resItems.data;
+
   await Promise.all(
-    items.map((item: any) => api.delete(`/items/${item.id}`))
+    items.map(async (item: any) => {
+      try {
+        await api.delete(`/items/${item.id}`);
+      } catch (error: any) {
+        if (error.response?.status !== 404) {
+          throw error;
+        }
+      }
+    })
   );
+
   const resColumns = await api.get("/columns", {
     params: { boardId },
   });
+
   const columns = resColumns.data;
+
   await Promise.all(
-    columns.map((column: any) => api.delete(`/columns/${column.id}`))
+    columns.map(async (column: any) => {
+      try {
+        await api.delete(`/columns/${column.id}`);
+      } catch (error: any) {
+        if (error.response?.status !== 404) {
+          throw error;
+        }
+      }
+    })
   );
+
   await api.delete(`/boards/${boardId}`);
 }
 
-
-
-// הוספת עמודה חדשה לאתר 
+// הוספת עמודה חדשה לאתר
 function addColumn(column: CreateColumnPayload) {
   return api.post<Columns>("/columns", column);
 }
@@ -89,29 +130,25 @@ function updateItemRequest(id: number, changes: Partial<Items>) {
   return api.patch<Items>(`/items/${id}`, changes);
 }
 
-function getNextColumnId() {
-  return api.get("/columns",{
-    params:{
-      _sort:"id",
-      _order:"desc",
-      _limit:1
-    }
-  })
-}
-
-
 export const API = {
+  getUsers,
+  addUser,
+  deleteUserById,
+  updateUserById,
+
   addBoard,
-  addColumn,
   getBoardById,
   getBoards,
+  deleteBoardById,
+  updateBoardById,
+
+
+  addColumn,
   getColumns,
+  DeleteColumnById,
+
   getItems,
   deleteItemById,
   addItemRequest,
   updateItemRequest,
-  updateBoardById,
-  getNextColumnId,
-  deleteBoardById,
-  DeleteColumnById,
 };
