@@ -26,11 +26,7 @@ export default function Column({ columnId }: ColumnProps) {
 
   const columnItems = items
     .filter((item) => {
-      const searchWords = searchItem
-        .toLowerCase()
-        .trim()
-        .split(" ")
-        .filter(Boolean);
+      const searchValue = searchItem.toLowerCase().trim();
 
       const title = item.title.toLowerCase();
       const assigneeId = item.assigneeId.toLowerCase();
@@ -39,18 +35,15 @@ export default function Column({ columnId }: ColumnProps) {
       const isSameColumn = item.columnId === columnId;
 
       const isMatchSearch =
-        searchWords.length === 0 ||
-        searchWords.every(
-          (word) =>
-            title.includes(word) ||
-            assigneeId.includes(word) ||
-            priority.includes(word),
-        );
+        searchValue.length === 0 ||
+        title.includes(searchValue) ||
+        assigneeId.includes(searchValue) ||
+        priority.includes(searchValue);
 
       return isSameColumn && isMatchSearch;
     })
     .sort((a, b) => a.position - b.position);
-
+    
   if (!column) {
     return null;
   }
