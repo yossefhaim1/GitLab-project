@@ -1094,7 +1094,7 @@
     },
     {
       "boardId": 3,
-      "columnId": 7,
+      "columnId": 8,
       "position": 1,
       "title": "הגכ",
       "assigneeId": "Avi",
@@ -1109,7 +1109,7 @@
     },
     {
       "boardId": 3,
-      "columnId": 8,
+      "columnId": 9,
       "position": 1,
       "title": "ק'כר'קכ",
       "assigneeId": "",
@@ -1129,7 +1129,7 @@
     },
     {
       "boardId": 3,
-      "columnId": 9,
+      "columnId": 7,
       "position": 1,
       "title": "sqs",
       "assigneeId": "Shimon",
