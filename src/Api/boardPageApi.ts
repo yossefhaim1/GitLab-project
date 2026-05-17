@@ -9,42 +9,60 @@ import type {
   CreateUserPayload,
 } from "../Type";
 
-function getUsers(){
-  return api.get<User[]>("/users");
+async function getUsers(){
+  console.log("Fetching users...");
+  const res = await api.get<User[]>("/users");
+  return res.data;
 }
 
-function addUser(user: CreateUserPayload){
-  return api.post<User>("/users", user);
+async function addUser(user: CreateUserPayload){
+  console.log("Adding new user...");
+  const res =  await api.post<User>("/users", user);
+  return res.data;
 }
 
-function deleteUserById(id: number){
-  return api.delete(`/users/${id}`);
+async function deleteUserById(id: number){
+  console.log(`Deleting user with ID: ${id}`);
+  const res = await api.delete(`/users/${id}`);
+  return res.data;
 }
 
-function updateUserById(id:number, changes: Partial<User>){
-  return api.patch<User>(`/users/${id}`, changes);
+async function updateUserById(id:number, changes: Partial<User>){
+  console.log(`Updating user with ID: ${id}`);
+  const res = await api.patch<User>(`/users/${id}`, changes);
+  return res.data;
 }
 
 // הוספתי פונקציות API ל-boards, columns, items
-function getBoards() {
-  return api.get<Boards[]>("/boards");
+async function getBoards() {
+  console.log("Fetching boards...");
+  const res = await api.get<Boards[]>("/boards");
+  return res.data;
 }
 
 // הוספת BOARD חדש לאתר 
-function addBoard(changes : Partial<Boards>) {
-  return api.post<Boards>("/boards", changes);
+async function addBoard(changes : Partial<Boards>) {
+  console.log("Adding new Board");
+  const res = await api.post<Boards>("/boards", changes);
+  return res.data;
 }
 
 // הוספתי פונקציה ל-get של board לפי id
-function getBoardById(boardId: number) {
-  return api.get<Boards>(`/boards/${boardId}`);
+async function getBoardById(boardId: number) {
+  console.log(`Fetching board with ID: ${boardId}`);
+  const res = await api.get<Boards>(`/boards/${boardId}`);
+  return res.data;
 }
 
-function updateBoardById(boardId: number, changes: Partial<Boards>) {
-  return api.patch<Boards>(`/boards/${boardId}`, changes);
+async function updateBoardById(boardId: number, changes: Partial<Boards>) {
+  console.log(`Updating board with ID: ${boardId}`);
+  const res = await api.patch<Boards>(`/boards/${boardId}`, changes);
+  return res.data;
 }
 
 async function DeleteColumnById(columnId: number) {
+  console.log(`Deleting column with ID: ${columnId}`);
+  
   // מביא את כל האייטמים של העמודה
   const res = await api.get("/items", {
     params: { columnId },
@@ -59,6 +77,7 @@ async function DeleteColumnById(columnId: number) {
 }
 
 async function deleteBoardById(boardId: number) {
+  console.log(`Deleting board with ID: ${boardId}`);
   const resItems = await api.get("/items", {
     params: { boardId },
   });
@@ -99,35 +118,47 @@ async function deleteBoardById(boardId: number) {
 }
 
 // הוספת עמודה חדשה לאתר
-function addColumn(column: CreateColumnPayload) {
-  return api.post<Columns>("/columns", column);
+async function addColumn(column: CreateColumnPayload) {
+  console.log("Adding new Column...");
+  const res = await api.post<Columns>("/columns", column);
+  return res.data;
 }
 
 // הוספתי פונקציה ל-get של columns לפי boardId
-function getColumns(boardId: number) {
-  return api.get<Columns[]>("/columns", {
+async function getColumns(boardId: number) {
+  console.log(`Fetching columns for board with ID: ${boardId}`);
+  const res = await api.get<Columns[]>("/columns", {
     params: { boardId },
   });
+  return res.data;
 }
 
 // הוספתי פונקציה ל-get של items לפי boardId
-function getItems(boardId: number) {
-  return api.get<Items[]>("/items", {
+async function getItems(boardId: number) {
+  console.log(`Fetching items for board with ID: ${boardId}`);
+  const res = await api.get<Items[]>("/items", {
     params: { boardId },
   });
+  return res.data;
 }
 
 // הוספתי פונקציות ל-delete, add, update של items
-function deleteItemById(id: number) {
-  return api.delete(`/items/${id}`);
+async function deleteItemById(id: number) {
+  console.log(`Deleting item with ID: ${id}`);
+  const res = await api.delete(`/items/${id}`);
+  return res.data;
 }
 
-function addItemRequest(item: CreateItemPayload) {
-  return api.post<Items>("/items", item);
+async function addItemRequest(item: CreateItemPayload) {
+  console.log("Adding new item...");
+  const res = await api.post<Items>("/items", item);
+  return res.data;
 }
 
-function updateItemRequest(id: number, changes: Partial<Items>) {
-  return api.patch<Items>(`/items/${id}`, changes);
+async function updateItemRequest(id: number, changes: Partial<Items>) {
+  console.log(`Updating item with ID: ${id}`);
+  const res = await api.patch<Items>(`/items/${id}`, changes);
+  return res.data;
 }
 
 export const API = {

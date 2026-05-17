@@ -91,8 +91,7 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
     set({ loading: true, error: null });
 
     try {
-      const res = await API.getBoards();
-      const boards = res.data;
+      const boards = await API.getBoards();
 
       const defaultBoard = boards.find((board) => board.isDefault);
 
@@ -118,8 +117,7 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
     set({ loading: true, error: null });
 
     try {
-      const res = await API.getUsers();
-      const Users = res.data;
+      const Users = await API.getUsers();
       set({
         users: Users,
         loading: false,
@@ -135,8 +133,7 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
 
   addUser: async (user: CreateUserPayload) => {
     try {
-      const res = await API.addUser(user);
-      const newUser = res.data;
+      const newUser = await API.addUser(user);
       set((state) => ({
         users: [...state.users, newUser],
       }));
@@ -290,7 +287,7 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
       const res = await API.getColumns(boardId);
 
       set({
-        columns: res.data,
+        columns: res,
       });
     } catch (err) {
       console.error(err);
@@ -305,7 +302,7 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
       const res = await API.getItems(boardId);
 
       set({
-        items: res.data,
+        items: res,
       });
     } catch (err) {
       console.error(err);
@@ -327,9 +324,9 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
 
       set({
         activeBoardId: boardId,
-        columns: columnsRes.data,
-        items: itemsRes.data,
-        users: usersRes.data,
+        columns: columnsRes,
+        items: itemsRes,
+        users: usersRes,
         loading: false,
       });
     } catch (err) {
@@ -345,7 +342,7 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
     try {
       const res = await API.addColumn(column);
       set((state) => ({
-        columns: [...state.columns, res.data],
+        columns: [...state.columns, res],
       }));
     } catch (err) {
       console.error(err);
@@ -360,7 +357,7 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
       const res = await API.addItemRequest(item);
 
       set((state) => ({
-        items: [...state.items, res.data],
+        items: [...state.items, res],
       }));
     } catch (err) {
       console.error(err);
@@ -372,8 +369,7 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
 
   updateItem: async (id: number, changes: Partial<CreateItemPayload>) => {
     try {
-      const res = await API.updateItemRequest(id, changes);
-      const updatedItem = res.data;
+      const updatedItem = await API.updateItemRequest(id, changes);
 
       set((state) => ({
         items: state.items.map((item) => (item.id === id ? updatedItem : item)),
@@ -410,7 +406,7 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
         isDefault: isFirstBoard,
       });
 
-      const createdBoard = res.data;
+      const createdBoard = res;
 
       set((state) => ({
         boards: [...state.boards, createdBoard],

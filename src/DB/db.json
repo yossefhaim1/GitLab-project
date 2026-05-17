@@ -44,6 +44,21 @@
       "name": "15456",
       "isDefault": true,
       "id": 3
+    },
+    {
+      "name": "1565",
+      "isDefault": false,
+      "id": 4
+    },
+    {
+      "name": "יוסף חיים חדש",
+      "isDefault": false,
+      "id": 5
+    },
+    {
+      "name": "huxdjmnbd",
+      "isDefault": false,
+      "id": 6
     }
   ],
   "columns": [
@@ -1112,7 +1127,7 @@
       "columnId": 9,
       "position": 1,
       "title": "ק'כר'קכ",
-      "assigneeId": "",
+      "assigneeId": "Moshe",
       "priority": [
         {
           "type": "LOW",
