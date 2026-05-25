@@ -14,7 +14,7 @@ import {
 import Add from "@mui/icons-material/Add";
 import type { CreateItemPayload } from "../../Type";
 import {useAddItem} from "../../React_Queries/useBoardMutationsAddData";
-import { useBoards, useColumns, useItems, useUsers } from "../../React_Queries/useBoardsGetData";
+import {  useColumns, useItems, useUsers } from "../../React_Queries/useBoardsGetData";
 import { useBoardStore } from "../../store/boardStore";
 type PriorityType = "LOW" | "MEDIUM" | "HIGH";
 

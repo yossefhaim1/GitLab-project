@@ -1,5 +1,4 @@
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Typography } from "@mui/material";
-import { useBoardStore } from "../../store/boardStore";
 import { useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import { useAddUser } from "../../React_Queries/useBoardMutationsAddData";

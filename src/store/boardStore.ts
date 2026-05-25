@@ -8,7 +8,7 @@ interface BoardStore {
   setActiveBoardId: (id: number) => void;
 }
 
-export const useBoardStore = create<BoardStore>((set, get) => ({
+export const useBoardStore = create<BoardStore>((set) => ({
   searchItem: "",
   activeBoardId: undefined,
 

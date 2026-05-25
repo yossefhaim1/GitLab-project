@@ -2,7 +2,7 @@ import { Box, Stack, Typography } from "@mui/material";
 import ItemCard from "./ItemCard";
 import AddItem from "./AddItem";
 import {
-  useBoards,
+  
   useColumns,
   useItems,
 } from "../../React_Queries/useBoardsGetData";

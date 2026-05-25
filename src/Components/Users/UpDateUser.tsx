@@ -1,5 +1,4 @@
 import { Box, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, TextField, Tooltip, Typography } from "@mui/material";
-import { useBoardStore } from "../../store/boardStore";
 import { useState } from "react";
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import CloseIcon from '@mui/icons-material/Close';
