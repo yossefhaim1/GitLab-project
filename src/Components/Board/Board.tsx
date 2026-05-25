@@ -1,14 +1,18 @@
 import { Box } from "@mui/material";
 import Column from "./Column";
-import { useBoardStore } from "../../store/boardStore";
 import { AllTopBoard } from "../TopBoard/AllTopBoard";
 import { AddColum } from "../TopColum/AddColum";
 import { useEffect, useRef } from "react";
 import BoardDndProvider from "./BoardDndProvider";
+import { useColumns } from "../../React_Queries/useBoardsGetData";
+import { useBoardStore } from "../../store/boardStore";
+import { useItems } from "../../React_Queries/useBoardsGetData";
 
 export default function Board() {
-  const columns = useBoardStore((state) => state.columns);
-  const activeBoardId = useBoardStore((state) => state.activeBoardId);
+  const activeBoard = useBoardStore((state) => state.activeBoardId);
+  const { data: items } = useItems(activeBoard);
+
+  const { data: columns } = useColumns(activeBoard);
 
   const boardScrollRef = useRef<HTMLDivElement | null>(null);
 
@@ -42,7 +46,7 @@ export default function Board() {
   };
 }, []);
 
-  if (!activeBoardId) return null;
+  if (!activeBoard) return null;
 
   return (
     <Box
@@ -88,7 +92,7 @@ export default function Board() {
           overflow: "hidden",
         }}
       >
-        <BoardDndProvider>
+        <BoardDndProvider items={items || []}>
           <Box
             ref={boardScrollRef}
             sx={{
@@ -100,7 +104,7 @@ export default function Board() {
               scrollBehavior: "smooth",
             }}
           >
-            {columns.map((col) => (
+            {columns?.map((col) => (
               <Column key={col.id} columnId={col.id} />
             ))}
 

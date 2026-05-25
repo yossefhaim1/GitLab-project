@@ -10,20 +10,21 @@ import Add from "@mui/icons-material/Add";
 import { useMemo, useState } from "react";
 import { useBoardStore } from "../../store/boardStore";
 import type { CreateColumnPayload } from "../../Type";
+import { useColumns } from "../../React_Queries/useBoardsGetData";
+import { useAddColumn } from "../../React_Queries/useBoardMutationsAddData";
 
 export function AddColum() {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [tagColor, setTagColor] = useState("#3b82f6");
-
-  const addColumn = useBoardStore((state) => state.addColumn);
+  const addColumn = useAddColumn();
   const activeBoardId = useBoardStore((state) => state.activeBoardId);
-  const columns = useBoardStore((state) => state.columns);
-
+    const { data: columns = [] } = useColumns(activeBoardId);
+    
   const nextOrder = useMemo(() => {
     const orders = columns
-      .filter((col) => col.boardId === activeBoardId)
-      .map((col) => col.order);
+      ?.filter((col) => col.boardId === activeBoardId)
+      .map((col) => col.order) || [];
 
     return orders.length > 0 ? Math.max(...orders) + 1 : 1;
   }, [columns, activeBoardId]);
@@ -53,7 +54,7 @@ export function AddColum() {
       color: tagColor,
     };
 
-    addColumn(newColumn);
+    addColumn.mutate(newColumn);
 
     setTitle("");
     setTagColor("#3b82f6");

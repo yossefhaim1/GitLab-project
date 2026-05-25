@@ -1,19 +1,21 @@
 import { Box, Paper, Tooltip, Typography } from "@mui/material";
 import DeleteItem from "./DeleteItem";
 import UpdateItem from "./UpdateItem";
-import { useBoardStore } from "../../store/boardStore";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import {  useColumns, useItems } from "../../React_Queries/useBoardsGetData";
+import { useBoardStore } from "../../store/boardStore";
 
 type ItemCardProps = {
   itemId: number;
 };
 
 export default function ItemCard({ itemId }: ItemCardProps) {
-  const items = useBoardStore((state) => state.items);
-  const columns = useBoardStore((state) => state.columns);
+  const activeBoard = useBoardStore((state) => state.activeBoardId);
+  const { data: columns } = useColumns(activeBoard);
+  const { data: items } = useItems(activeBoard);
 
-  const item = items.find((currentItem) => currentItem.id === itemId);
+  const item = items?.find((currentItem) => currentItem.id === itemId);
 
   const {
     attributes,
@@ -28,7 +30,7 @@ export default function ItemCard({ itemId }: ItemCardProps) {
 
   if (!item) return null;
 
-  const column = columns.find(
+  const column = columns?.find(
     (currentColumn) => currentColumn.id === item.columnId
   );
 

@@ -3,7 +3,7 @@ import { useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
-import { useBoardStore } from "../../store/boardStore";
+import { useDeleteUser } from "../../React_Queries/useBoardMutationsDeleteData";
 
 interface DeleteUserProps {
     id: number;
@@ -11,10 +11,10 @@ interface DeleteUserProps {
 }
 export default function DeleteUser({id , name}: DeleteUserProps){
     const [open , setOpen] = useState<boolean>(false);
-    const deleteUser = useBoardStore((state) => state.deleteUser);
+    const deleteUser = useDeleteUser();
 
     function handleDeleteUser() {
-        deleteUser(id);
+        deleteUser.mutate(id);
         setOpen(false);
     }
     

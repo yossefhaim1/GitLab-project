@@ -4,6 +4,7 @@ import { useState } from "react";
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from "@mui/icons-material/Edit";
+import { useUpDateUser } from "../../React_Queries/useBoardMutationsUpDateData";
 
 
 interface UpDateUserProps {
@@ -12,12 +13,12 @@ interface UpDateUserProps {
 }
 
 export default function UpDateUser({ id, name }: UpDateUserProps) {
-  const updateUser = useBoardStore((state) => state.updateUser);
+  const updateUser = useUpDateUser();
   const [open, setOpen] = useState<boolean>(false);
   const [newNameUser, setNewNameUser] = useState<string>(name);
 
   function hendeleUpdateUser() {
-    updateUser(id, { name: newNameUser });
+    updateUser.mutate({ id, changes: { name: newNameUser } });
     setOpen(false);
   }
   return (

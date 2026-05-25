@@ -1,6 +1,7 @@
 import { API } from "../Api/boardPageApi";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-
+import type {CreateBoardPayload, CreateColumnPayload, CreateItemPayload, CreateUserPayload} from "../Type";
+import { useBoardStore } from "../store/boardStore";
 
 // this part its for to ADD data for the boards, columns, items and users 
 // by this part "refetchOnMount" in the useQuery in the useBoards, useColumns, useItems and useUsers
@@ -9,12 +10,18 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 export function useAddBoard() {
   const queryClient = useQueryClient();
 
+  const setActiveBoardId = useBoardStore(
+    (state) => state.setActiveBoardId
+  );
+
   return useMutation({
-    mutationFn: API.addBoard,
-    onSuccess: () => {
+    mutationFn: (BoardData : CreateBoardPayload) => 
+      API.addBoard(BoardData),
+    onSuccess: (newBoard) => {
       queryClient.invalidateQueries({
         queryKey: ["boards"],
       });
+      setActiveBoardId(newBoard.id);
     },
   });
 }
@@ -23,7 +30,7 @@ export function useAddColumn() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: API.addColumn,
+    mutationFn: (ColumnData : CreateColumnPayload) => API.addColumn(ColumnData),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["columns"],
@@ -36,7 +43,7 @@ export function useAddItem() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: API.addItemRequest,
+    mutationFn: (ItemData : CreateItemPayload) => API.addItemRequest(ItemData),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["items"],
@@ -49,7 +56,7 @@ export function useAddUser() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: API.addUser,
+    mutationFn: (UserData : CreateUserPayload) => API.addUser(UserData),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["users"],

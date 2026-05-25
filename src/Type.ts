@@ -39,4 +39,4 @@ export interface User{
 export type CreateUserPayload = Omit<User, "id">;
 export type CreateItemPayload = Omit<Items, "id">;
 export type CreateColumnPayload = Omit<Columns, "id">;
-export type CreateBoardPayload = Omit<Boards, "id" | "isDefault">;
+export type CreateBoardPayload = Omit<Boards, "id">;

@@ -2,15 +2,16 @@ import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextFie
 import { useBoardStore } from "../../store/boardStore";
 import { useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
+import { useAddUser } from "../../React_Queries/useBoardMutationsAddData";
 
 export default function AddUser() {
-  const addUser = useBoardStore((state) => state.addUser);
   const [open, setOpen] = useState<boolean>(false);
   const [userName, setUserName] = useState<string>("");
+  const addUser = useAddUser();
 
   function handleSaveUser() {
     if (!userName.trim()) return;
-    addUser({ name: userName });
+    addUser.mutate({ name: userName });
     setUserName("");
     setOpen(false);
   }

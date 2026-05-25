@@ -7,6 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useBoardStore } from "../../store/boardStore";
+import { useDeleteBoard } from "../../React_Queries/useBoardMutationsDeleteData";
 
 interface DeleteBoardProps {
   open: boolean;
@@ -14,12 +15,12 @@ interface DeleteBoardProps {
 }
 
 export function DeleteBoard({ open, onClose }: DeleteBoardProps) {
-  const deleteBoard = useBoardStore((state) => state.deleteBoard);
+  const deleteBoard = useDeleteBoard();
   const activeBoardId = useBoardStore((state) => state.activeBoardId);
 
   async function handleDelete() {
     if (!activeBoardId) return;
-    await deleteBoard(activeBoardId);
+    await deleteBoard.mutate(activeBoardId);
     onClose();
   }
 

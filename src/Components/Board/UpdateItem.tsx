@@ -13,8 +13,9 @@ import {
 } from "@mui/material";
 import { Edit } from "@mui/icons-material";
 import type { Items } from "../../Type";
+import { useItems, useUsers } from "../../React_Queries/useBoardsGetData";
+import { useUpDateItem } from "../../React_Queries/useBoardMutationsUpDateData";
 import { useBoardStore } from "../../store/boardStore";
-
 type PriorityType = "LOW" | "MEDIUM" | "HIGH";
 
 const PRIORITY_COLOR: Record<PriorityType, string> = {
@@ -33,10 +34,12 @@ type UpdateItemProps = {
 };
 
 export default function UpdateItem({ itemId }: UpdateItemProps) {
-  const items = useBoardStore((state) => state.items);
-  const updateItem = useBoardStore((state) => state.updateItem);
-  const AllUsers = useBoardStore((state) => state.users);
-  const item = items.find((currentItem) => currentItem.id === itemId);
+  const activeBoard = useBoardStore((state) => state.activeBoardId);
+  const { data: items } = useItems(activeBoard);
+  const { data: Users    } = useUsers();
+  const updateItem = useUpDateItem();
+  const AllUsers = Users || [];
+  const item = items?.find((currentItem) => currentItem.id === itemId);
 
   const [open, setOpen] = useState<boolean>(false);
   const [title, setTitle] = useState<string>("");
@@ -117,7 +120,7 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
       return;
     }
 
-    await updateItem(item.id, changes);
+    await updateItem.mutate({ id: item.id, changes });
     setOpen(false);
   }
 

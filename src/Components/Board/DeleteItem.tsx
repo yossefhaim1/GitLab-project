@@ -1,6 +1,5 @@
 import Delete from "@mui/icons-material/Delete";
 import IconButton from "@mui/material/IconButton";
-import { useBoardStore } from "../../store/boardStore";
 import Tooltip from "@mui/material/Tooltip";
 import { useState } from "react";
 import {
@@ -12,17 +11,18 @@ import {
   DialogTitle,
   Typography,
 } from "@mui/material";
+import { useDeleteItem } from "../../React_Queries/useBoardMutationsDeleteData";
 
 type DeleteItemProps = {
   itemId: number;
 };
 
 export default function DeleteItem({ itemId }: DeleteItemProps) {
-  const deleteItem = useBoardStore((state) => state.deleteItem);
+  const deleteItem = useDeleteItem();
   const [open, setOpen] = useState<boolean>(false);
 
   async function handleDelete() {
-    await deleteItem(itemId);
+    await deleteItem.mutate(itemId);
     setOpen(false);
   }
 

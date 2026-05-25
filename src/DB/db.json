@@ -1,6 +1,10 @@
 {
   "users": [
     {
+      "id": 2,
+      "name": "154"
+    },
+    {
       "id": 3,
       "name": "Moshe"
     },
@@ -33,32 +37,12 @@
     {
       "id": 1,
       "name": "Development Board",
-      "isDefault": false
+      "isDefault": true
     },
     {
       "id": 2,
       "name": "Development Board Copy",
       "isDefault": false
-    },
-    {
-      "name": "15456",
-      "isDefault": true,
-      "id": 3
-    },
-    {
-      "name": "1565",
-      "isDefault": false,
-      "id": 4
-    },
-    {
-      "name": "יוסף חיים חדש",
-      "isDefault": false,
-      "id": 5
-    },
-    {
-      "name": "huxdjmnbd",
-      "isDefault": false,
-      "id": 6
     }
   ],
   "columns": [
@@ -103,27 +87,6 @@
       "title": "Done",
       "order": 3,
       "color": "#2dab3c"
-    },
-    {
-      "boardId": 3,
-      "title": "+65",
-      "order": 1,
-      "color": "#2d3543",
-      "id": 7
-    },
-    {
-      "boardId": 3,
-      "title": "658+9",
-      "order": 2,
-      "color": "#ff9500",
-      "id": 8
-    },
-    {
-      "boardId": 3,
-      "title": "+651",
-      "order": 3,
-      "color": "#a6ff00",
-      "id": 9
     }
   ],
   "items": [
@@ -357,7 +320,7 @@
       "columnId": 2,
       "position": 3,
       "title": "Implement auth",
-      "assigneeId": "Shimon",
+      "assigneeId": "yossef",
       "priority": [
         {
           "type": "MEDIUM",
@@ -413,7 +376,7 @@
       "columnId": 2,
       "position": 5,
       "title": "Improve performance",
-      "assigneeId": "Moshe",
+      "assigneeId": "yossef",
       "priority": [
         {
           "type": "MEDIUM",
@@ -1106,56 +1069,6 @@
           "color": "#a16207"
         }
       ]
-    },
-    {
-      "boardId": 3,
-      "columnId": 8,
-      "position": 1,
-      "title": "הגכ",
-      "assigneeId": "Avi",
-      "priority": [
-        {
-          "type": "LOW",
-          "color": "#38A169"
-        }
-      ],
-      "tags": [],
-      "id": 38
-    },
-    {
-      "boardId": 3,
-      "columnId": 9,
-      "position": 1,
-      "title": "ק'כר'קכ",
-      "assigneeId": "Moshe",
-      "priority": [
-        {
-          "type": "LOW",
-          "color": "#38A169"
-        }
-      ],
-      "tags": [
-        {
-          "type": "כקכ",
-          "color": "#3bf63e"
-        }
-      ],
-      "id": 39
-    },
-    {
-      "boardId": 3,
-      "columnId": 7,
-      "position": 1,
-      "title": "sqs",
-      "assigneeId": "Shimon",
-      "priority": [
-        {
-          "type": "LOW",
-          "color": "#38A169"
-        }
-      ],
-      "tags": [],
-      "id": 40
     }
   ]
 }
