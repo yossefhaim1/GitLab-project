@@ -1,31 +1,37 @@
 import { Box, Stack, Typography } from "@mui/material";
 import ItemCard from "./ItemCard";
 import AddItem from "./AddItem";
-import { useBoardStore } from "../../store/boardStore";
+import {
+  
+  useColumns,
+  useItems,
+} from "../../React_Queries/useBoardsGetData";
 import { DeleteColumn } from "../TopColum/DeletColumn";
 import { useDroppable } from "@dnd-kit/core";
 import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import { useBoardStore } from "../../store/boardStore";
 
 type ColumnProps = {
   columnId: number;
 };
 
 export default function Column({ columnId }: ColumnProps) {
-  const columns = useBoardStore((state) => state.columns);
-  const items = useBoardStore((state) => state.items);
+  const activeBoard = useBoardStore((state) => state.activeBoardId);
+  const { data: columns } = useColumns(activeBoard);
+  const { data: items } = useItems(activeBoard);
   const searchItem = useBoardStore((state) => state.searchItem);
 
-  const column = columns.find((col) => col.id === columnId);
+  const column = columns?.find((col) => col.id === columnId);
 
   const { setNodeRef } = useDroppable({
     id: `column-${columnId}`,
   });
 
   const columnItems = items
-    .filter((item) => {
+    ?.filter((item) => {
       const searchValue = searchItem.toLowerCase().trim();
 
       const title = item.title.toLowerCase();
@@ -43,7 +49,7 @@ export default function Column({ columnId }: ColumnProps) {
       return isSameColumn && isMatchSearch;
     })
     .sort((a, b) => a.position - b.position);
-    
+
   if (!column) {
     return null;
   }
@@ -118,10 +124,10 @@ export default function Column({ columnId }: ColumnProps) {
         }}
       >
         <SortableContext
-          items={columnItems.map((item) => `item-${item.id}`)}
+          items={columnItems?.map((item) => `item-${item.id}`) || []}
           strategy={verticalListSortingStrategy}
         >
-          {columnItems.map((item) => (
+          {columnItems?.map((item) => (
             <ItemCard key={item.id} itemId={item.id} />
           ))}
         </SortableContext>

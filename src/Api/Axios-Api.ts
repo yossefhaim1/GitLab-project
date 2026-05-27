@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: "https://qldb72lt-3000.uks1.devtunnels.ms/",
   headers: {
     "Content-Type": "application/json",
   },

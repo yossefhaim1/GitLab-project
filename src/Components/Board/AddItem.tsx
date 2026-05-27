@@ -13,8 +13,9 @@ import {
 } from "@mui/material";
 import Add from "@mui/icons-material/Add";
 import type { CreateItemPayload } from "../../Type";
+import {useAddItem} from "../../React_Queries/useBoardMutationsAddData";
+import {  useColumns, useItems, useUsers } from "../../React_Queries/useBoardsGetData";
 import { useBoardStore } from "../../store/boardStore";
-
 type PriorityType = "LOW" | "MEDIUM" | "HIGH";
 
 const PRIORITY_COLOR: Record<PriorityType, string> = {
@@ -33,11 +34,12 @@ type AddItemProps = {
 };
 
 export default function AddItem({ columnId }: AddItemProps) {
-  const items = useBoardStore((state) => state.items);
-  const columns = useBoardStore((state) => state.columns);
-  const activeBoardId = useBoardStore((state) => state.activeBoardId);
-  const addItem = useBoardStore((state) => state.addItem);
-  const AllUsers = useBoardStore((state) => state.users);
+  const activeBoard = useBoardStore((state) => state.activeBoardId);
+  const { data: columns } = useColumns(activeBoard);
+  const { data: items } = useItems(activeBoard);
+  const addItem = useAddItem();
+  const { data: users } = useUsers();
+  const AllUsers = users || [];
   const [open, setOpen] = useState<boolean>(false);
   const [title, setTitle] = useState<string>("");
   const [assigneeId, setAssigneeId] = useState<string>("");
@@ -46,12 +48,12 @@ export default function AddItem({ columnId }: AddItemProps) {
   const [tagColor, setTagColor] = useState<string>("#3bf63e");
   const [tags, setTags] = useState<TagInput[]>([]);
 
-  const column = columns.find((col) => col.id === columnId);
+  const column = columns?.find((col) => col.id === columnId);
 
   const nextPosition = useMemo(() => {
     const positions = items
-      .filter((item) => item.columnId === columnId)
-      .map((item) => item.position);
+      ?.filter((item) => item.columnId === columnId)
+      .map((item) => item.position) || [];
 
     return Math.max(0, ...positions) + 1;
   }, [items, columnId]);
@@ -82,10 +84,10 @@ export default function AddItem({ columnId }: AddItemProps) {
     try {
       const cleanTitle = title.trim();
 
-      if (!cleanTitle || !activeBoardId || !column || !assigneeId) return;
+      if (!cleanTitle || !activeBoard || !column || !assigneeId) return;
 
       const newItem: CreateItemPayload = {
-        boardId: activeBoardId,
+        boardId: activeBoard,
         columnId,
         position: nextPosition,
         title: cleanTitle,
@@ -99,7 +101,7 @@ export default function AddItem({ columnId }: AddItemProps) {
         tags,
       };
 
-      await addItem(newItem);
+      await addItem.mutate(newItem);
       console.log("success to add item");
 
       setTitle("");
@@ -112,7 +114,7 @@ export default function AddItem({ columnId }: AddItemProps) {
     } catch (err) {
       console.error(err);
     }
-    if (!activeBoardId || !column) {
+    if (!activeBoard || !column) {
       return null;
     }
   }

@@ -2,11 +2,16 @@ import { Box, Button } from "@mui/material";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import StarBorderRoundedIcon from "@mui/icons-material/StarBorderRounded";
 import { useBoardStore } from "../../store/boardStore";
+import { useBoards } from "../../React_Queries/useBoardsGetData";
+import { useUpDateBoard } from "../../React_Queries/useBoardMutationsUpDateData";
 
 export function SetDefaultBoardButton() {
   const activeBoardId = useBoardStore((state) => state.activeBoardId);
-  const boards = useBoardStore((state) => state.boards);
-  const setDefaultBoard = useBoardStore((state) => state.setDefaultBoard);
+
+  const { data } = useBoards();
+  const boards = data?.boards ?? [];
+
+  const setDefaultBoard = useUpDateBoard();
 
   const activeBoard = boards.find((board) => board.id === activeBoardId);
 
@@ -21,10 +26,10 @@ export function SetDefaultBoardButton() {
             <StarBorderRoundedIcon fontSize="small" />
           )
         }
-        disabled={!activeBoardId}
+        disabled={!activeBoard}
         onClick={() => {
-          if (activeBoardId) {
-            setDefaultBoard(activeBoardId);
+          if (activeBoard) {
+            setDefaultBoard.mutate({ id: activeBoard.id });
           }
         }}
         sx={{

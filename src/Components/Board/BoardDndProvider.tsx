@@ -7,15 +7,22 @@ import {
 } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import { useState } from "react";
-import { useBoardStore } from "../../store/boardStore";
 import ItemCard from "./ItemCard";
+import type { Items } from "../../Type";
+import { useUpDateItem } from "../../React_Queries/useBoardMutationsUpDateData";
 
 type BoardDndProviderProps = {
   children: React.ReactNode;
+  items: Items[];
 };
 
-export default function BoardDndProvider({ children }: BoardDndProviderProps) {
+export default function BoardDndProvider({
+  children,
+  items,
+}: BoardDndProviderProps) {
   const [activeItemId, setActiveItemId] = useState<number | null>(null);
+
+  const updateItemMutation = useUpDateItem();
 
   function getItemId(id: string | number) {
     return Number(String(id).replace("item-", ""));
@@ -35,10 +42,6 @@ export default function BoardDndProvider({ children }: BoardDndProviderProps) {
     setActiveItemId(null);
 
     if (!over) return;
-
-    const items = useBoardStore.getState().items;
-    const setItems = useBoardStore.getState().setItems;
-    const updateItem = useBoardStore.getState().updateItem;
 
     const activeItemId = getItemId(active.id);
     const overId = String(over.id);
@@ -75,8 +78,13 @@ export default function BoardDndProvider({ children }: BoardDndProviderProps) {
     if (sourceColumnId === targetColumnId) {
       if (overItemId === null) return;
 
-      const oldIndex = sourceItems.findIndex((item) => item.id === activeItemId);
-      const newIndex = sourceItems.findIndex((item) => item.id === overItemId);
+      const oldIndex = sourceItems.findIndex(
+        (item) => item.id === activeItemId
+      );
+
+      const newIndex = sourceItems.findIndex(
+        (item) => item.id === overItemId
+      );
 
       if (oldIndex === -1 || newIndex === -1) return;
       if (oldIndex === newIndex) return;
@@ -88,15 +96,12 @@ export default function BoardDndProvider({ children }: BoardDndProviderProps) {
         })
       );
 
-      const updatedItems = items.map((item) => {
-        return reorderedItems.find((changed) => changed.id === item.id) ?? item;
-      });
-
-      setItems(updatedItems);
-
       for (const item of reorderedItems) {
-        await updateItem(item.id, {
-          position: item.position,
+        await updateItemMutation.mutateAsync({
+          id: item.id,
+          changes: {
+            position: item.position,
+          },
         });
       }
 
@@ -118,7 +123,10 @@ export default function BoardDndProvider({ children }: BoardDndProviderProps) {
     let insertIndex = targetItems.length;
 
     if (overItemId !== null) {
-      const foundIndex = targetItems.findIndex((item) => item.id === overItemId);
+      const foundIndex = targetItems.findIndex(
+        (item) => item.id === overItemId
+      );
+
       insertIndex = foundIndex === -1 ? targetItems.length : foundIndex;
     }
 
@@ -132,34 +140,22 @@ export default function BoardDndProvider({ children }: BoardDndProviderProps) {
       position: index + 1,
     }));
 
-    const updatedItems = items.map((item) => {
-      const sourceChanged = updatedSourceItems.find(
-        (changed) => changed.id === item.id
-      );
-
-      if (sourceChanged) return sourceChanged;
-
-      const targetChanged = fixedTargetItems.find(
-        (changed) => changed.id === item.id
-      );
-
-      if (targetChanged) return targetChanged;
-
-      return item;
-    });
-
-    setItems(updatedItems);
-
     for (const item of updatedSourceItems) {
-      await updateItem(item.id, {
-        position: item.position,
+      await updateItemMutation.mutateAsync({
+        id: item.id,
+        changes: {
+          position: item.position,
+        },
       });
     }
 
     for (const item of fixedTargetItems) {
-      await updateItem(item.id, {
-        columnId: item.columnId,
-        position: item.position,
+      await updateItemMutation.mutateAsync({
+        id: item.id,
+        changes: {
+          columnId: item.columnId,
+          position: item.position,
+        },
       });
     }
   }

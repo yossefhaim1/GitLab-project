@@ -10,19 +10,19 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { useBoardStore } from "../../store/boardStore";
 import { useState } from "react";
+import { useDeleteColumn } from "../../React_Queries/useBoardMutationsDeleteData";
 
 interface DeleteColumnProps {
   columnId: number;
 }
 
 export function DeleteColumn({ columnId }: DeleteColumnProps) {
-  const deleteColumn = useBoardStore((state) => state.deleteColumn);
   const [open, setOpen] = useState(false);
+  const deleteColumn = useDeleteColumn();
 
   async function handleDelete() {
-    await deleteColumn(columnId);
+    await deleteColumn.mutate(columnId);
     setOpen(false);
   }
 

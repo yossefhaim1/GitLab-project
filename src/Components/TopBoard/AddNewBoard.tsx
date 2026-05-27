@@ -1,13 +1,7 @@
-import {
-  Box,
-  Button,
-  Drawer,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { useBoardStore } from "../../store/boardStore";
+import { Box, Button, Drawer, TextField, Typography } from "@mui/material";
 import { useState } from "react";
-import type { CreateBoardPayload } from "../../Type";
+import { useAddBoard } from "../../React_Queries/useBoardMutationsAddData";
+import { useBoards } from "../../React_Queries/useBoardsGetData";
 
 interface AddNewBoardProps {
   open: boolean;
@@ -17,8 +11,10 @@ interface AddNewBoardProps {
 export function AddNewBoard({ open, onClose }: AddNewBoardProps) {
   const [boardName, setBoardName] = useState<string>("");
 
-  const addBoard = useBoardStore((state) => state.addBoard);
-  const setActiveBoardId = useBoardStore((state) => state.setActiveBoardId);
+  const { data } = useBoards();
+  const boards = data?.boards ?? [];
+
+  const addBoard = useAddBoard();
 
   function handleCloseDrawer() {
     if (document.activeElement instanceof HTMLElement) {
@@ -28,23 +24,18 @@ export function AddNewBoard({ open, onClose }: AddNewBoardProps) {
     onClose();
   }
 
-  async function handelCreate() {
-    const NameBoard = boardName.trim();
+  async function handleCreate() {
+    const nameBoard = boardName.trim();
 
-    if (!NameBoard) return;
+    if (!nameBoard) return;
 
-    const newBoard: CreateBoardPayload = {
-      name: NameBoard,
-    };
-
-    const createdBoard = await addBoard(newBoard);
+    await addBoard.mutateAsync({
+      name: nameBoard,
+      isDefault: boards.length === 0,
+    });
 
     setBoardName("");
     handleCloseDrawer();
-
-    if (!createdBoard) return;
-
-    setActiveBoardId(createdBoard.id);
   }
 
   return (
@@ -67,10 +58,20 @@ export function AddNewBoard({ open, onClose }: AddNewBoardProps) {
           value={boardName}
           onChange={(e) => setBoardName(e.target.value)}
           sx={{ mb: 2 }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleCreate();
+            }
+          }}
         />
 
-        <Button fullWidth variant="contained" onClick={handelCreate}>
-          CREATE
+        <Button
+          fullWidth
+          variant="contained"
+          onClick={handleCreate}
+          disabled={addBoard.isPending}
+        >
+          {addBoard.isPending ? "Creating..." : "CREATE"}
         </Button>
       </Box>
     </Drawer>
