@@ -7,7 +7,7 @@ import type {
   CreateColumnPayload,
   User,
   CreateUserPayload,
-} from "../Type";
+} from  "../Type";
 
 async function getUsers() {
   console.log("");
