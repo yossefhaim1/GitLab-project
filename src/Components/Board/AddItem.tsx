@@ -16,13 +16,13 @@ import type { CreateItemPayload } from "../../Type";
 import {useAddItem} from "../../React_Queries/useBoardMutationsAddData";
 import {  useColumns, useItems, useUsers } from "../../React_Queries/useBoardsGetData";
 import { useBoardStore } from "../../store/boardStore";
-type PriorityType = "LOW" | "MEDIUM" | "HIGH";
+import type { PriorityTypeValues} from "../../Type";
 
-const PRIORITY_COLOR: Record<PriorityType, string> = {
+const PRIORITY_COLOR: Record<PriorityTypeValues, string> = {
   LOW: "#38A169",
   MEDIUM: "#ECC94B",
   HIGH: "#E53E3E",
-};
+} as const;
 
 type TagInput = {
   type: string;
@@ -43,7 +43,7 @@ export default function AddItem({ columnId }: AddItemProps) {
   const [open, setOpen] = useState<boolean>(false);
   const [title, setTitle] = useState<string>("");
   const [assigneeId, setAssigneeId] = useState<string>("");
-  const [priority, setPriority] = useState<PriorityType>("LOW");
+  const [priority, setPriority] = useState<PriorityTypeValues>("LOW");
   const [tagText, setTagText] = useState<string>("");
   const [tagColor, setTagColor] = useState<string>("#3bf63e");
   const [tags, setTags] = useState<TagInput[]>([]);
@@ -148,7 +148,7 @@ export default function AddItem({ columnId }: AddItemProps) {
               fullWidth
               label="Priority"
               value={priority}
-              onChange={(e) => setPriority(e.target.value as PriorityType)}
+              onChange={(e) => setPriority(e.target.value as PriorityTypeValues)}
               sx={{ mb: 2 }}
             >
               <MenuItem value="LOW">LOW</MenuItem>

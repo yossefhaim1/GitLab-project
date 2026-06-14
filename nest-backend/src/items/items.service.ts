@@ -1,17 +1,16 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { ItemEntity } from '../Entity/item.entity';
 
 @Injectable()
 export class ItemsService {
-    getItems(){
-        return [
-            { id: "1", name: 'item1' },
-            { id: "2", name: 'item2' },
-            { id: "3", name: 'item3' }
-        ];
-    }
+    constructor(
+        @InjectRepository(ItemEntity)
+        private readonly itemRepository: Repository<ItemEntity>,
+    ) {}
 
-    getItemById(id: string) {
-        const items = this.getItems();
-        return items.find((item) => item.id === id);
+    getAllItems() {
+        return this.itemRepository.find();
     }
 }

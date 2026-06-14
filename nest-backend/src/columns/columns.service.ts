@@ -1,19 +1,22 @@
 import { Injectable } from '@nestjs/common';
+import { ColumnEntity } from '../Entity/column.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class ColumnsService {
-    getColumns(){
-        return [
-            { id: "1", name: 'column1' },
-            { id: "2", name: 'column2' },
-            { id: "3", name: 'column3' }
-        ];
-    }
+  constructor(
+    @InjectRepository(ColumnEntity)
+    private readonly columnRepository: Repository<ColumnEntity>,
+  ) {}
 
-    getColumnById(id: string) {
-        const columns = this.getColumns();
-        return columns.find((column) => column.id === id);
-    }
+  getColumnsById(id: number) {
+    return this.columnRepository.findOne({
+      where: { id },
+    });
+  }
 
-
+  getColumns() {
+    return this.columnRepository.find();
+  }
 }

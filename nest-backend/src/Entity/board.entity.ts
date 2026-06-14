@@ -1,13 +1,24 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn , Column, OneToMany } from "typeorm";
+import{ ItemEntity} from "./item.entity";
+import { ColumnEntity } from "./column.entity";
 
 @Entity('boards')
-export class Board {
-  @PrimaryGeneratedColumn()
-  id!: number;
+export class BoardEntity {
 
-  @Column()
-  name!: string;
+    @PrimaryGeneratedColumn()
+    id!: number;
 
-  @Column({ name: 'isDefault', default: false })
-  isDefault!: boolean;
+    @Column()
+    name!: string;
+
+    @Column()
+    isDefault!: boolean;
+
+    @OneToMany(() => ItemEntity, (item) => item.board)
+    items!: ItemEntity[];
+
+    @OneToMany(() => ColumnEntity, (column) => column.board)
+    columns!: ColumnEntity[];
+
+
 }

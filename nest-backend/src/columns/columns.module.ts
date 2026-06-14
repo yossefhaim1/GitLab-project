@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ColumnsService } from './columns.service';
 import { ColumnsController } from './columns.controller';
+import { ColumnEntity } from '../Entity/column.entity';
+import { TypeOrmModule } from '@nestjs/typeorm/dist/typeorm.module';
 
 @Module({
+  imports: [TypeOrmModule.forFeature([ColumnEntity])],
   providers: [ColumnsService],
-  controllers: [ColumnsController]
+  controllers: [ColumnsController],
 })
 export class ColumnsModule {}
-

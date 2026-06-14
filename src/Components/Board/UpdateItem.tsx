@@ -12,13 +12,12 @@ import {
   Autocomplete,
 } from "@mui/material";
 import { Edit } from "@mui/icons-material";
-import type { Items } from "../../Type";
+import type { Items, PriorityTypeValues } from "../../Type";
 import { useItems, useUsers } from "../../React_Queries/useBoardsGetData";
 import { useUpDateItem } from "../../React_Queries/useBoardMutationsUpDateData";
 import { useBoardStore } from "../../store/boardStore";
-type PriorityType = "LOW" | "MEDIUM" | "HIGH";
 
-const PRIORITY_COLOR: Record<PriorityType, string> = {
+const PRIORITY_COLOR: Record<PriorityTypeValues, string> = {
   LOW: "#38A169",
   MEDIUM: "#ECC94B",
   HIGH: "#E53E3E",
@@ -44,7 +43,7 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
   const [open, setOpen] = useState<boolean>(false);
   const [title, setTitle] = useState<string>("");
   const [assigneeId, setAssigneeId] = useState<string>("");
-  const [priority, setPriority] = useState<PriorityType>("LOW");
+  const [priority, setPriority] = useState<PriorityTypeValues>("LOW");
   const [tagText, setTagText] = useState<string>("");
   const [tagColor, setTagColor] = useState<string>("#3bf63e");
   const [tags, setTags] = useState<TagInput[]>([]);
@@ -54,7 +53,7 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
 
     setTitle(item.title);
     setAssigneeId(item.assigneeId);
-    setPriority((item.priority?.[0]?.type as PriorityType) || "LOW");
+    setPriority((item.priority?.[0]?.type as PriorityTypeValues) || "LOW");
     setTags(item.tags || []);
     setTagText("");
     setTagColor("#3bf63e");
@@ -157,7 +156,7 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
             fullWidth
             label="Priority"
             value={priority}
-            onChange={(e) => setPriority(e.target.value as PriorityType)}
+            onChange={(e) => setPriority(e.target.value as PriorityTypeValues)}
             sx={{ mb: 2 }}
           >
             <MenuItem value="LOW">LOW</MenuItem>

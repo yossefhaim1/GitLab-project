@@ -7,12 +7,6 @@ export class ItemsController {
 
   @Get()
   getItems() {
-    return this.itemsService.getItems();
-  }
-
-  @Get(':id')
-  getItemById(@Param('id') id: string) {
-    const item = this.itemsService.getItemById(id);
-    return { item };
+    return this.itemsService.getAllItems();
   }
 }

@@ -1,39 +1,47 @@
 export interface Boards {
-    id: number;
-    name: string;
-    isDefault: boolean;
+  id: number;
+  name: string;
+  isDefault: boolean;
 }
 
 export interface Columns {
-    id: number;
-    boardId: number;
-    title: string;
-    order: number;
-    color: string;
+  id: number;
+  boardId: number;
+  title: string;
+  order: number;
+  color: string;
 }
+export const PriorityType = {
+  LOW: "LOW",
+  MEDIUM: "MEDIUM",
+  HIGH: "HIGH",
+} as const;
+
+export type PriorityTypeValues =
+  (typeof PriorityType)[keyof typeof PriorityType];
 
 interface Priority {
-    type: string;
-    color: string;
+  type: PriorityTypeValues;
+  color: string;
 }
 interface Tag {
-    type: string;
-    color: string;
+  type: string;
+  color: string;
 }
 export interface Items {
-    id: number;
-    boardId: number;
-    columnId: number;
-    position: number;
-    title: string;
-    assigneeId: string;
-    priority: Priority[];
-    tags: Tag[];
+  id: number;
+  boardId: number;
+  columnId: number;
+  position: number;
+  title: string;
+  assigneeId: string;
+  priority: Priority[];
+  tags: Tag[];
 }
 
-export interface User{
-    id: number;
-    name: string;
+export interface User {
+  id: number;
+  name: string;
 }
 
 export type CreateUserPayload = Omit<User, "id">;
