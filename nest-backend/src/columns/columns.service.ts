@@ -1,22 +1,49 @@
-import { Injectable } from '@nestjs/common';
-import { ColumnEntity } from '../Entity/column.entity';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { ColumnRepository } from '../Repositorys/Column.Repository';
+import { CreateColumnDto, UpdateColumnDto } from './dto/column.dto';
 
 @Injectable()
 export class ColumnsService {
   constructor(
-    @InjectRepository(ColumnEntity)
-    private readonly columnRepository: Repository<ColumnEntity>,
+    private readonly columnRepository: ColumnRepository,
   ) {}
 
-  getColumnsById(id: number) {
-    return this.columnRepository.findOne({
+  async getColumnById(id: number) {
+    return await this.columnRepository.findOne({
       where: { id },
     });
   }
 
-  getColumns() {
-    return this.columnRepository.find();
+  async getColumns() {
+    return await this.columnRepository.find({
+      relations: {
+        board: true,
+      },
+    });
+  }
+
+  async createColumn(createColumnDto: CreateColumnDto) {
+    const column = this.columnRepository.create(createColumnDto);
+
+    return this.columnRepository.save(column);
+  }
+
+  async updateColumn(id: number, updateColumnDto: UpdateColumnDto) {
+    await this.columnRepository.update({ id }, updateColumnDto);
+    return this.getColumnById(id);
+  }
+
+  async deleteColumn(id: number) {
+    const column = await this.getColumnById(id);
+
+    if (!column) {
+      throw new NotFoundException();
+    }
+
+    await this.columnRepository.delete(id);
+
+    return {
+      message: 'Column deleted successfully',
+    };
   }
 }

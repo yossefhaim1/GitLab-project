@@ -7,10 +7,10 @@ export class PriorityEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column()
+  @Column({name : "type"})
   type!: PriorityTypeValues; // LOW / MED / HIGH
 
-  @Column()
+  @Column({name : "color"})
   color!: string;
 
   @OneToMany(() => ItemEntity, (item) => item.priority)

@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne , OneToMany} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne , OneToMany, JoinColumn} from 'typeorm';
 import { BoardEntity } from './board.entity';
 import { ItemEntity } from './item.entity';
 
@@ -11,10 +11,14 @@ export class ColumnEntity {
 
   // מזהה את הלוח שאליו שייכת העמודה
   @ManyToOne(() => BoardEntity, (board) => board.columns)
+  @JoinColumn({ name: 'boardId' })
   board!: BoardEntity;
 
+  @Column({name : 'boardId'})
+  boardId!: number;
+
   // שם העמודה
-  @Column()
+  @Column({name : 'title'})
   title!: string;
 
   // סדר העמודה בלוח
@@ -22,7 +26,7 @@ export class ColumnEntity {
   order!: number;
 
   // צבע העמודה
-  @Column()
+  @Column({name : 'color'})
   color!: string;
 
   @OneToMany(() => ItemEntity , (item) => item.column)

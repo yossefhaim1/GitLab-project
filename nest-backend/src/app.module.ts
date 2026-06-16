@@ -5,6 +5,9 @@ import { UsersModule } from './users/users.module';
 import { BoardsModule } from './boards/boards.module';
 import { ColumnsModule } from './columns/columns.module';
 import { ItemsModule } from './items/items.module';
+import { ItemTagModule } from './item_tag/ItemTag.module';
+import { TagsModule } from './tags/tags.module';
+import { PrioritiesModule } from './priorities/priorities.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -27,6 +30,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     BoardsModule,
     ColumnsModule,
     ItemsModule,
+    ItemTagModule,
+    TagsModule,
+    PrioritiesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

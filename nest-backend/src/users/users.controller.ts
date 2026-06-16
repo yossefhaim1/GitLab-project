@@ -7,14 +7,6 @@ export class UsersController {
 
   @Get()
   getUsers() {
-    const age = this.usersService.getAge();
-    const users = this.usersService.getUsers();
-    return { users, age };
-  }  
-
-  @Get(':id')
-  getUserById(@Param('id') id: string) {
-    const user = this.usersService.getUserById(id);
-    return { user };
+    return this.usersService.getUsers();
   }
 }

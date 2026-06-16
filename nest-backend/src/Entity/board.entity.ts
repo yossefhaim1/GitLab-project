@@ -8,10 +8,10 @@ export class BoardEntity {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column()
-    name!: string;
+    @Column({name: 'title'})
+    title!: string;
 
-    @Column()
+    @Column({name: 'isDefault', default: false })
     isDefault!: boolean;
 
     @OneToMany(() => ItemEntity, (item) => item.board)

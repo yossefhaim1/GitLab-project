@@ -1,13 +1,13 @@
 import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn } from 'typeorm';
 
 @Entity('users')
-export class userEntity {
+export class UserEntity {
     
   // מזהה ייחודי למשתמש
   @PrimaryGeneratedColumn()
   id!: number;
 
   // שם המשתמש
-  @Column()
+  @Column({name : 'name'})
   name!: string;
 }

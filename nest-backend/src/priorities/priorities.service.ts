@@ -1,17 +1,13 @@
 import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-
-import { PriorityEntity } from "../Entity/priority.entity";
+import { PriorityRepository } from "../Repositorys/Priorities.Repository";
 
 @Injectable()
 export class PrioritiesService {
     constructor(
-        @InjectRepository(PriorityEntity)
-        private readonly priorityRepository: Repository<PriorityEntity>,
+        private readonly priorityRepository: PriorityRepository,
     ) {}
 
-    async findAll(): Promise<PriorityEntity[]> {
+    getPriorities() {
         return this.priorityRepository.find();
     }
 }

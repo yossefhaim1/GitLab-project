@@ -8,6 +8,6 @@ export class PrioritiesController {
 
     @Get()
     getPriorities() {
-        return this.prioritiesService.findAll();
+        return this.prioritiesService.getPriorities();
     }
 }

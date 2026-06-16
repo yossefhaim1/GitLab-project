@@ -8,10 +8,10 @@ export class TagEntity{
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column()
+    @Column({name : 'title'})
     title!: string;
 
-    @Column()
+    @Column({name : 'color'})
     color!: string;
 
     @OneToMany(()=> ItemTagEntity , (itemTag) => itemTag.tag)

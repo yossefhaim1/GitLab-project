@@ -1,50 +1,63 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { BoardEntity } from '../Entity/board.entity';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { BoardRepository } from '../Repositorys/Board.Repository';
+import type { CreateBoardDto, UpdateBoardDto } from './dto/board.dto';
 
 @Injectable()
 export class BoardsService {
-  constructor(
-    @InjectRepository(BoardEntity)
-    private readonly boardRepository: Repository<BoardEntity>,
-  ) {}
+  constructor(private readonly boardRepository: BoardRepository) {}
 
-  getBoardDefault() {
-    return this.boardRepository.findOne({
-      where: { isDefault: true },
+  async getBoards() {
+    return await this.boardRepository.find();
+  }
+
+  async getBoardById(id: number) {
+    return await this.boardRepository.findOne({
+      where: {
+        id,
+      },
     });
   }
 
-  getBoardById(id: number) {
-    return this.boardRepository.findOne({
-      where: { id },
+  async createBoard(createBoardDto: CreateBoardDto) {
+    return await this.boardRepository.save(
+      this.boardRepository.create(createBoardDto),
+    );
+  }
+
+  async deleteBoard(id: number) {
+    const board = await this.getBoardById(id);
+
+    if (!board) {
+      throw new NotFoundException();
+    }
+
+    await this.boardRepository.delete(id);
+
+    return {
+      message: 'Board deleted successfully',
+    };
+  }
+
+  async updateBoard(id: number, updateBoardDto: UpdateBoardDto) {
+    await this.boardRepository.update({ id }, updateBoardDto);
+    return this.getBoardById(id);
+  }
+
+  async getAllParamsForBoard(id: number) {
+    return await this.boardRepository.findOne({
+      where: {
+        id,
+      },
+      relations: {
+        columns: {
+          items: {
+            priority: true,
+            tags: {
+              tag: true,
+            },
+          },
+        },
+      },
     });
   }
-
-  getBoards() {
-    return this.boardRepository.find();
-  }
-
-  createBoard(body :{name :string ; isDefault? : boolean}){
-    const NewBoard = this.boardRepository.create({
-      name : body.name,
-      isDefault : body.isDefault ?? false,
-    });
-    return this.boardRepository.save(NewBoard);
-  }
-
-
-
-
 }
-
-//  הקובץ הזה אחרי על ולידציות על המידע שהמשתמש שלוח
-// הקובץ הזה אחראי על הבאת הנתונים מהדאטה בייס והחזרת הנתונים ל - Controller
-// וגם אחראי בין היתר על לוגיקה
-// בדיקות
-// ולידציות
-// קריאה ל-Repository
-// עבודה מול DB דרך TypeORM
-
-// הקובץ הזה הוא מספר 3 באירככיה של הקבצים מופיע אחרי boards.controller.ts
