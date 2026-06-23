@@ -1,39 +1,40 @@
-import { Box,  Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Tooltip, Typography, } from "@mui/material";
+import { Box, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Tooltip, Typography } from "@mui/material";
+import { useDeletePriority } from "../../React_Queries/useBoardMutationsDeleteData";
 import { useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
-import { useDeleteUser } from "../../React_Queries/useBoardMutationsDeleteData";
 
-interface DeleteUserProps {
+interface DeletePriorityProps {
     id: number;
-    name: string;
+    type: string;
 }
-export default function DeleteUser({id , name}: DeleteUserProps){
+
+export function DeletePriority({id , type} : DeletePriorityProps) {
     const [open , setOpen] = useState<boolean>(false);
-    const deleteUser = useDeleteUser();
+    const deletePriority = useDeletePriority();
     const [errorMessage, setErrorMessage] = useState<string>("");
 
-    function handleDeleteUser() {
-        deleteUser.mutate(id, {
+    function handleDeletePriority() {
+        deletePriority.mutate(id, {
             onSuccess: () => {
                 setErrorMessage("");
                 setOpen(false);
             },
             onError: () => {
-                setErrorMessage("Failed to delete user. Please try again.");
+                setErrorMessage("Failed to delete this priority. Please try again.");
             },
         });
     }
-    
+
     return(
         <Box>
             <Dialog open={open} onClose={() => setOpen(false)}>
-                <DialogTitle>Delete User</DialogTitle>
+                <DialogTitle>Delete Priority</DialogTitle>
 
                 <DialogContent>
                     <Typography>
-                        Are you sure you want to delete this user {name}?
+                        Are you sure you want to delete this priority {type}?
                     </Typography>
                     {errorMessage ? (
                         <Typography color="error" sx={{ mt: 1, fontSize: 13 }}>
@@ -45,18 +46,17 @@ export default function DeleteUser({id , name}: DeleteUserProps){
                     <IconButton onClick={() => setOpen(false)} color="secondary">
                         <CloseIcon />
                     </IconButton>
-                    <IconButton onClick={handleDeleteUser} color="primary">
+                    <IconButton onClick={handleDeletePriority} color="primary">
                         <DoneIcon />
                     </IconButton>
                 </DialogActions>
-
             </Dialog>
-            
-            <Tooltip title="Delete User">
+
+            <Tooltip title="Delete Priority">
                 <IconButton onClick={() => setOpen(true)} color="error">
                     <DeleteIcon fontSize="small" />
                 </IconButton>
             </Tooltip>
         </Box>
-    );
+    )
 }

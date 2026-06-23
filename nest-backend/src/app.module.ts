@@ -7,7 +7,7 @@ import { ColumnsModule } from './columns/columns.module';
 import { ItemsModule } from './items/items.module';
 import { ItemTagModule } from './item_tag/ItemTag.module';
 import { TagsModule } from './tags/tags.module';
-import { PrioritiesModule } from './priorities/priorities.module';
+import { PrioritiesModule } from './priorities/priority.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 

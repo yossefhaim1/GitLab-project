@@ -2,23 +2,27 @@ import { PrimaryGeneratedColumn , ManyToOne , Entity, JoinColumn, Column } from 
 import { TagEntity } from "./tag.entity";
 import { ItemEntity } from "./item.entity";
 
-@Entity('item_tags')
+@Entity('itemtags')
 export class ItemTagEntity{
 
     @PrimaryGeneratedColumn()
     id! :number ;
 
-    @ManyToOne ( ()=> ItemEntity , (item) => item.tags)
-    @JoinColumn({name : 'item_id'})
+    @ManyToOne ( ()=> ItemEntity , (item) => item.tags, {
+        onDelete:'CASCADE',
+    })
+    @JoinColumn({name : 'itemId'})
     item! : ItemEntity;
 
     @Column()
-    item_id! : number;
+    itemId! : number;
 
-    @ManyToOne ( ()=> TagEntity , (tag) => tag.items)
-    @JoinColumn({name : 'tag_id'})
+    @ManyToOne ( ()=> TagEntity , (tag) => tag.items, {
+        onDelete: 'CASCADE'
+    })
+    @JoinColumn({name : 'tagId'})
     tag! : TagEntity;
 
     @Column()
-    tag_id! : number;
+    tagId! : number;
 }

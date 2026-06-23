@@ -13,10 +13,11 @@ import type { CreateColumnPayload } from "../../Type";
 import { useColumns } from "../../React_Queries/useBoardsGetData";
 import { useAddColumn } from "../../React_Queries/useBoardMutationsAddData";
 
-export function AddColum() {
+export function AddColumn() {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
-  const [tagColor, setTagColor] = useState("#3b82f6");
+  const [columnColor, setColumnColor] = useState("#3b82f6");
+  const [errorMessage, setErrorMessage] = useState("");
   const addColumn = useAddColumn();
   const activeBoardId = useBoardStore((state) => state.activeBoardId);
     const { data: columns = [] } = useColumns(activeBoardId);
@@ -30,36 +31,51 @@ export function AddColum() {
   }, [columns, activeBoardId]);
 
   function handleCreate() {
-    const cleanTitle = title.trim();
+  const cleanTitle = title.trim();
 
-    if (!cleanTitle || !activeBoardId) return;
-
-    const isColumnExists = columns.some(
-      (column) =>
-        column.boardId === activeBoardId &&
-        column.title.trim().toLowerCase() === cleanTitle.toLowerCase()
-    );
-
-    if (isColumnExists) {
-      alert("Column already exists");
-      setTitle("");
-      setOpen(false);
-      return;
-    }
-
-    const newColumn: CreateColumnPayload = {
-       boardId: activeBoardId,
-      title: cleanTitle,
-      order: nextOrder,
-      color: tagColor,
-    };
-
-    addColumn.mutate(newColumn);
-
-    setTitle("");
-    setTagColor("#3b82f6");
-    setOpen(false);
+  if (!cleanTitle) {
+    setErrorMessage("Column title is required.");
+    return;
   }
+
+  if (!activeBoardId) {
+    setErrorMessage("No active board selected.");
+    return;
+  }
+
+  const isColumnExists = columns.some(
+    (column) =>
+      column.boardId === activeBoardId &&
+      column.title.trim().toLowerCase() === cleanTitle.toLowerCase()
+  );
+
+  if (isColumnExists) {
+    setErrorMessage("Column already exists.");
+    setTitle("");
+    return;
+  }
+
+  setErrorMessage("");
+
+  const newColumn: CreateColumnPayload = {
+    boardId: activeBoardId,
+    title: cleanTitle,
+    order: nextOrder,
+    color: columnColor,
+  };
+
+  addColumn.mutate(newColumn, {
+    onSuccess: () => {
+      setErrorMessage("");
+      setTitle("");
+      setColumnColor("#3b82f6");
+      setOpen(false);
+    },
+    onError: () => {
+      setErrorMessage("Failed to add column. Please try again.");
+    },
+  });
+}
 
   return (
     <Box
@@ -155,9 +171,20 @@ export function AddColum() {
             label="Column title"
             placeholder="Example: Review"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={(e) => {
+              setTitle(e.target.value);
+              if (errorMessage) {
+                setErrorMessage("");
+              }
+            }}
             sx={{ mb: 2 }}
           />
+
+          {errorMessage ? (
+            <Typography color="error" sx={{ mb: 2, fontSize: 13 }}>
+              {errorMessage}
+            </Typography>
+          ) : null}
 
           <Typography sx={{ fontWeight: 800, mb: 1, color: "#0f172a" }}>
             Column color
@@ -180,7 +207,7 @@ export function AddColum() {
                 width: 42,
                 height: 42,
                 borderRadius: "50%",
-                backgroundColor: tagColor,
+                backgroundColor: columnColor,
                 border: "3px solid #e5e7eb",
                 position: "relative",
                 cursor: "pointer",
@@ -190,8 +217,8 @@ export function AddColum() {
             >
               <input
                 type="color"
-                value={tagColor}
-                onChange={(e) => setTagColor(e.target.value)}
+                value={columnColor}
+                onChange={(e) => setColumnColor(e.target.value)}
                 style={{
                   position: "absolute",
                   inset: 0,
@@ -206,8 +233,8 @@ export function AddColum() {
 
             <TextField
               size="small"
-              value={tagColor}
-              onChange={(e) => setTagColor(e.target.value)}
+              value={columnColor}
+              onChange={(e) => setColumnColor(e.target.value)}
               sx={{ flex: 1 }}
             />
           </Box>

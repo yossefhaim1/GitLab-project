@@ -1,8 +1,8 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 
-import { PrioritiesController } from "./priorities.controller";
-import { PrioritiesService } from "./priorities.service";
+import { PrioritiesController } from "./priority.controller";
+import { PrioritiesService } from "./priority.service";
 import { PriorityEntity } from "../Entity/priority.entity";
 import { PriorityRepository } from "../Repositorys/Priorities.Repository";
 

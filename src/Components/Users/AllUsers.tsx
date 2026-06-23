@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 
 import AddUser from "./AddUser";
-import UpDateUser from "./UpDateUser";
+import UpdateUser from "./UpdateUser";
 import DeleteUser from "./DeleteUser";
 import { useUsers } from "../../React_Queries/useBoardsGetData";
 
@@ -89,7 +89,7 @@ export function TableOfUsers({ open, onClose }: TableOfUsersProps) {
                         spacing={1}
                         justifyContent="flex-end"
                       >
-                        <UpDateUser id={user.id} name={user.name} />
+                        <UpdateUser id={user.id} name={user.name} />
                         <DeleteUser id={user.id} name={user.name} />
                       </Stack>
                     </TableCell>

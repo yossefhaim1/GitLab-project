@@ -4,13 +4,15 @@ import { CreateColumnDto, UpdateColumnDto } from './dto/column.dto';
 
 @Injectable()
 export class ColumnsService {
-  constructor(
-    private readonly columnRepository: ColumnRepository,
-  ) {}
+  constructor(private readonly columnRepository: ColumnRepository) {}
 
   async getColumnById(id: number) {
     return await this.columnRepository.findOne({
       where: { id },
+      relations: {
+        board: true,
+        items: true,
+      },
     });
   }
 
@@ -18,9 +20,16 @@ export class ColumnsService {
     return await this.columnRepository.find({
       relations: {
         board: true,
+        items: true,
       },
     });
   }
+  
+  async getColumnsByBoardId(boardId: number) {
+  return this.columnRepository.find({
+    where: { boardId },
+  });
+}
 
   async createColumn(createColumnDto: CreateColumnDto) {
     const column = this.columnRepository.create(createColumnDto);
@@ -34,16 +43,14 @@ export class ColumnsService {
   }
 
   async deleteColumn(id: number) {
-    const column = await this.getColumnById(id);
+    const result = await this.columnRepository.delete({ id });
 
-    if (!column) {
-      throw new NotFoundException();
+    if (result.affected === 0){
+      throw new NotFoundException(`Column with id ${id} not found`);
     }
 
-    await this.columnRepository.delete(id);
-
     return {
-      message: 'Column deleted successfully',
-    };
+      message : 'Column deleted successfully'
+    }
   }
 }

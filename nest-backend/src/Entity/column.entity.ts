@@ -10,7 +10,9 @@ export class ColumnEntity {
   id!: number;
 
   // מזהה את הלוח שאליו שייכת העמודה
-  @ManyToOne(() => BoardEntity, (board) => board.columns)
+  @ManyToOne(() => BoardEntity, (board) => board.columns, {
+      onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'boardId' })
   board!: BoardEntity;
 

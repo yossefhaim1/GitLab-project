@@ -6,6 +6,7 @@ import {
   DialogTitle,
   Typography,
 } from "@mui/material";
+import { useState } from "react";
 import { useBoardStore } from "../../store/boardStore";
 import { useDeleteBoard } from "../../React_Queries/useBoardMutationsDeleteData";
 
@@ -17,11 +18,23 @@ interface DeleteBoardProps {
 export function DeleteBoard({ open, onClose }: DeleteBoardProps) {
   const deleteBoard = useDeleteBoard();
   const activeBoardId = useBoardStore((state) => state.activeBoardId);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  async function handleDelete() {
-    if (!activeBoardId) return;
-    await deleteBoard.mutate(activeBoardId);
-    onClose();
+  function handleDelete() {
+    if (!activeBoardId) {
+      setErrorMessage("No active board selected.");
+      return;
+    }
+
+    deleteBoard.mutate(activeBoardId, {
+      onSuccess: () => {
+        setErrorMessage("");
+        onClose();
+      },
+      onError: () => {
+        setErrorMessage("Failed to delete board. Please try again.");
+      },
+    });
   }
 
   return (
@@ -30,12 +43,22 @@ export function DeleteBoard({ open, onClose }: DeleteBoardProps) {
 
       <DialogContent>
         <Typography>Are you sure you want to delete this board?</Typography>
+        {errorMessage ? (
+          <Typography color="error" sx={{ mt: 1 }}>
+            {errorMessage}
+          </Typography>
+        ) : null}
       </DialogContent>
 
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
 
-        <Button onClick={handleDelete} color="error" variant="contained">
+        <Button
+          onClick={handleDelete}
+          color="error"
+          variant="contained"
+          disabled={deleteBoard.isPending}
+        >
           Delete
         </Button>
       </DialogActions>

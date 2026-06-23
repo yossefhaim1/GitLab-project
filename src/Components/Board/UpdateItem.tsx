@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Box,
   Button,
@@ -8,25 +8,18 @@ import {
   Typography,
   Chip,
   Tooltip,
-  MenuItem,
   Autocomplete,
 } from "@mui/material";
 import { Edit } from "@mui/icons-material";
-import type { Items, PriorityTypeValues } from "../../Type";
-import { useItems, useUsers } from "../../React_Queries/useBoardsGetData";
-import { useUpDateItem } from "../../React_Queries/useBoardMutationsUpDateData";
+import type { Items, Priority, Tag } from "../../Type";
+import {
+  useItems,
+  useUsers,
+  usePriorities,
+  useTags,
+} from "../../React_Queries/useBoardsGetData";
+import { useUpdateItemWithTags } from "../../React_Queries/useBoardMutationsUpDateData";
 import { useBoardStore } from "../../store/boardStore";
-
-const PRIORITY_COLOR: Record<PriorityTypeValues, string> = {
-  LOW: "#38A169",
-  MEDIUM: "#ECC94B",
-  HIGH: "#E53E3E",
-};
-
-type TagInput = {
-  type: string;
-  color: string;
-};
 
 type UpdateItemProps = {
   itemId: number;
@@ -34,93 +27,94 @@ type UpdateItemProps = {
 
 export default function UpdateItem({ itemId }: UpdateItemProps) {
   const activeBoard = useBoardStore((state) => state.activeBoardId);
+
   const { data: items } = useItems(activeBoard);
-  const { data: Users    } = useUsers();
-  const updateItem = useUpDateItem();
-  const AllUsers = Users || [];
+  const { data: users } = useUsers();
+  const { data: priorities } = usePriorities();
+  const { data: allTags } = useTags();
+
+  const updateItem = useUpdateItemWithTags();
+
   const item = items?.find((currentItem) => currentItem.id === itemId);
 
-  const [open, setOpen] = useState<boolean>(false);
-  const [title, setTitle] = useState<string>("");
-  const [assigneeId, setAssigneeId] = useState<string>("");
-  const [priority, setPriority] = useState<PriorityTypeValues>("LOW");
-  const [tagText, setTagText] = useState<string>("");
-  const [tagColor, setTagColor] = useState<string>("#3bf63e");
-  const [tags, setTags] = useState<TagInput[]>([]);
+  const allUsers = users || [];
+  const priorityOptions = priorities || [];
+  const tagOptions = allTags || [];
 
-  useEffect(() => {
-    if (!open || !item) return;
+  const [open, setOpen] = useState(false);
+  const [title, setTitle] = useState("");
+  const [assigneeId, setAssigneeId] = useState<number | null>(null);
+  const [priorityId, setPriorityId] = useState<number | null>(null);
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  function handleOpen() {
+    if (!item) return;
 
     setTitle(item.title);
     setAssigneeId(item.assigneeId);
-    setPriority((item.priority?.[0]?.type as PriorityTypeValues) || "LOW");
-    setTags(item.tags || []);
-    setTagText("");
-    setTagColor("#3bf63e");
-  }, [open, item]);
-
-  function addTag() {
-    const value = tagText.trim();
-
-    if (!value) return;
-
-    const alreadyExists = tags.some(
-      (tag) => tag.type.toLowerCase() === value.toLowerCase(),
-    );
-
-    if (alreadyExists) {
-      setTagText("");
-      return;
-    }
-
-    setTags((prev) => [...prev, { type: value, color: tagColor }]);
-    setTagText("");
-  }
-
-  function removeTag(type: string) {
-    setTags((prev) => prev.filter((tag) => tag.type !== type));
+    setPriorityId(item.priorityId);
+    setSelectedTags(item.tags || []);
+    setErrorMessage("");
+    setOpen(true);
   }
 
   async function handleSave() {
-    if (!item) return;
+    if (!item) {
+      setErrorMessage("Task not found.");
+      return;
+    }
+
+    const cleanTitle = title.trim();
+    if (!cleanTitle) {
+      setErrorMessage("Title is required.");
+      return;
+    }
+
+    if (!assigneeId) {
+      setErrorMessage("Please select a user to assign this task.");
+      return;
+    }
+
+    if (!priorityId) {
+      setErrorMessage("Please select a priority.");
+      return;
+    }
+
+    setErrorMessage("");
 
     const changes: Partial<Items> = {};
-    const cleanTitle = title.trim();
-
-    if (cleanTitle === "") return;
 
     if (cleanTitle !== item.title) {
       changes.title = cleanTitle;
     }
 
-    const cleanAssigneeId = assigneeId.trim();
-    if (cleanAssigneeId === "") return;
-    if (cleanAssigneeId !== item.assigneeId) {
-      changes.assigneeId = cleanAssigneeId;
+    if (assigneeId !== item.assigneeId) {
+      changes.assigneeId = assigneeId;
     }
 
-    const nextPriority = [
+    if (priorityId !== item.priorityId) {
+      changes.priorityId = priorityId;
+    }
+
+    const selectedTagIds = selectedTags.map((tag) => tag.id);
+
+    updateItem.mutate(
       {
-        type: priority,
-        color: PRIORITY_COLOR[priority],
+        id: item.id,
+        changes,
+        tagIds: selectedTagIds,
       },
-    ];
-
-    if (JSON.stringify(nextPriority) !== JSON.stringify(item.priority)) {
-      changes.priority = nextPriority;
-    }
-
-    if (JSON.stringify(tags) !== JSON.stringify(item.tags)) {
-      changes.tags = tags;
-    }
-
-    if (Object.keys(changes).length === 0) {
-      setOpen(false);
-      return;
-    }
-
-    await updateItem.mutate({ id: item.id, changes });
-    setOpen(false);
+      {
+        onSuccess: () => {
+          setErrorMessage("");
+          setOpen(false);
+        },
+        onError: () => {
+          setErrorMessage("Failed to update task. Please try again.");
+        },
+      },
+    );
   }
 
   if (!item) return null;
@@ -131,7 +125,7 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
         <IconButton
           size="small"
           sx={{ width: 34, height: 34, p: 0.5 }}
-          onClick={() => setOpen(true)}
+          onClick={handleOpen}
         >
           <Edit fontSize="small" />
         </IconButton>
@@ -151,94 +145,97 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
             sx={{ mb: 2 }}
           />
 
-          <TextField
-            select
-            fullWidth
-            label="Priority"
-            value={priority}
-            onChange={(e) => setPriority(e.target.value as PriorityTypeValues)}
-            sx={{ mb: 2 }}
-          >
-            <MenuItem value="LOW">LOW</MenuItem>
-            <MenuItem value="MEDIUM">MEDIUM</MenuItem>
-            <MenuItem value="HIGH">HIGH</MenuItem>
-          </TextField>
-
           <Autocomplete
-            options={AllUsers}
-            getOptionLabel={(option) => option.name}
-            renderInput={(params) => (
-              <TextField {...params} label="Assign task" />
-            )}
+            options={priorityOptions}
+            getOptionLabel={(option: Priority) => option.type}
             value={
-              AllUsers.find((user) => user.name === assigneeId) || null
+              priorityOptions.find((priority) => priority.id === priorityId) ||
+              null
             }
             onChange={(_, newValue) => {
-              setAssigneeId(newValue ? newValue.name : "");
+              setPriorityId(newValue ? newValue.id : null);
             }}
+            renderOption={(props, option) => (
+              <Box
+                component="li"
+                {...props}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                }}
+              >
+                <Box
+                  sx={{
+                    width: 12,
+                    height: 12,
+                    borderRadius: "50%",
+                    backgroundColor: option.color,
+                  }}
+                />
+
+                {option.type}
+              </Box>
+            )}
+            renderInput={(params) => <TextField {...params} label="Priority" />}
             sx={{ mb: 2 }}
           />
 
-          <Box sx={{ display: "flex", gap: 1, mb: 1, alignItems: "center" }}>
-            <TextField
-              fullWidth
-              label="Add tag"
-              value={tagText}
-              onChange={(e) => setTagText(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") addTag();
-              }}
-            />
+          <Autocomplete
+            options={allUsers}
+            getOptionLabel={(option) => option.name}
+            value={allUsers.find((user) => user.id === assigneeId) || null}
+            onChange={(_, newValue) => {
+              setAssigneeId(newValue ? newValue.id : null);
+            }}
+            renderInput={(params) => (
+              <TextField {...params} label="Assign task" />
+            )}
+            sx={{ mb: 2 }}
+          />
 
-            <Box
-              sx={{
-                width: 32,
-                height: 32,
-                borderRadius: "500px",
-                backgroundColor: tagColor,
-                border: "2px solid #e5e7eb",
-                position: "relative",
-                cursor: "pointer",
-              }}
-            >
-              <input
-                type="color"
-                value={tagColor}
-                onChange={(e) => setTagColor(e.target.value)}
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: "100%",
-                  height: "100%",
-                  opacity: 0,
-                  cursor: "pointer",
-                  border: "none",
-                }}
-              />
-            </Box>
+          <Autocomplete
+            multiple
+            options={tagOptions}
+            getOptionLabel={(option: Tag) => option.title}
+            value={selectedTags}
+            onChange={(_, newValue) => {
+              setSelectedTags(newValue);
+            }}
+            renderTags={(value, getTagProps) =>
+              value.map((option, index) => {
+                const { key, ...tagProps } = getTagProps({ index });
 
-            <Button onClick={addTag} variant="contained">
-              Add
-            </Button>
-          </Box>
+                return (
+                  <Chip
+                    key={key}
+                    label={option.title}
+                    {...tagProps}
+                    sx={{
+                      backgroundColor: `${option.color}33`,
+                      color: option.color,
+                      border: `1px solid ${option.color}`,
+                    }}
+                  />
+                );
+              })
+            }
+            renderInput={(params) => <TextField {...params} label="Tags" />}
+            sx={{ mb: 2 }}
+          />
 
-          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
-            {tags.map((tag) => (
-              <Chip
-                key={tag.type}
-                label={tag.type}
-                onDelete={() => removeTag(tag.type)}
-                sx={{
-                  backgroundColor: `${tag.color}33`,
-                  color: tag.color,
-                  border: `1px solid ${tag.color}`,
-                }}
-              />
-            ))}
-          </Box>
+          {errorMessage ? (
+            <Typography color="error" sx={{ mb: 2, fontSize: 13 }}>
+              {errorMessage}
+            </Typography>
+          ) : null}
 
-          <Button fullWidth variant="contained" onClick={handleSave}>
+          <Button
+            fullWidth
+            variant="contained"
+            onClick={handleSave}
+            disabled={updateItem.isPending}
+          >
             Save
           </Button>
         </Box>

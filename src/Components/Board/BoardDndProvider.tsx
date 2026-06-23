@@ -46,6 +46,8 @@ export default function BoardDndProvider({
     const activeItemId = getItemId(active.id);
     const overId = String(over.id);
 
+    try {
+
     const activeItem = items.find((item) => item.id === activeItemId);
     if (!activeItem) return;
 
@@ -157,6 +159,9 @@ export default function BoardDndProvider({
           position: item.position,
         },
       });
+    }
+    } catch {
+      alert("Failed to move item. Please try again.");
     }
   }
 

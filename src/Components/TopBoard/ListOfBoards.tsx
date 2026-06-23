@@ -16,7 +16,7 @@ export function ListOfBoards() {
       <Autocomplete
         options={boards}
         getOptionLabel={(option) =>
-          `${option.name} ${option.isDefault ? "(Default)" : ""}`
+          `${option.title} ${option.isDefault ? "(Default)" : ""}`
         }
         isOptionEqualToValue={(option, value) => option.id === value.id}
         value={boards.find((board) => board.id === activeBoardId) || null}

@@ -1,17 +1,19 @@
 import { Box, Button } from "@mui/material";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import StarBorderRoundedIcon from "@mui/icons-material/StarBorderRounded";
+import { useState } from "react";
 import { useBoardStore } from "../../store/boardStore";
 import { useBoards } from "../../React_Queries/useBoardsGetData";
-import { useUpDateBoard } from "../../React_Queries/useBoardMutationsUpDateData";
+import { useSetDefaultBoard } from "../../React_Queries/useBoardMutationsUpDateData";
 
 export function SetDefaultBoardButton() {
   const activeBoardId = useBoardStore((state) => state.activeBoardId);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const { data } = useBoards();
   const boards = data?.boards ?? [];
 
-  const setDefaultBoard = useUpDateBoard();
+  const setDefaultBoard = useSetDefaultBoard();
 
   const activeBoard = boards.find((board) => board.id === activeBoardId);
 
@@ -29,7 +31,17 @@ export function SetDefaultBoardButton() {
         disabled={!activeBoard}
         onClick={() => {
           if (activeBoard) {
-            setDefaultBoard.mutate({ id: activeBoard.id });
+            setDefaultBoard.mutate(
+              { id: activeBoard.id },
+              {
+                onSuccess: () => {
+                  setErrorMessage("");
+                },
+                onError: () => {
+                  setErrorMessage("Failed to set default board. Please try again.");
+                },
+              },
+            );
           }
         }}
         sx={{
@@ -68,6 +80,11 @@ export function SetDefaultBoardButton() {
       >
         {activeBoard?.isDefault ? "Default Saved" : "Set as Default"}
       </Button>
+      {errorMessage ? (
+        <Box sx={{ color: "error.main", mt: 1, fontSize: 12 }}>
+          {errorMessage}
+        </Box>
+      ) : null}
     </Box>
   );
 }

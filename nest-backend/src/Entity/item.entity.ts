@@ -1,47 +1,68 @@
-import {Entity, Column , PrimaryGeneratedColumn, ManyToOne, OneToMany, JoinColumn} from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+} from 'typeorm';
 import { BoardEntity } from './board.entity';
 import { ColumnEntity } from './column.entity';
 import { PriorityEntity } from './priority.entity';
 import { ItemTagEntity } from './ItemTag.entity';
-
+import { UserEntity } from './user.entity';
 
 @Entity('items')
 export class ItemEntity {
+  @PrimaryGeneratedColumn()
+  id!: number;
 
-    @PrimaryGeneratedColumn()
-    id!: number;
-    
-    @ManyToOne(() => BoardEntity, (board) => board.items)
-    @JoinColumn({ name: 'boardId' })
-    board! : BoardEntity;
+  @ManyToOne(() => BoardEntity, (board) => board.items, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'boardId' })
+  board!: BoardEntity;
 
-    @Column({name : 'boardId'})
-    boardId!: number;
-    
-    @ManyToOne(() => ColumnEntity, (column) => column.items)
-    @JoinColumn({ name: 'columnId' })
-    column! : ColumnEntity;
+  @Column({ name: 'boardId' })
+  boardId!: number;
 
-    @Column({name : 'columnId'})
-    columnId!: number;
+  @ManyToOne(() => ColumnEntity, (column) => column.items, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'columnId' })
+  column!: ColumnEntity;
 
-    @Column({name : 'position'})
-    position!: number;
+  @Column({ name: 'columnId' })
+  columnId!: number;
 
-    @Column({name : 'title'})
-    title!: string;
+  @Column({ name: 'position' })
+  position!: number;
 
-    @Column({name : 'assignee'})
-    assignee!: string;
+  @Column({ name: 'title' })
+  title!: string;
 
-    @ManyToOne(() => PriorityEntity , (priority) => priority.items)
-    @JoinColumn({ name: 'priorityId' })
-    priority!: PriorityEntity;
+  @ManyToOne(() => UserEntity, (user) => user.items, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'assignee' })
+  assignee!: UserEntity | null;
 
-    @Column({name : 'priorityId'})
-    priorityId!: number;
+  @Column({ name: 'assignee', nullable: true })
+  assigneeId!: number | null;
 
-    @OneToMany (() => ItemTagEntity , (itemTag) => itemTag.item)
-    tags!: ItemTagEntity[];
+  @ManyToOne(() => PriorityEntity, (priority) => priority.items, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'priorityId'})
+  priority!: PriorityEntity | null;
 
+  @Column({ name: 'priorityId', nullable: true })
+  priorityId!: number | null;
+
+  @OneToMany(() => ItemTagEntity, (itemTag) => itemTag.item, {
+    cascade: true,
+  })
+  tags!: ItemTagEntity[];
 }

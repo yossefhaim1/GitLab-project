@@ -14,7 +14,6 @@ import {
   createColumnSchema,
   updateColumnSchema,
 } from './schemas/column.schema';
-import { id } from 'zod/v4/locales';
 
 @Controller('columns')
 export class ColumnsController {
@@ -24,7 +23,10 @@ export class ColumnsController {
   getColumns() {
     return this.columnsService.getColumns();
   }
-
+  @Get('board/:boardId')
+  getColumnsByBoardId(@Param('boardId', ParseIntPipe) boardId: number) {
+    return this.columnsService.getColumnsByBoardId(boardId);
+  }
   @Get(':id')
   getColumnById(@Param('id', ParseIntPipe) id: number) {
     return this.columnsService.getColumnById(id);
@@ -37,13 +39,16 @@ export class ColumnsController {
   }
 
   @Patch('/:id')
-  updateColumn(@Param('id', ParseIntPipe) id: number,@Body() body: UpdateColumnDto,) {
+  updateColumn(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: UpdateColumnDto,
+  ) {
     const updateColumnDto = updateColumnSchema.parse(body);
     return this.columnsService.updateColumn(id, updateColumnDto);
   }
 
   @Delete('/:id')
-  deleteColumn(@Param('id', ParseIntPipe) id: number ){
+  deleteColumn(@Param('id', ParseIntPipe) id: number) {
     return this.columnsService.deleteColumn(id);
   }
 }

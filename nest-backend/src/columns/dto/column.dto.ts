@@ -6,7 +6,6 @@ export type CreateColumnDto = {
 }
 
 export type UpdateColumnDto = {
-    id: number;
     title?: string;
     order?: number;
     color?: string;

@@ -18,9 +18,6 @@ export const createColumnSchema = z.object({
 });
 
 export const updateColumnSchema = z.object({
-  id: z
-    .number()
-    .int('ID must be an integer'),
   title: z
     .string()
     .min(1, 'Title is required')

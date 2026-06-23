@@ -12,12 +12,16 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PersonIcon from '@mui/icons-material/Person';
+import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
+import BookmarkAddedIcon from '@mui/icons-material/BookmarkAdded';
 import { useState } from "react";
 import type { MouseEvent } from "react";
 
+import { TableOfPriorities} from './TableOfPriorities';
+import { TableOfTags} from './TableOfTags';
 import { TableOfUsers} from "../Users/AllUsers";
 import { AddNewBoard } from "./AddNewBoard";
-import { DeleteBoard } from "./DeletBoard";
+import { DeleteBoard } from "./DeleteBoard";
 
 export function BoardActionsMenu() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -25,6 +29,8 @@ export function BoardActionsMenu() {
   const [openAddBoard, setOpenAddBoard] = useState<boolean>(false);
   const [openDeleteBoard, setOpenDeleteBoard] = useState<boolean>(false);
   const [openBoardUserBoard, setOpenBoardUserBoard] = useState<boolean>(false);
+  const [openTableOfPriorities, setOpenTableOfPriorities] = useState<boolean>(false);
+  const [openTableOfTags, setOpenTableOfTags] = useState<boolean>(false);
 
   const openMenu = Boolean(anchorEl);
 
@@ -94,13 +100,38 @@ export function BoardActionsMenu() {
             <ListItemIcon>
               <PersonIcon fontSize="small" />
             </ListItemIcon>
-            <ListItemText primary="Table all users" />
+            <ListItemText primary="Table Users" />
           </MenuItem> 
           
+            <MenuItem
+            onClick={() => {
+              handleCloseMenu();
+              setOpenTableOfPriorities(true);
+            }}
+          >
+            <ListItemIcon>
+              <PriorityHighIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText primary=" Priorities Table" />
+          </MenuItem>
+
           <MenuItem
             onClick={() => {
               handleCloseMenu();
+              setOpenTableOfTags(true);
+            }}
+          >
+            <ListItemIcon>
+              <BookmarkAddedIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText primary=" Tags Table" />
+          </MenuItem>
 
+          <Divider />
+
+          <MenuItem
+            onClick={() => {
+              handleCloseMenu();
               setTimeout(() => {
                 setOpenAddBoard(true);
               }, 0);
@@ -142,6 +173,15 @@ export function BoardActionsMenu() {
         open={openBoardUserBoard}
         onClose={() => setOpenBoardUserBoard(false)}
       />
+
+      <TableOfPriorities
+        open={openTableOfPriorities}
+        onClose={() => setOpenTableOfPriorities(false)}
+      />
+      <TableOfTags
+        open={openTableOfTags}
+        onClose={() => setOpenTableOfTags(false)}
+      />      
     </>
   );
 }

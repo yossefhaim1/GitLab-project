@@ -6,13 +6,30 @@ import { useAddUser } from "../../React_Queries/useBoardMutationsAddData";
 export default function AddUser() {
   const [open, setOpen] = useState<boolean>(false);
   const [userName, setUserName] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
   const addUser = useAddUser();
 
   function handleSaveUser() {
-    if (!userName.trim()) return;
-    addUser.mutate({ name: userName });
-    setUserName("");
-    setOpen(false);
+    const cleanName = userName.trim();
+
+    if (!cleanName) {
+      setErrorMessage("User name is required.");
+      return;
+    }
+
+    addUser.mutate(
+      { name: cleanName },
+      {
+        onSuccess: () => {
+          setErrorMessage("");
+          setUserName("");
+          setOpen(false);
+        },
+        onError: () => {
+          setErrorMessage("Failed to add user. Please try again.");
+        },
+      },
+    );
   }
   return (
     <Box>
@@ -31,8 +48,18 @@ export default function AddUser() {
               fullWidth
               variant="standard"
               value={userName}
-              onChange={(e) => setUserName(e.target.value)}
+              onChange={(e) => {
+                setUserName(e.target.value);
+                if (errorMessage) {
+                  setErrorMessage("");
+                }
+              }}
             />
+            {errorMessage ? (
+              <Typography color="error" sx={{ mt: 1, fontSize: 13 }}>
+                {errorMessage}
+              </Typography>
+            ) : null}
         </DialogContent>
         <DialogActions>
             <Button onClick={() => setOpen(false)}>Cancel</Button>

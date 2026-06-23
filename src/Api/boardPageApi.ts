@@ -1,4 +1,5 @@
 import api from "./Axios-Api";
+
 import type {
   Boards,
   Items,
@@ -7,226 +8,276 @@ import type {
   CreateColumnPayload,
   User,
   CreateUserPayload,
-} from  "../Type";
+  Tag,
+  CreateTagPayload,
+  Priority,
+  CreatePriorityPayload,
+  CreateItemTagPayload,
+  ItemTag,
+} from "../Type";
+
+// USERS
 
 async function getUsers() {
-  console.log("");
-  console.log("Fetching users...");
   const res = await api.get<User[]>("/users");
   return res.data;
 }
 
-async function addUser(user: CreateUserPayload) {
-  console.log("");
-  console.log("Adding new user...");
-  const res = await api.post<User>("/users", user);
+async function getUserById(id: number) {
+  const res = await api.get<User>(`/users/${id}`);
+  return res.data;
+}
+
+async function getUserByName(name: string) {
+  const res = await api.get<User>(`/users/name/${name}`);
+  return res.data;
+}
+
+async function addUser(userData: CreateUserPayload) {
+  const res = await api.post<User>("/users", userData);
   return res.data;
 }
 
 async function deleteUserById(id: number) {
-  console.log("");
-  console.log(`Deleting user with ID: ${id}`);
   const res = await api.delete(`/users/${id}`);
   return res.data;
 }
 
 async function updateUserById(id: number, changes: Partial<User>) {
-  console.log("");
-  console.log(`Updating user with ID: ${id}`);
   const res = await api.patch<User>(`/users/${id}`, changes);
   return res.data;
 }
 
-// הוספתי פונקציות API ל-boards, columns, items
+// BOARDS
+
 async function getBoards() {
-  console.log("");
-  console.log("Fetching boards...");
   const res = await api.get<Boards[]>("/boards");
   return res.data;
 }
 
-// הוספת BOARD חדש לאתר
-async function addBoard(changes: Partial<Boards>) {
-  console.log("");
-  console.log("Adding new Board");
-  const res = await api.post<Boards>("/boards", changes);
-  return res.data;
-}
-
-// הוספתי פונקציה ל-get של board לפי id
 async function getBoardById(boardId: number) {
-  console.log("");
-  console.log(`Fetching board with ID: ${boardId}`);
   const res = await api.get<Boards>(`/boards/${boardId}`);
   return res.data;
 }
 
-async function updateBoardById(newDefaultBoard: number) {
-  console.log("");
-  console.log(`Updating board with ID: ${newDefaultBoard}`);
-  const { data: boards } = await api.get<Boards[]>("/boards");
-  console.log("Success to fetch all Board");
-  
-  await Promise.all(
-    boards.map((board) => {
-      console.log(`Updating board with ID: ${board.id} - setting isDefault to ${board.id === newDefaultBoard}`);
-      return api.patch(`/boards/${board.id}`, {
-        isDefault: board.id === newDefaultBoard,
-      });
-    })
-  );
-
-  return newDefaultBoard;
+async function getAllParamsForBoard(boardId: number) {
+  const res = await api.get<Boards>(`/boards/${boardId}/params`);
+  return res.data;
 }
 
-async function DeleteColumnById(columnId: number) {
-  console.log("");
-  console.log(`Deleting column with ID: ${columnId}`);
+async function addBoard(boardData: Partial<Boards>) {
+  const res = await api.post<Boards>("/boards", boardData);
+  return res.data;
+}
 
-  // מביא את כל האייטמים של העמודה
-  const res = await api.get<Items[]>("/items", {
-    params: { columnId },
-  });
-  console.log("Success to fetch all Items");
+async function updateBoardById(boardId: number, changes: Partial<Boards>) {
+  const res = await api.patch<Boards>(`/boards/${boardId}`, changes);
+  return res.data;
+}
 
-  const items = res.data;
-
-  // מוחק את כל האייטמים
-  await Promise.all(
-    items.map((item: Items) => api.delete(`/items/${item.id}`)),
-  );
-  console.log("Success to Delete all Items");
-  // מוחק את הקולום
-  await api.delete(`/columns/${columnId}`);
-  console.log(`Deleted column with ID: ${columnId}`);
+async function setDefaultBoard(boardId: number) {
+  const res = await api.patch<Boards>(`/boards/${boardId}/default`);
+  return res.data;
 }
 
 async function deleteBoardById(boardId: number) {
-  console.log("");
-  console.log(`Starting deletion of board with ID: ${boardId}`);
-
-  const resBoards = await api.get<Boards[]>("/boards");
-  console.log("Success to fetch boards");
-  const boards = resBoards.data;
-
-  const boardToDelete = boards.find((b) => b.id === boardId);
-  const wasDefault = boardToDelete?.isDefault === true;
-  const nextDefaultBoard = boards.find((b) => b.id !== boardId);
-
-  const resItems = await api.get<Items[]>("/items", { params: { boardId } });
-  console.log("Success to fetch items");
-  const items = resItems.data;
-
-  for (const item of items) {
-    try {
-      await api.delete(`/items/${item.id}`);
-      console.log(
-        `Deleted item with ID: ${item.id} from board with ID: ${boardId}`,
-      );
-    } catch (error: any) {
-      if (error.response?.status !== 404) throw error;
-    }
-  }
-
-  const resColumns = await api.get<Columns[]>("/columns", {
-    params: { boardId },
-  });
-  const columns = resColumns.data;
-  console.log("Success to fetch columns");
-
-  for (const column of columns) {
-    try {
-      await api.delete(`/columns/${column.id}`);
-      console.log(
-        `Deleted column with ID: ${column.id} from board with ID: ${boardId}`,
-      );
-    } catch (error: any) {
-      if (error.response?.status !== 404) throw error;
-    }
-  }
-
-  await api.delete(`/boards/${boardId}`);
-  console.log(`Deleted board with ID: ${boardId}`);
-
-  if (wasDefault && nextDefaultBoard) {
-    await api.patch(`/boards/${nextDefaultBoard.id}`, {
-      isDefault: true,
-    });
-    console.log(`Set board with ID: ${nextDefaultBoard.id} as default`);
-  }
-
-  return boardId;
-}
-
-// הוספת עמודה חדשה לאתר
-async function addColumn(column: CreateColumnPayload) {
-  console.log("");
-  console.log("Adding new Column...");
-  const res = await api.post<Columns>("/columns", column);
+  const res = await api.delete(`/boards/${boardId}`);
   return res.data;
 }
 
-// הוספתי פונקציה ל-get של columns לפי boardId
-async function getColumns(boardId: number) {
-  console.log("");
-  console.log(`Fetching columns for board with ID: ${boardId}`);
-  const res = await api.get<Columns[]>("/columns", {
-    params: { boardId },
-  });
+// COLUMNS
+
+async function getColumns() {
+  const res = await api.get<Columns[]>("/columns");
   return res.data;
 }
 
-// הוספתי פונקציה ל-get של items לפי boardId
-async function getItems(boardId: number) {
-  console.log("");
-  console.log(`Fetching items for board with ID: ${boardId}`);
-  const res = await api.get<Items[]>("/items", {
-    params: { boardId },
-  });
+async function getColumnById(columnId: number) {
+  const res = await api.get<Columns>(`/columns/${columnId}`);
+  return res.data;
+}
+async function getColumnsByBoardId(boardId: number) {
+  const res = await api.get<Columns[]>(`/columns/board/${boardId}`);
   return res.data;
 }
 
-// הוספתי פונקציות ל-delete, add, update של items
-async function deleteItemById(id: number) {
-  console.log("");
-  console.log(`Deleting item with ID: ${id}`);
-  const res = await api.delete(`/items/${id}`);
-  console.log(`Successfully deleted item with ID: ${id}`);
+async function addColumn(columnData: CreateColumnPayload) {
+  const res = await api.post<Columns>("/columns", columnData);
   return res.data;
 }
 
-async function addItemRequest(item: CreateItemPayload) {
-  console.log("");
-  console.log("Adding new item...");
-  const res = await api.post<Items>("/items", item);
+async function updateColumnById(columnId: number, changes: Partial<Columns>) {
+  const res = await api.patch<Columns>(`/columns/${columnId}`, changes);
+  return res.data;
+}
+
+async function deleteColumnById(columnId: number) {
+  const res = await api.delete(`/columns/${columnId}`);
+  return res.data;
+}
+
+// ITEMS
+
+async function getItems() {
+  const res = await api.get<Items[]>("/items");
+  return res.data;
+}
+
+async function getItemById(id: number) {
+  const res = await api.get<Items>(`/items/${id}`);
+  return res.data;
+}
+
+async function getItemRelations(id: number) {
+  const res = await api.get<Items>(`/items/${id}/relations`);
+  return res.data;
+}
+
+async function getItemsByBoardId(boardId: number) {
+  const res = await api.get<Items[]>(`/items/board/${boardId}`);
+  return res.data;
+}
+
+async function getItemsByColumnId(columnId: number) {
+  const res = await api.get<Items[]>(`/items/column/${columnId}`);
+  return res.data;
+}
+
+async function addItemRequest(itemData: CreateItemPayload) {
+  const res = await api.post<Items>("/items", itemData);
   return res.data;
 }
 
 async function updateItemRequest(id: number, changes: Partial<Items>) {
-  console.log("");
-  console.log(`Updating item with ID: ${id}`);
   const res = await api.patch<Items>(`/items/${id}`, changes);
   return res.data;
 }
 
+async function deleteItemById(id: number) {
+  const res = await api.delete(`/items/${id}`);
+  return res.data;
+}
+
+// Tag
+
+async function getTags() {
+  const res = await api.get<Tag[]>("/tags");
+  return res.data;
+}
+
+async function createTag(tagData: CreateTagPayload) {
+  const res = await api.post<Tag>("/tags", tagData);
+  return res.data;
+}
+
+async function deleteTagById(id: number) {
+  const res = await api.delete(`/tags/${id}`);
+  return res.data;
+}
+
+async function updateTagById(id: number, changes: Partial<Tag>) {
+  const res = await api.patch<Tag>(`/tags/${id}`, changes);
+  return res.data;
+}
+
+// itemTags
+
+async function addItemTag(itemTagData: CreateItemTagPayload) {
+  const res = await api.post<ItemTag>("/itemTags", itemTagData);
+  return res.data;
+}
+
+async function getItemTagRelationsByItemId(
+  itemId: number
+): Promise<ItemTag[]> {
+  const res = await api.get<ItemTag[]>(
+    `/itemTags/item/${itemId}/relations`
+  );
+
+  return res.data;
+}
+
+async function deleteItemTagById(id: number) {
+  const res = await api.delete(`/itemTags/${id}`);
+  return res.data;
+}
+
+async function getTagsByItemId(itemId: number) {
+  const res = await api.get<Tag[]>(`/itemTags/item/${itemId}`);
+  return res.data;
+}
+
+//  priority
+
+async function getPriorities() {
+  const res = await api.get(`/priorities`);
+  return res.data;
+}
+
+async function addPriority(priorityData: CreatePriorityPayload) {
+  const res = await api.post("/priorities", priorityData);
+  return res.data;
+}
+async function updatePriorityById(id: number, changes: Partial<Priority>) {
+  const res = await api.patch<Priority>(`/priorities/${id}`, changes);
+  return res.data;
+}
+async function deletePriorityById(id: number) {
+  const res = await api.delete<Priority>(`/priorities/${id}`);
+  return res.data;
+}
+
 export const API = {
+  // users
   getUsers,
+  getUserById,
+  getUserByName,
   addUser,
   deleteUserById,
   updateUserById,
 
-  addBoard,
-  getBoardById,
+  // boards
   getBoards,
-  deleteBoardById,
+  getBoardById,
+  getAllParamsForBoard,
+  addBoard,
   updateBoardById,
+  setDefaultBoard,
+  deleteBoardById,
 
-  addColumn,
+  // columns
   getColumns,
-  DeleteColumnById,
+  getColumnById,
+  getColumnsByBoardId,
+  addColumn,
+  updateColumnById,
+  deleteColumnById,
 
+  // items
   getItems,
-  deleteItemById,
+  getItemById,
+  getItemRelations,
+  getItemsByBoardId,
+  getItemsByColumnId,
   addItemRequest,
   updateItemRequest,
+  deleteItemById,
+
+  // tags
+  getTags,
+  createTag,
+  updateTagById,
+  deleteTagById,
+
+  // itemTags
+  getTagsByItemId,
+  addItemTag,
+  getItemTagRelationsByItemId,
+  deleteItemTagById,
+
+  //priority
+  getPriorities,
+  addPriority,
+  updatePriorityById,
+  deletePriorityById,
 };

@@ -20,10 +20,18 @@ type DeleteItemProps = {
 export default function DeleteItem({ itemId }: DeleteItemProps) {
   const deleteItem = useDeleteItem();
   const [open, setOpen] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  async function handleDelete() {
-    await deleteItem.mutate(itemId);
-    setOpen(false);
+  function handleDelete() {
+    deleteItem.mutate(itemId, {
+      onSuccess: () => {
+        setErrorMessage("");
+        setOpen(false);
+      },
+      onError: () => {
+        setErrorMessage("Failed to delete this item. Please try again.");
+      },
+    });
   }
 
   return (
@@ -43,11 +51,21 @@ export default function DeleteItem({ itemId }: DeleteItemProps) {
 
         <DialogContent>
           <Typography>Are you sure you want to delete this item?</Typography>
+          {errorMessage ? (
+            <Typography color="error" sx={{ mt: 1 }}>
+              {errorMessage}
+            </Typography>
+          ) : null}
         </DialogContent>
 
         <DialogActions>
           <Button onClick={() => setOpen(false)}>Cancel</Button>
-          <Button onClick={handleDelete} color="error" variant="contained">
+          <Button
+            onClick={handleDelete}
+            color="error"
+            variant="contained"
+            disabled={deleteItem.isPending}
+          >
             Delete
           </Button>
         </DialogActions>

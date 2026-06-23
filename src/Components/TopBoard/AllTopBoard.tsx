@@ -1,7 +1,7 @@
 import { BoardActionsMenu } from "./BoardActionsMenu";
 import { Search } from "./Search";
 import { ListOfBoards } from "./ListOfBoards";
-import { SetDefaultBoardButton } from "./SetDefaulteBoardButton";
+import { SetDefaultBoardButton } from "./SetDefaultBoardButton";
 import { Box } from "@mui/material";
 
 export function AllTopBoard() {
