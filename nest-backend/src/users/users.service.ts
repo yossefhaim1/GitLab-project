@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { UserRepository } from '../Repositorys/User.Repository';
+import { UserRepository } from './User.Repository';
 import type { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { UserEntity } from '../Entity/user.entity';
 import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere.js';

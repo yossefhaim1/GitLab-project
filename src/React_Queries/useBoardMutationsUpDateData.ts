@@ -125,7 +125,7 @@ export function useUpDateUser() {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
-      queryClient.invalidateQueries({ queryKey: ["items"] });
+      queryClient.invalidateQueries({ queryKey: ["items", boardId] });
     },
   });
 }
@@ -153,7 +153,7 @@ export function useUpDateTag() {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tags"] });
-      queryClient.invalidateQueries({ queryKey: ["items"] });
+      queryClient.invalidateQueries({ queryKey: ["items", boardId] });
       queryClient.invalidateQueries({ queryKey: ["itemTags"] });
     },
   });

@@ -6,7 +6,7 @@ const defaultQueryOptions = {
   gcTime: 1000 * 60 * 10,
   refetchOnWindowFocus: false,
   refetchOnReconnect: false,
-  refetchInterval: 1000 * 60 * 5,
+  refetchInterval: 1000 * 30 ,
   retry: 2,
 };
 

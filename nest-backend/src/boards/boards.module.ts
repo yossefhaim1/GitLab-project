@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { BoardsService } from './boards.service';
 import { BoardsController } from './boards.controller';
 import { BoardEntity } from '../Entity/board.entity';
-import { BoardRepository } from '../Repositorys/Board.Repository';
+import { BoardRepository } from './Board.Repository';
 
 @Module({
   imports: [

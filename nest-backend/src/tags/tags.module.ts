@@ -3,7 +3,7 @@ import {TypeOrmModule} from '@nestjs/typeorm';
 import {TagsService} from './tags.service';
 import {TagsController} from './tags.controller';
 import {TagEntity} from '../Entity/tag.entity';
-import { TagRepository } from '../Repositorys/Tag.Repository';
+import { TagRepository } from './Tag.Repository';
 
 @Module({
     imports: [

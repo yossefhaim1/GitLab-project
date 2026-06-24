@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { BoardRepository } from '../Repositorys/Board.Repository';
+import { BoardRepository } from './Board.Repository';
 import type { CreateBoardDto, UpdateBoardDto } from './dto/board.dto';
 
 @Injectable()

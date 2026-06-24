@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ItemTagRepository } from '../Repositorys/ItemTag.Repository';
+import { ItemTagRepository } from './ItemTag.Repository';
 import { ItemTagEntity } from '../Entity/ItemTag.entity';
 import { createItemTagDto, updateItemTagDto } from './dto/item-tag.dto';
 

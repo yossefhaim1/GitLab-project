@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { TagRepository } from '../Repositorys/Tag.Repository';
+import { TagRepository } from './Tag.Repository';
 import { TagEntity } from '../Entity/tag.entity';
 import { CreateTagDto, UpdateTagDto } from './dto/tag.dto';
 import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere.js';

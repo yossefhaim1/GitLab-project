@@ -4,7 +4,7 @@ export const createBoardSchema = z.object({
   title: z
     .string()
     .min(1, 'Title is required')
-    .max(20, 'Title is too long'),
+    .max(50, 'Title is too long'),
 
   isDefault: z.boolean().optional(),
 });

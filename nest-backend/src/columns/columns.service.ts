@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { ColumnRepository } from '../Repositorys/Column.Repository';
+import { ColumnRepository } from './Column.Repository';
 import { CreateColumnDto, UpdateColumnDto } from './dto/column.dto';
 
 @Injectable()

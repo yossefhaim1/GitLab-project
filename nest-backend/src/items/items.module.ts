@@ -3,7 +3,7 @@ import { ItemsService } from './items.service';
 import { ItemsController } from './items.controller';
 import { ItemEntity } from '../Entity/item.entity';
 import { TypeOrmModule } from '@nestjs/typeorm/dist/typeorm.module';
-import { ItemRepository } from '../Repositorys/Item.Repository';
+import { ItemRepository } from './Item.Repository';
 
 @Module({
   imports: [

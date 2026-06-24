@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PriorityRepository } from '../Repositorys/Priorities.Repository';
+import { PriorityRepository } from './Priorities.Repository';
 import { PriorityTypeValues } from '../Type.nestJs';
 import { CreatePriorityDto, UpdatePriorityDto } from './dto/priority.dto';
 import { PriorityEntity } from '../Entity/priority.entity';

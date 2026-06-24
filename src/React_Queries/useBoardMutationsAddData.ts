@@ -31,8 +31,8 @@ export function useAddColumn() {
   return useMutation({
     mutationFn: (columnData: CreateColumnPayload) => API.addColumn(columnData),
 
-    onSuccess: (newColumn) => {
-      queryClient.invalidateQueries({ queryKey: ["columns", newColumn.boardId] });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["columns"] });
     },
   });
 }
@@ -43,8 +43,8 @@ export function useAddItem() {
   return useMutation({
     mutationFn: (itemData: CreateItemPayload) => API.addItemRequest(itemData),
 
-    onSuccess: (newItem) => {
-      queryClient.invalidateQueries({ queryKey: ["items", newItem.boardId] });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["items"] });
     },
   });
 }
@@ -74,8 +74,8 @@ export function useAddItemWithTags() {
       return newItem;
     },
 
-    onSuccess: (newItem) => {
-      queryClient.invalidateQueries({ queryKey: ["items", newItem.boardId] });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["items"] });
     },
   });
 }
