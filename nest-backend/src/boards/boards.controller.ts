@@ -11,35 +11,47 @@ import {
 import { BoardsService } from './boards.service';
 import type { CreateBoardDto, UpdateBoardDto } from './dto/board.dto';
 import { createBoardSchema, updateBoardSchema } from './schemas/board.schema';
-import { BoardEntity } from '../Entity/board.entity';
+import {
+  BoardResponseDto,
+  DeleteBoardResponseDto,
+  GetAllParamsForBoardResponseDto,
+  GetBoardsResponseDto,
+} from './dto/board-response.dto';
+
 
 @Controller('boards')
 export class BoardsController {
   constructor(private readonly boardsService: BoardsService) {}
 
   @Get()
-  getBoards() : Promise<BoardEntity[]> {
+  getBoards(): Promise<GetBoardsResponseDto> {
     return this.boardsService.getBoards();
   }
 
   @Get('/:id')
-  getBoardById(@Param('id', ParseIntPipe) id: number) {
+  getBoardById(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<BoardResponseDto | null> {
     return this.boardsService.getBoardById(id);
   }
 
   @Get('/:id/params')
-  getAllParamsForBoard(@Param('id', ParseIntPipe) id: number) {
+  getAllParamsForBoard(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<GetAllParamsForBoardResponseDto> {
     return this.boardsService.getAllParamsForBoard(id);
   }
 
   @Post()
-  createBoard(@Body() body: CreateBoardDto) {
+  createBoard(@Body() body: CreateBoardDto): Promise<BoardResponseDto> {
     const createBoardDto = createBoardSchema.parse(body);
     return this.boardsService.createBoard(createBoardDto);
   }
-  
+
   @Patch(':id/default')
-  setDefaultBoard(@Param('id', ParseIntPipe) id: number) {
+  setDefaultBoard(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<BoardResponseDto> {
     return this.boardsService.setDefaultBoard(id);
   }
 
@@ -47,13 +59,15 @@ export class BoardsController {
   updateBoard(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdateBoardDto,
-  ) {
+  ): Promise<BoardResponseDto | null> {
     const updateBoardDto = updateBoardSchema.parse(body);
     return this.boardsService.updateBoard(id, updateBoardDto);
   }
 
   @Delete('/:id')
-  deleteBoard(@Param('id', ParseIntPipe) id: number) {
+  deleteBoard(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<DeleteBoardResponseDto> {
     return this.boardsService.deleteBoard(id);
   }
 }

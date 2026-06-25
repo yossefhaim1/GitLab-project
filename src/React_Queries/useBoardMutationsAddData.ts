@@ -10,6 +10,7 @@ import type {
   CreateItemTagPayload,
 } from "../Type";
 import { useBoardStore } from "../store/boardStore";
+import { useActiveBoardId } from "../Hook/useActiveBoardId";
 
 export function useAddBoard() {
   const queryClient = useQueryClient();
@@ -43,8 +44,8 @@ export function useAddItem() {
   return useMutation({
     mutationFn: (itemData: CreateItemPayload) => API.addItemRequest(itemData),
 
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["items"] });
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["items", variables.boardId] });
     },
   });
 }
@@ -74,8 +75,8 @@ export function useAddItemWithTags() {
       return newItem;
     },
 
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["items"] });
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["items", variables.item.boardId] });
     },
   });
 }
@@ -119,14 +120,14 @@ export function useAddTag() {
 
 export function useAddItemTag() {
   const queryClient = useQueryClient();
+  const boardId = useActiveBoardId();
 
   return useMutation({
     mutationFn: (itemTagData: CreateItemTagPayload) =>
       API.addItemTag(itemTagData),
 
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["itemTags"] });
-      queryClient.invalidateQueries({ queryKey: ["items"] });
+      queryClient.invalidateQueries({ queryKey: ["items", boardId] });
     },
   });
 }

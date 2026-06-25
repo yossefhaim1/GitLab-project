@@ -14,26 +14,36 @@ import {
   createColumnSchema,
   updateColumnSchema,
 } from './schemas/column.schema';
+import {
+  ColumnResponseDto,
+  ColumnWithRelationsResponseDto,
+  GetColumnsResponseDto,
+  GetColumnsByBoardIdResponseDto,
+  DeleteColumnResponseDto,
+} from './dto/column-response.dto';
 
 @Controller('columns')
 export class ColumnsController {
   constructor(private readonly columnsService: ColumnsService) {}
 
   @Get()
-  getColumns() {
+  getColumns() : Promise<GetColumnsResponseDto>{
     return this.columnsService.getColumns();
   }
   @Get('board/:boardId')
-  getColumnsByBoardId(@Param('boardId', ParseIntPipe) boardId: number) {
+  getColumnsByBoardId(@Param('boardId', ParseIntPipe) boardId: number)
+  : Promise<GetColumnsByBoardIdResponseDto | null> {
     return this.columnsService.getColumnsByBoardId(boardId);
   }
   @Get(':id')
-  getColumnById(@Param('id', ParseIntPipe) id: number) {
+  getColumnById(@Param('id', ParseIntPipe) id: number)
+  : Promise<ColumnWithRelationsResponseDto | null> {
     return this.columnsService.getColumnById(id);
   }
 
   @Post()
-  createColumn(@Body() body: CreateColumnDto) {
+  createColumn(@Body() body: CreateColumnDto)
+  : Promise<ColumnResponseDto> {
     const createColumnDto = createColumnSchema.parse(body);
     return this.columnsService.createColumn(createColumnDto);
   }
@@ -42,13 +52,14 @@ export class ColumnsController {
   updateColumn(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdateColumnDto,
-  ) {
+  ): Promise<ColumnResponseDto | null> {
     const updateColumnDto = updateColumnSchema.parse(body);
     return this.columnsService.updateColumn(id, updateColumnDto);
   }
 
   @Delete('/:id')
-  deleteColumn(@Param('id', ParseIntPipe) id: number) {
+  deleteColumn(@Param('id', ParseIntPipe) id: number)
+  : Promise<DeleteColumnResponseDto> {
     return this.columnsService.deleteColumn(id);
   }
 }

@@ -104,9 +104,7 @@ export default function Board() {
               scrollBehavior: "smooth",
             }}
           >
-            {[...(columns || [])]
-              .sort((a, b) => a.order - b.order)
-              .map((col) => (
+            {(columns || []).map((col) => (
                 <Column key={col.id} columnId={col.id} />
               ))}
 

@@ -51,8 +51,8 @@ async function updateUserById(id: number, changes: Partial<User>) {
 // BOARDS
 
 async function getBoards() {
-  const res = await api.get<Boards[]>("/boards");
-  return res.data;
+  const res = await api.get<{ boards: Boards[] }>("/boards");
+  return res.data;    
 }
 
 async function getBoardById(boardId: number) {
@@ -88,7 +88,7 @@ async function deleteBoardById(boardId: number) {
 // COLUMNS
 
 async function getColumns() {
-  const res = await api.get<Columns[]>("/columns");
+  const res = await api.get<{ columns: Columns[] }>("/columns");
   return res.data;
 }
 
@@ -97,7 +97,7 @@ async function getColumnById(columnId: number) {
   return res.data;
 }
 async function getColumnsByBoardId(boardId: number) {
-  const res = await api.get<Columns[]>(`/columns/board/${boardId}`);
+  const res = await api.get<{ columns: Columns[] }>(`/columns/board/${boardId}`);
   return res.data;
 }
 

@@ -20,12 +20,10 @@ export function AddColumn() {
   const [errorMessage, setErrorMessage] = useState("");
   const addColumn = useAddColumn();
   const activeBoardId = useBoardStore((state) => state.activeBoardId);
-    const { data: columns = [] } = useColumns(activeBoardId);
+  const { data: columns = [] } = useColumns(activeBoardId);
     
   const nextOrder = useMemo(() => {
-    const orders = columns
-      ?.filter((col) => col.boardId === activeBoardId)
-      .map((col) => col.order) || [];
+    const orders = columns.map((col) => col.order);
 
     return orders.length > 0 ? Math.max(...orders) + 1 : 1;
   }, [columns, activeBoardId]);
@@ -45,7 +43,6 @@ export function AddColumn() {
 
   const isColumnExists = columns.some(
     (column) =>
-      column.boardId === activeBoardId &&
       column.title.trim().toLowerCase() === cleanTitle.toLowerCase()
   );
 

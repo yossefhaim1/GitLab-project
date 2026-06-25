@@ -3,7 +3,7 @@ import { useBoardStore } from "../../store/boardStore";
 import { useBoards } from "../../React_Queries/useBoardsGetData";
 
 export function ListOfBoards() {
-  const { data } = useBoards();
+  const {data}  = useBoards();
 
   const boards = data?.boards ?? [];
 

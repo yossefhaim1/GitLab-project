@@ -8,9 +8,7 @@ import type {
   Priority,
   Tag,
 } from "../Type";
-import { useBoardStore } from "../store/boardStore";
-
-const boardId = useBoardStore.getState().activeBoardId;
+import { useActiveBoardId } from "../Hook/useActiveBoardId";
 
 export function useUpDateBoard() {
   const queryClient = useQueryClient();
@@ -40,33 +38,35 @@ export function useSetDefaultBoard() {
 
 export function useUpDateColumn() {
   const queryClient = useQueryClient();
+  const boardId = useActiveBoardId();
 
   return useMutation({
     mutationFn: (columnData: { id: number; changes: Partial<Columns> }) =>
       API.updateColumnById(columnData.id, columnData.changes),
 
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["columns"] });
+      queryClient.invalidateQueries({ queryKey: ["columns", boardId] });
     },
   });
 }
 
 export function useUpDateItem() {
   const queryClient = useQueryClient();
+  const boardId = useActiveBoardId();
 
   return useMutation({
     mutationFn: (itemData: { id: number; changes: Partial<Items> }) =>
       API.updateItemRequest(itemData.id, itemData.changes),
 
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["items"] });
-      queryClient.invalidateQueries({ queryKey: ["itemTags"] });
+      queryClient.invalidateQueries({ queryKey: ["items", boardId] });
     },
   });
 }
 
 export function useUpdateItemWithTags() {
   const queryClient = useQueryClient();
+  const boardId = useActiveBoardId();
 
   return useMutation({
     mutationFn: async ({id,changes,tagIds,}: {id: number;changes: Partial<Items>;tagIds: number[];}) => {
@@ -110,7 +110,7 @@ export function useUpdateItemWithTags() {
     },
 
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["items" , boardId] });
+      queryClient.invalidateQueries({ queryKey: ["items", boardId] });
 
     },
   });
@@ -118,6 +118,7 @@ export function useUpdateItemWithTags() {
 
 export function useUpDateUser() {
   const queryClient = useQueryClient();
+  const boardId = useActiveBoardId();
 
   return useMutation({
     mutationFn: (userData: { id: number; changes: Partial<User> }) =>
@@ -132,6 +133,7 @@ export function useUpDateUser() {
 
 export function useUpDatePriority() {
   const queryClient = useQueryClient();
+  const boardId = useActiveBoardId();
 
   return useMutation({
     mutationFn: (priorityData: { id: number; changes: Partial<Priority> }) =>
@@ -146,6 +148,7 @@ export function useUpDatePriority() {
 
 export function useUpDateTag() {
   const queryClient = useQueryClient();
+  const boardId = useActiveBoardId();
 
   return useMutation({
     mutationFn: (tagData: { id: number; changes: Partial<Tag> }) =>
@@ -154,7 +157,6 @@ export function useUpDateTag() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tags"] });
       queryClient.invalidateQueries({ queryKey: ["items", boardId] });
-      queryClient.invalidateQueries({ queryKey: ["itemTags"] });
     },
   });
   

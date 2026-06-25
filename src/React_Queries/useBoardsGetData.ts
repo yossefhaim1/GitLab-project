@@ -1,23 +1,24 @@
 import { useQuery } from "@tanstack/react-query";
 import { API } from "../Api/boardPageApi";
+import type { Boards, Columns, Items } from "../Type";
 
 const defaultQueryOptions = {
   staleTime: 1000 * 60 * 5,
-  gcTime: 1000 * 60 * 10,
+  cacheTime: 1000 * 60 * 10,
   refetchOnWindowFocus: false,
   refetchOnReconnect: false,
-  refetchInterval: 1000 * 30 ,
+  refetchInterval: 1000 * 60 * 5,
   retry: 2,
 };
 
 export function useBoards() {
-  return useQuery({
+  return useQuery<{ boards: Boards[] }, Error, { boards: Boards[]; defaultBoardId: number | undefined }>({
     queryKey: ["boards"],
     queryFn: API.getBoards,
     ...defaultQueryOptions,
     refetchOnMount: true,
-    placeholderData: [],
-    select: (boards) => {
+    select: (data) => {
+      const boards = data.boards ?? [];
       const defaultBoardId = boards.find((board) => board.isDefault)?.id;
       return { boards, defaultBoardId };
     },
@@ -25,26 +26,23 @@ export function useBoards() {
 }
 
 export function useColumns(boardId: number | undefined) {
-  return useQuery({
+  return useQuery<{ columns: Columns[] }, Error, Columns[]>({
     queryKey: ["columns", boardId],
     queryFn: () => API.getColumnsByBoardId(boardId!),
     enabled: boardId !== undefined,
     ...defaultQueryOptions,
     refetchOnMount: false,
-    placeholderData: [],
-    select: (columns) => [...columns].sort((a, b) => a.order - b.order),
+    select: (data) => data.columns ?? [],
   });
 }
 
 export function useItems(boardId: number | undefined) {
-  return useQuery({
+  return useQuery<Items[], Error, Items[]>({
     queryKey: ["items", boardId],
     queryFn: () => API.getItemsByBoardId(boardId!),
     enabled: boardId !== undefined,
     ...defaultQueryOptions,
     refetchOnMount: false,
-    placeholderData: [],
-    select: (items) => [...items].sort((a, b) => a.position - b.position),
   });
 }
 

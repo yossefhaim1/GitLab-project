@@ -1,15 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ItemRepository } from './Item.Repository';
 import { CreateItemDto, UpdateItemDto } from './dto/item.dto';
+import { DeleteItemResponseDto, GetItemByIdResponseDto, ItemResponseDto } from './dto/item-response.dto';
 @Injectable()
 export class ItemsService {
   constructor(private readonly itemRepository: ItemRepository) {}
 
-  async getAllItems() {
-    return await this.itemRepository.find();
+  async getAllItems() :Promise<ItemResponseDto[]>{
+    return await this.itemRepository.find({
+      order: { position: 'ASC' },
+    });
   }
 
-  async getItemById(id: number) {
+  async getItemById(id: number): Promise<GetItemByIdResponseDto> {
     const item = await this.itemRepository.findOne({
       where: { id },
       relations: {
@@ -33,9 +36,10 @@ export class ItemsService {
     };
   }
 
-  async getItemsByBoardId(boardId: number) {
+  async getItemsByBoardId(boardId: number) :Promise<GetItemByIdResponseDto[]> {
     const items = await this.itemRepository.find({
       where: { boardId },
+      order: { position: 'ASC' },
       relations: {
         priority: true,
         assignee: true,
@@ -53,18 +57,21 @@ export class ItemsService {
     }));
   }
 
-  async getItemsByColumnId(columnId: number) {
+  async getItemsByColumnId(columnId: number) :Promise<ItemResponseDto[]> {
     return await this.itemRepository.find({
       where: { columnId },
+      order: { position: 'ASC' },
     });
   }
 
-  async createItem(createItemDto: CreateItemDto) {
+  async createItem(createItemDto: CreateItemDto)
+  : Promise<ItemResponseDto> {
     const item = this.itemRepository.create(createItemDto);
     return this.itemRepository.save(item);
   }
 
-  async updateItem(id: number, updateItemDto: UpdateItemDto) {
+  async updateItem(id: number, updateItemDto: UpdateItemDto)
+  : Promise<GetItemByIdResponseDto> {
     const result = await this.itemRepository.update({ id }, updateItemDto);
 
     if (result.affected === 0) {
@@ -74,7 +81,8 @@ export class ItemsService {
     return this.getItemById(id);
   }
 
-  async deleteItem(id: number) {
+  async deleteItem(id: number) :Promise<DeleteItemResponseDto>
+   {
     const result = await this.itemRepository.delete(id);
 
     if (result.affected === 0) {
@@ -86,7 +94,7 @@ export class ItemsService {
     };
   }
 
-  async getRelationsItem(id: number) {
+  async getRelationsItem(id: number) :Promise<GetItemByIdResponseDto> {
     const item = await this.itemRepository.findOne({
       where: { id },
       relations: {

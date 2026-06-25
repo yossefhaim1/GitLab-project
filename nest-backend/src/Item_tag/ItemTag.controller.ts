@@ -24,7 +24,7 @@ export class ItemTagController {
 
   @Get('/item/:itemId/relations')
   getItemTagRelationsByItemId(@Param('itemId', ParseIntPipe) itemId: number) {
-    return this.itemTagService.getItemTagRelationsByItemId(itemId);
+    return this.itemTagService.getItemTagByItemId(itemId);
   }
 
   @Get('/:id/relations')
