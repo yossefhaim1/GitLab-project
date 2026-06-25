@@ -38,26 +38,31 @@ export class BoardsService {
   }
 
   async deleteBoard(id: number): Promise<DeleteBoardResponseDto> {
-  const boardToDelete = await this.getBoardById(id);
+    const boardToDelete = await this.getBoardById(id);
 
-  if (boardToDelete?.isDefault) {
-    const anyBoard = await this.boardRepository.findOne({
-      where: {},
-      order: {
-        id: 'ASC',
-      },
-    });
+    const result = await this.boardRepository.delete({ id });
 
-    if (anyBoard) {
-      await this.setDefaultBoard(anyBoard.id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`Board with id ${id} not found`);
     }
+
+    if (boardToDelete?.isDefault) {
+      const anyBoard = await this.boardRepository.findOne({
+        where: {},
+        order: {
+          id: 'ASC',
+        },
+      });
+
+      if (anyBoard) {
+        await this.setDefaultBoard(anyBoard.id);
+      }
+    }
+
+    return {
+      message: 'Board deleted successfully',
+    };
   }
-  
-  await this.boardRepository.delete({ id });
-  return {
-    message: 'Board deleted successfully',
-  };
-}
 
   async setDefaultBoard(id: number): Promise<BoardResponseDto> {
     const board = await this.getBoardById(id);
@@ -84,7 +89,9 @@ export class BoardsService {
     return this.getBoardById(id);
   }
 
-  async getAllParamsForBoard(id: number): Promise<GetAllParamsForBoardResponseDto> {
+  async getAllParamsForBoard(
+    id: number,
+  ): Promise<GetAllParamsForBoardResponseDto> {
     const board = await this.boardRepository.findOne({
       where: { id },
       relations: {

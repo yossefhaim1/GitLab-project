@@ -25,7 +25,8 @@ interface TableOfPrioritiesProps {
 }
 
 export function TableOfPriorities({ open, onClose }: TableOfPrioritiesProps) {
-  const { data: priority = [], isLoading, error } = usePriorities();
+  const { data: priorities = [], isLoading, error } = usePriorities();
+
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle>
@@ -34,10 +35,11 @@ export function TableOfPriorities({ open, onClose }: TableOfPrioritiesProps) {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            gap: 2,
           }}
         >
-          Table Of Priorities
-          <AddPriority  />
+          <Typography variant="h6">Table Of Priorities</Typography>
+          <AddPriority />
         </Box>
       </DialogTitle>
 
@@ -46,7 +48,7 @@ export function TableOfPriorities({ open, onClose }: TableOfPrioritiesProps) {
           <Typography>Loading priorities...</Typography>
         ) : error ? (
           <Typography color="error">Error loading priorities</Typography>
-        ) : priority.length === 0 ? (
+        ) : priorities.length === 0 ? (
           <Typography>No priorities available</Typography>
         ) : (
           <TableContainer sx={{ maxHeight: 350 }}>
@@ -62,6 +64,7 @@ export function TableOfPriorities({ open, onClose }: TableOfPrioritiesProps) {
                   >
                     Priority Name
                   </TableCell>
+
                   <TableCell
                     align="right"
                     sx={{
@@ -76,28 +79,47 @@ export function TableOfPriorities({ open, onClose }: TableOfPrioritiesProps) {
               </TableHead>
 
               <TableBody>
-                {priority.map((priority) => (
+                {priorities.map((priority) => (
                   <TableRow key={priority.id}>
                     <TableCell>
                       <Box
-                        sx={{ display: "flex",
-                           alignItems: "center", gap: 1 }}
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 1,
+                        }}
                       >
                         <Box
                           sx={{
-                            width: 50,
-                            height: 20,
-                            borderRadius: "10%",
+                            width: 18,
+                            height: 18,
+                            borderRadius: "50%",
                             backgroundColor: priority.color,
+                            border: "1px solid #cbd5e1",
+                            flexShrink: 0,
                           }}
                         />
-                        {priority.type}
+
+                        <Typography>{priority.type}</Typography>
                       </Box>
                     </TableCell>
+
                     <TableCell align="right">
-                      <Stack direction="row" gap={1} justifyContent="flex-end">
-                        <UpDatePriority id={priority.id} type={priority.type} color={priority.color} />
-                        <DeletePriority id={priority.id} type={priority.type} />
+                      <Stack
+                        direction="row"
+                        gap={1}
+                        justifyContent="flex-end"
+                      >
+                        <UpDatePriority
+                          id={priority.id}
+                          type={priority.type}
+                          color={priority.color}
+                        />
+
+                        <DeletePriority
+                          id={priority.id}
+                          type={priority.type}
+                        />
                       </Stack>
                     </TableCell>
                   </TableRow>
@@ -107,6 +129,7 @@ export function TableOfPriorities({ open, onClose }: TableOfPrioritiesProps) {
           </TableContainer>
         )}
       </DialogContent>
+
       <DialogActions>
         <Button onClick={onClose} color="primary">
           Close

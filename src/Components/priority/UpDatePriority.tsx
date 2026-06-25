@@ -28,21 +28,47 @@ export function UpDatePriority({ id, type, color }: UpDatePriorityProps) {
   const [newType, setNewType] = useState<PriorityTypeValues>(type);
   const [newColor, setNewColor] = useState<string>(color);
   const [errorMessage, setErrorMessage] = useState<string>("");
+
   const updatePriority = useUpDatePriority();
 
-  function handleUpdatePriority() {
-    const cleanType = newType.trim();
+  function handleOpen() {
+    setNewType(type);
+    setNewColor(color);
+    setErrorMessage("");
+    setOpen(true);
+  }
 
-    if (!cleanType) {
+  function handleClose() {
+    setErrorMessage("");
+    setOpen(false);
+  }
+
+  function handleUpdatePriority() {
+    const cleanColor = newColor.trim();
+
+    if (!newType) {
       setErrorMessage("Priority type is required.");
       return;
     }
+
+    if (!cleanColor) {
+      setErrorMessage("Priority color is required.");
+      return;
+    }
+
+    const isValidHexColor = /^#[0-9A-Fa-f]{6}$/.test(cleanColor);
+
+    if (!isValidHexColor) {
+      setErrorMessage("Color must be a valid hex color, for example #ff0000.");
+      return;
+    }
+
     updatePriority.mutate(
       {
         id,
         changes: {
-          type: cleanType as PriorityTypeValues,
-          color: newColor,
+          type: newType,
+          color: cleanColor,
         },
       },
       {
@@ -63,7 +89,7 @@ export function UpDatePriority({ id, type, color }: UpDatePriorityProps) {
     <Box>
       <Dialog
         open={open}
-        onClose={() => setOpen(false)}
+        onClose={handleClose}
         PaperProps={{
           sx: {
             width: "500px",
@@ -71,18 +97,24 @@ export function UpDatePriority({ id, type, color }: UpDatePriorityProps) {
           },
         }}
       >
-        {" "}
         <DialogTitle>Update Priority</DialogTitle>
+
         <DialogContent>
-            <br />
+          <Typography>Update the priority type and color:</Typography>
+
           <Autocomplete
             options={PRIORITY_TYPES}
             value={newType}
             onChange={(_, value) => {
               if (value) {
                 setNewType(value);
+
+                if (errorMessage) {
+                  setErrorMessage("");
+                }
               }
             }}
+            sx={{ mt: 2 }}
             renderInput={(params) => (
               <TextField {...params} label="Priority Type" />
             )}
@@ -109,7 +141,7 @@ export function UpDatePriority({ id, type, color }: UpDatePriorityProps) {
                 width: 42,
                 height: 42,
                 borderRadius: "50%",
-                backgroundColor: newColor,
+                backgroundColor: newColor || "#3b82f6",
                 border: "3px solid #e5e7eb",
                 position: "relative",
                 cursor: "pointer",
@@ -119,8 +151,14 @@ export function UpDatePriority({ id, type, color }: UpDatePriorityProps) {
             >
               <input
                 type="color"
-                value={newColor}
-                onChange={(e) => setNewColor(e.target.value)}
+                value={newColor || "#3b82f6"}
+                onChange={(e) => {
+                  setNewColor(e.target.value);
+
+                  if (errorMessage) {
+                    setErrorMessage("");
+                  }
+                }}
                 style={{
                   position: "absolute",
                   inset: 0,
@@ -135,27 +173,45 @@ export function UpDatePriority({ id, type, color }: UpDatePriorityProps) {
 
             <TextField
               size="small"
+              label="Color"
               value={newColor}
-              onChange={(e) => setNewColor(e.target.value)}
-              sx={{ flex: 1 }}
+              onChange={(e) => {
+                setNewColor(e.target.value);
+
+                if (errorMessage) {
+                  setErrorMessage("");
+                }
+              }}
+              placeholder="#ff0000"
+              fullWidth
             />
           </Box>
-          {errorMessage && (
-            <Typography color="error">{errorMessage}</Typography>
-          )}
+
+          {errorMessage ? (
+            <Typography color="error" sx={{ mt: 1, fontSize: 13 }}>
+              {errorMessage}
+            </Typography>
+          ) : null}
         </DialogContent>
+
         <DialogActions>
-          <Button onClick={() => setOpen(false)} color="primary">
+          <Button onClick={handleClose} disabled={updatePriority.isPending}>
             Cancel
           </Button>
-          <Button onClick={handleUpdatePriority} color="primary">
+
+          <Button
+            onClick={handleUpdatePriority}
+            color="primary"
+            variant="contained"
+            disabled={updatePriority.isPending}
+          >
             Update
           </Button>
         </DialogActions>
       </Dialog>
 
       <Tooltip title="Edit Priority">
-        <IconButton onClick={() => setOpen(true)} color="primary">
+        <IconButton onClick={handleOpen} color="primary">
           <EditIcon />
         </IconButton>
       </Tooltip>

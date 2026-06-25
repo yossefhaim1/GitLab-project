@@ -18,22 +18,51 @@ export function AddPriority() {
   const [priorityType, setPriorityType] = useState<PriorityTypeValues>("LOW");
   const [selectedColor, setSelectedColor] = useState<string>("#3b82f6");
   const [errorMessage, setErrorMessage] = useState<string>("");
+
   const addPriority = useAddPriority();
 
-  function handleAddPriority() {
-    const cleanType = priorityType;
+  function handleOpen() {
+    setPriorityType("LOW");
+    setSelectedColor("#3b82f6");
+    setErrorMessage("");
+    setOpen(true);
+  }
 
-    if (!cleanType) {
+  function handleClose() {
+    setErrorMessage("");
+    setOpen(false);
+  }
+
+  function handleAddPriority() {
+    const cleanColor = selectedColor.trim();
+
+    if (!priorityType) {
       setErrorMessage("Priority type is required.");
       return;
     }
 
+    if (!cleanColor) {
+      setErrorMessage("Priority color is required.");
+      return;
+    }
+
+    const isValidHexColor = /^#[0-9A-Fa-f]{6}$/.test(cleanColor);
+
+    if (!isValidHexColor) {
+      setErrorMessage("Color must be a valid hex color, for example #ff0000.");
+      return;
+    }
+
     addPriority.mutate(
-      { type: cleanType, color: selectedColor },
+      {
+        type: priorityType,
+        color: cleanColor,
+      },
       {
         onSuccess: () => {
           setErrorMessage("");
           setPriorityType("LOW");
+          setSelectedColor("#3b82f6");
           setOpen(false);
         },
         onError: () => {
@@ -49,7 +78,7 @@ export function AddPriority() {
     <Box>
       <Dialog
         open={open}
-        onClose={() => setOpen(false)}
+        onClose={handleClose}
         PaperProps={{
           sx: {
             width: "500px",
@@ -57,23 +86,29 @@ export function AddPriority() {
           },
         }}
       >
-        {" "}
         <DialogTitle>Add Priority</DialogTitle>
+
         <DialogContent>
           <Typography>Enter the type of the new priority:</Typography>
-          <br />
+
           <Autocomplete
             options={PRIORITY_TYPES}
             value={priorityType}
             onChange={(_, value) => {
               if (value) {
                 setPriorityType(value);
+
+                if (errorMessage) {
+                  setErrorMessage("");
+                }
               }
             }}
+            sx={{ mt: 2 }}
             renderInput={(params) => (
               <TextField {...params} label="Priority Type" />
             )}
           />
+
           {errorMessage ? (
             <Typography color="error" sx={{ mt: 1, fontSize: 13 }}>
               {errorMessage}
@@ -112,7 +147,13 @@ export function AddPriority() {
               <input
                 type="color"
                 value={selectedColor || "#3b82f6"}
-                onChange={(e) => setSelectedColor(e.target.value)}
+                onChange={(e) => {
+                  setSelectedColor(e.target.value);
+
+                  if (errorMessage) {
+                    setErrorMessage("");
+                  }
+                }}
                 style={{
                   position: "absolute",
                   inset: 0,
@@ -127,26 +168,38 @@ export function AddPriority() {
 
             <TextField
               size="small"
+              label="Color"
               value={selectedColor}
-              onChange={(e) => setSelectedColor(e.target.value)}
+              onChange={(e) => {
+                setSelectedColor(e.target.value);
+
+                if (errorMessage) {
+                  setErrorMessage("");
+                }
+              }}
               placeholder="#ff0000"
-              sx={{ flex: 1 }}
+              fullWidth
             />
           </Box>
         </DialogContent>
+
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>Cancel</Button>
+          <Button onClick={handleClose} disabled={addPriority.isPending}>
+            Cancel
+          </Button>
+
           <Button
             onClick={handleAddPriority}
             color="primary"
             variant="contained"
+            disabled={addPriority.isPending}
           >
             Add
           </Button>
         </DialogActions>
       </Dialog>
 
-      <Button variant="contained" onClick={() => setOpen(true)}>
+      <Button variant="contained" onClick={handleOpen}>
         Add Priority
       </Button>
     </Box>

@@ -10,6 +10,7 @@ import {
   Autocomplete,
   Chip,
 } from "@mui/material";
+import InputAdornment from "@mui/material/InputAdornment";
 import Add from "@mui/icons-material/Add";
 import type { CreateItemPayload, Priority, Tag } from "../../Type";
 import { useAddItemWithTags } from "../../React_Queries/useBoardMutationsAddData";
@@ -50,6 +51,9 @@ export default function AddItem({ columnId }: AddItemProps) {
 
   const column = columns?.find((col) => col.id === columnId);
 
+  const selectedPriority =
+    allPriorities.find((priority) => priority.id === priorityId) || null;
+
   const nextPosition = useMemo(() => {
     const positions =
       items
@@ -58,6 +62,20 @@ export default function AddItem({ columnId }: AddItemProps) {
 
     return Math.max(0, ...positions) + 1;
   }, [items, columnId]);
+
+  function handleOpen() {
+    setTitle("");
+    setAssigneeId(null);
+    setPriorityId(null);
+    setSelectedTags([]);
+    setErrorMessage("");
+    setOpen(true);
+  }
+
+  function handleClose() {
+    setErrorMessage("");
+    setOpen(false);
+  }
 
   async function handleCreate() {
     const cleanTitle = title.trim();
@@ -120,13 +138,13 @@ export default function AddItem({ columnId }: AddItemProps) {
         <IconButton
           size="small"
           sx={{ width: 34, height: 34 }}
-          onClick={() => setOpen(true)}
+          onClick={handleOpen}
         >
           <Add fontSize="small" />
         </IconButton>
       </Tooltip>
 
-      <Drawer anchor="right" open={open} onClose={() => setOpen(false)}>
+      <Drawer anchor="right" open={open} onClose={handleClose}>
         <Box sx={{ width: 360, p: 2.5 }}>
           <Typography sx={{ fontWeight: 800, mb: 2 }}>Add task</Typography>
 
@@ -134,19 +152,26 @@ export default function AddItem({ columnId }: AddItemProps) {
             fullWidth
             label="Title"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={(e) => {
+              setTitle(e.target.value);
+
+              if (errorMessage) {
+                setErrorMessage("");
+              }
+            }}
             sx={{ mb: 2 }}
           />
 
           <Autocomplete
             options={allPriorities}
             getOptionLabel={(option: Priority) => option.type}
-            value={
-              allPriorities.find((priority) => priority.id === priorityId) ||
-              null
-            }
+            value={selectedPriority}
             onChange={(_, newValue) => {
               setPriorityId(newValue ? newValue.id : null);
+
+              if (errorMessage) {
+                setErrorMessage("");
+              }
             }}
             renderOption={(props, option) => (
               <Box
@@ -164,13 +189,39 @@ export default function AddItem({ columnId }: AddItemProps) {
                     height: 12,
                     borderRadius: "50%",
                     backgroundColor: option.color,
+                    border: "1px solid #cbd5e1",
+                    flexShrink: 0,
                   }}
                 />
 
                 {option.type}
               </Box>
             )}
-            renderInput={(params) => <TextField {...params} label="Priority" />}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Priority"
+                InputProps={{
+                  ...params.InputProps,
+                  startAdornment: selectedPriority ? (
+                    <InputAdornment position="start">
+                      <Box
+                        sx={{
+                          width: 14,
+                          height: 14,
+                          borderRadius: "50%",
+                          backgroundColor: selectedPriority.color,
+                          border: "1px solid #cbd5e1",
+                          flexShrink: 0,
+                        }}
+                      />
+                    </InputAdornment>
+                  ) : (
+                    params.InputProps.startAdornment
+                  ),
+                }}
+              />
+            )}
             sx={{ mb: 2 }}
           />
 
@@ -180,6 +231,10 @@ export default function AddItem({ columnId }: AddItemProps) {
             value={allUsers.find((user) => user.id === assigneeId) || null}
             onChange={(_, newValue) => {
               setAssigneeId(newValue ? newValue.id : null);
+
+              if (errorMessage) {
+                setErrorMessage("");
+              }
             }}
             renderInput={(params) => (
               <TextField {...params} label="Assign task" />
@@ -194,7 +249,35 @@ export default function AddItem({ columnId }: AddItemProps) {
             value={selectedTags}
             onChange={(_, newValue) => {
               setSelectedTags(newValue);
+
+              if (errorMessage) {
+                setErrorMessage("");
+              }
             }}
+            renderOption={(props, option) => (
+              <Box
+                component="li"
+                {...props}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                }}
+              >
+                <Box
+                  sx={{
+                    width: 12,
+                    height: 12,
+                    borderRadius: "50%",
+                    backgroundColor: option.color,
+                    border: "1px solid #cbd5e1",
+                    flexShrink: 0,
+                  }}
+                />
+
+                {option.title}
+              </Box>
+            )}
             renderTags={(value, getTagProps) =>
               value.map((option, index) => {
                 const { key, ...tagProps } = getTagProps({ index });

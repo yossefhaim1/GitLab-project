@@ -10,6 +10,7 @@ import {
   Tooltip,
   Autocomplete,
 } from "@mui/material";
+import InputAdornment from "@mui/material/InputAdornment";
 import { Edit } from "@mui/icons-material";
 import type { Items, Priority, Tag } from "../../Type";
 import {
@@ -118,7 +119,8 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
   }
 
   if (!item) return null;
-
+  const selectedPriority =
+    priorityOptions.find((priority) => priority.id === priorityId) || null;
   return (
     <>
       <Tooltip title="Edit Task" placement="bottom" arrow enterDelay={200}>
@@ -148,10 +150,7 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
           <Autocomplete
             options={priorityOptions}
             getOptionLabel={(option: Priority) => option.type}
-            value={
-              priorityOptions.find((priority) => priority.id === priorityId) ||
-              null
-            }
+            value={selectedPriority}
             onChange={(_, newValue) => {
               setPriorityId(newValue ? newValue.id : null);
             }}
@@ -171,13 +170,38 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
                     height: 12,
                     borderRadius: "50%",
                     backgroundColor: option.color,
+                    border: "1px solid #cbd5e1",
+                    flexShrink: 0,
                   }}
                 />
 
                 {option.type}
               </Box>
             )}
-            renderInput={(params) => <TextField {...params} label="Priority" />}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Priority"
+                InputProps={{
+                  ...params.InputProps,
+                  startAdornment: selectedPriority ? (
+                    <InputAdornment position="start">
+                      <Box
+                        sx={{
+                          width: 14,
+                          height: 14,
+                          borderRadius: "50%",
+                          backgroundColor: selectedPriority.color,
+                          border: "1px solid #cbd5e1",
+                        }}
+                      />
+                    </InputAdornment>
+                  ) : (
+                    params.InputProps.startAdornment
+                  ),
+                }}
+              />
+            )}
             sx={{ mb: 2 }}
           />
 
@@ -199,9 +223,38 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
             options={tagOptions}
             getOptionLabel={(option: Tag) => option.title}
             value={selectedTags}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
             onChange={(_, newValue) => {
               setSelectedTags(newValue);
+
+              if (errorMessage) {
+                setErrorMessage("");
+              }
             }}
+            renderOption={(props, option) => (
+              <Box
+                component="li"
+                {...props}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                }}
+              >
+                <Box
+                  sx={{
+                    width: 12,
+                    height: 12,
+                    borderRadius: "50%",
+                    backgroundColor: option.color,
+                    border: "1px solid #cbd5e1",
+                    flexShrink: 0,
+                  }}
+                />
+
+                {option.title}
+              </Box>
+            )}
             renderTags={(value, getTagProps) =>
               value.map((option, index) => {
                 const { key, ...tagProps } = getTagProps({ index });
