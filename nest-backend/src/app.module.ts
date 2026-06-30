@@ -10,7 +10,7 @@ import { TagsModule } from './tags/tags.module';
 import { PrioritiesModule } from './priorities/priority.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-
+import { UsersModule } from './users/user.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -33,6 +33,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     ItemTagModule,
     TagsModule,
     PrioritiesModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

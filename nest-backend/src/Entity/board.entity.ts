@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn , Column, OneToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn , Column, OneToMany, ManyToOne, JoinColumn } from "typeorm";
 import{ ItemEntity} from "./item.entity";
 import { ColumnEntity } from "./column.entity";
+import { UserEntity } from "./user.entity";
 
 @Entity('boards')
 export class BoardEntity {
@@ -20,4 +21,10 @@ export class BoardEntity {
     @OneToMany(() => ColumnEntity, (column) => column.board)
     columns!: ColumnEntity[];
 
+    @ManyToOne(() => UserEntity, (user) => user.boards)
+    @JoinColumn({name: 'userId'})
+    user!: UserEntity;
+
+    @Column({name: 'userId'})
+    userId!: number;
 }
