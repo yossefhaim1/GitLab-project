@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Dialog,
   DialogActions,
@@ -14,6 +15,7 @@ import {
 } from "@mui/material";
 import { useItemsWithoutPriority } from "../../Hook/useItemsWithoutPriority";
 import { UpdateItem } from "../Board/UpdateItem";
+import {AddPriority} from "../priority/AddPriority"
 
 interface ItemWithoutPriorityProps {
   open: boolean;
@@ -29,7 +31,14 @@ export function ItemWithoutPriority({
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+      <Box display="flex" justifyContent="space-between" alignItems="center" p={2}>
       <DialogTitle>Items Without Priority</DialogTitle>
+      
+      {count === 0 ? (
+        null
+      ) : <AddPriority/> }
+      
+      </Box>
 
       <DialogContent dividers>
         {isLoading ? (
