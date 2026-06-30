@@ -6,8 +6,8 @@ import type {
   Columns,
   CreateItemPayload,
   CreateColumnPayload,
-  User,
-  CreateUserPayload,
+  Assignee,
+  CreateAssigneePayload,
   Tag,
   CreateTagPayload,
   Priority,
@@ -16,35 +16,35 @@ import type {
   ItemTag,
 } from "../Type";
 
-// USERS
+// ASSIGNEES
 
-async function getUsers() {
-  const res = await api.get<User[]>("/users");
+async function getAssignees() {
+  const res = await api.get<Assignee[]>("/assignees");
   return res.data;
 }
 
-async function getUserById(id: number) {
-  const res = await api.get<User>(`/users/${id}`);
+async function getAssigneeById(id: number) {
+  const res = await api.get<Assignee>(`/assignees/${id}`);
   return res.data;
 }
 
-async function getUserByName(name: string) {
-  const res = await api.get<User>(`/users/name/${name}`);
+async function getAssigneeByName(name: string) {
+  const res = await api.get<Assignee>(`/assignees/name/${name}`);
   return res.data;
 }
 
-async function addUser(userData: CreateUserPayload) {
-  const res = await api.post<User>("/users", userData);
+async function addAssignee(assigneeData: CreateAssigneePayload) {
+  const res = await api.post<Assignee>("/assignees", assigneeData);
   return res.data;
 }
 
-async function deleteUserById(id: number) {
-  const res = await api.delete(`/users/${id}`);
+async function deleteAssigneeById(id: number) {
+  const res = await api.delete(`/assignees/${id}`);
   return res.data;
 }
 
-async function updateUserById(id: number, changes: Partial<User>) {
-  const res = await api.patch<User>(`/users/${id}`, changes);
+async function updateAssigneeById(id: number, changes: Partial<Assignee>) {
+  const res = await api.patch<Assignee>(`/assignees/${id}`, changes);
   return res.data;
 }
 
@@ -228,13 +228,13 @@ async function deletePriorityById(id: number) {
 }
 
 export const API = {
-  // users
-  getUsers,
-  getUserById,
-  getUserByName,
-  addUser,
-  deleteUserById,
-  updateUserById,
+  // assignees
+  getAssignees,
+  getAssigneeById,
+  getAssigneeByName,
+  addAssignee,
+  deleteAssigneeById,
+  updateAssigneeById,
 
   // boards
   getBoards,

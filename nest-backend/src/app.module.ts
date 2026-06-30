@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UsersModule } from './users/users.module';
+import { AssigneeModule } from './assignee/assignee.module';
 import { BoardsModule } from './boards/boards.module';
 import { ColumnsModule } from './columns/columns.module';
 import { ItemsModule } from './items/items.module';
@@ -26,7 +26,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       autoLoadEntities: true,
       synchronize: true, // לא מומלץ בסביבת ייצור, רק לפיתוח
     }),
-    UsersModule,
+    AssigneeModule,
     BoardsModule,
     ColumnsModule,
     ItemsModule,

@@ -4,7 +4,7 @@ import type {
   Boards,
   Columns,
   Items,
-  User,
+  Assignee,
   Priority,
   Tag,
 } from "../Type";
@@ -116,16 +116,16 @@ export function useUpdateItemWithTags() {
   });
 }
 
-export function useUpDateUser() {
+export function useUpDateAssignee() {
   const queryClient = useQueryClient();
   const boardId = useActiveBoardId();
 
   return useMutation({
-    mutationFn: (userData: { id: number; changes: Partial<User> }) =>
-      API.updateUserById(userData.id, userData.changes),
+    mutationFn: (assigneeData: { id: number; changes: Partial<Assignee> }) =>
+      API.updateAssigneeById(assigneeData.id, assigneeData.changes),
 
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: ["assignees"] });
       queryClient.invalidateQueries({ queryKey: ["items", boardId] });
     },
   });

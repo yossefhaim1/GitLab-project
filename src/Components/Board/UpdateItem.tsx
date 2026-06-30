@@ -15,7 +15,7 @@ import { Edit } from "@mui/icons-material";
 import type { Items, Priority, Tag } from "../../Type";
 import {
   useItems,
-  useUsers,
+  useAssignees,
   usePriorities,
   useTags,
 } from "../../React_Queries/useBoardsGetData";
@@ -26,11 +26,11 @@ type UpdateItemProps = {
   itemId: number;
 };
 
-export default function UpdateItem({ itemId }: UpdateItemProps) {
+export function UpdateItem({ itemId }: UpdateItemProps) {
   const activeBoard = useBoardStore((state) => state.activeBoardId);
 
   const { data: items } = useItems(activeBoard);
-  const { data: users } = useUsers();
+  const { data: assignees } = useAssignees();
   const { data: priorities } = usePriorities();
   const { data: allTags } = useTags();
 
@@ -38,7 +38,7 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
 
   const item = items?.find((currentItem) => currentItem.id === itemId);
 
-  const allUsers = users || [];
+  const allAssignees = assignees || [];
   const priorityOptions = priorities || [];
   const tagOptions = allTags || [];
 
@@ -55,7 +55,11 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
     setTitle(item.title);
     setAssigneeId(item.assigneeId);
     setPriorityId(item.priorityId);
-    setSelectedTags(item.tags || []);
+
+    setSelectedTags(
+      (item.tags || []).map((currentTag: any) => currentTag.tag ?? currentTag),
+    );
+
     setErrorMessage("");
     setOpen(true);
   }
@@ -67,13 +71,14 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
     }
 
     const cleanTitle = title.trim();
+
     if (!cleanTitle) {
       setErrorMessage("Title is required.");
       return;
     }
 
     if (!assigneeId) {
-      setErrorMessage("Please select a user to assign this task.");
+      setErrorMessage("Please select an Assignee to assign this task.");
       return;
     }
 
@@ -119,8 +124,10 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
   }
 
   if (!item) return null;
+
   const selectedPriority =
     priorityOptions.find((priority) => priority.id === priorityId) || null;
+
   return (
     <>
       <Tooltip title="Edit Task" placement="bottom" arrow enterDelay={200}>
@@ -133,7 +140,17 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
         </IconButton>
       </Tooltip>
 
-      <Drawer anchor="left" open={open} onClose={() => setOpen(false)}>
+      <Drawer
+        anchor="left"
+        open={open}
+        onClose={() => setOpen(false)}
+        sx={{
+          zIndex: (theme) => theme.zIndex.modal + 2,
+          "& .MuiDrawer-paper": {
+            zIndex: (theme) => theme.zIndex.modal + 3,
+          },
+        }}
+      >
         <Box sx={{ width: 360, p: 2.5 }}>
           <Typography sx={{ fontWeight: 800, mb: 2 }}>
             Edit Task #{item.id}
@@ -149,35 +166,42 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
 
           <Autocomplete
             options={priorityOptions}
+            disablePortal
+            noOptionsText="If no priority is available, please create one first. > Menu > Priorities Table > add priority."
             getOptionLabel={(option: Priority) => option.type}
             value={selectedPriority}
             onChange={(_, newValue) => {
               setPriorityId(newValue ? newValue.id : null);
             }}
-            renderOption={(props, option) => (
-              <Box
-                component="li"
-                {...props}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1,
-                }}
-              >
-                <Box
-                  sx={{
-                    width: 12,
-                    height: 12,
-                    borderRadius: "50%",
-                    backgroundColor: option.color,
-                    border: "1px solid #cbd5e1",
-                    flexShrink: 0,
-                  }}
-                />
+            renderOption={(props, option) => {
+              const { key, ...optionProps } = props;
 
-                {option.type}
-              </Box>
-            )}
+              return (
+                <Box
+                  key={key}
+                  component="li"
+                  {...optionProps}
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: 12,
+                      height: 12,
+                      borderRadius: "50%",
+                      backgroundColor: option.color,
+                      border: "1px solid #cbd5e1",
+                      flexShrink: 0,
+                    }}
+                  />
+
+                  {option.type}
+                </Box>
+              );
+            }}
             renderInput={(params) => (
               <TextField
                 {...params}
@@ -206,9 +230,9 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
           />
 
           <Autocomplete
-            options={allUsers}
+            options={allAssignees}
             getOptionLabel={(option) => option.name}
-            value={allUsers.find((user) => user.id === assigneeId) || null}
+            value={allAssignees.find((assignee) => assignee.id === assigneeId) || null}
             onChange={(_, newValue) => {
               setAssigneeId(newValue ? newValue.id : null);
             }}
@@ -221,6 +245,7 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
           <Autocomplete
             multiple
             options={tagOptions}
+            disablePortal
             getOptionLabel={(option: Tag) => option.title}
             value={selectedTags}
             isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -231,30 +256,35 @@ export default function UpdateItem({ itemId }: UpdateItemProps) {
                 setErrorMessage("");
               }
             }}
-            renderOption={(props, option) => (
-              <Box
-                component="li"
-                {...props}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1,
-                }}
-              >
-                <Box
-                  sx={{
-                    width: 12,
-                    height: 12,
-                    borderRadius: "50%",
-                    backgroundColor: option.color,
-                    border: "1px solid #cbd5e1",
-                    flexShrink: 0,
-                  }}
-                />
+            renderOption={(props, option) => {
+              const { key, ...optionProps } = props;
 
-                {option.title}
-              </Box>
-            )}
+              return (
+                <Box
+                  key={key}
+                  component="li"
+                  {...optionProps}
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: 12,
+                      height: 12,
+                      borderRadius: "50%",
+                      backgroundColor: option.color,
+                      border: "1px solid #cbd5e1",
+                      flexShrink: 0,
+                    }}
+                  />
+
+                  {option.title}
+                </Box>
+              );
+            }}
             renderTags={(value, getTagProps) =>
               value.map((option, index) => {
                 const { key, ...tagProps } = getTagProps({ index });

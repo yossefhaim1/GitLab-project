@@ -4,7 +4,7 @@ import type {
   CreateBoardPayload,
   CreateColumnPayload,
   CreateItemPayload,
-  CreateUserPayload,
+  CreateAssigneePayload,
   CreatePriorityPayload,
   CreateTagPayload,
   CreateItemTagPayload,
@@ -81,14 +81,14 @@ export function useAddItemWithTags() {
   });
 }
 
-export function useAddUser() {
+export function useAddAssignee() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (userData: CreateUserPayload) => API.addUser(userData),
+    mutationFn: (assigneeData: CreateAssigneePayload) => API.addAssignee(assigneeData),
 
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: ["assignees"] });
     },
   });
 }

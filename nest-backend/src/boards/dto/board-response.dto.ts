@@ -2,30 +2,16 @@ import { createZodDto } from 'nestjs-zod';
 import { z as zod } from 'zod';
 import {
   columnResponseSchema,
-  ColumnResponseDto,
   ColumnWithItemsResponseDto,
 } from '../../columns/dto/column-response.dto';
-import {
-  itemResponseSchema,
-  ItemResponseDto,
-} from '../../items/dto/item-response.dto';
+import { itemResponseSchema } from '../../items/dto/item-response.dto';
 
-import {
-  priorityResponseSchema,
-  PriorityResponseDto,
-} from '../../priorities/dto/priority-response.dto';
-import {
-  TagResponseDto,
-  tagResponseSchema,
-} from '../../tags/dto/tag-response.dto';
-import {
-  UserResponseSchema,
-  UserResponseDto,
-} from '../../users/dto/user-response.dto';
-import {
-  itemTagsResponseSchema,
-  ItemTagsResponseDto,
-} from '../../item_tag/dto/itemTags-response.dto';
+import { priorityResponseSchema } from '../../priorities/dto/priority-response.dto';
+import { tagResponseSchema } from '../../tags/dto/tag-response.dto';
+import { AssigneeResponseSchema } from '../../assignee/dto/assignee-response.dto';
+import { itemTagsResponseSchema } from '../../item_tag/dto/itemTags-response.dto';
+
+
 export const boardResponseSchema = zod.object({
   id: zod.number().int().positive(),
   title: zod.string(),
@@ -68,7 +54,7 @@ export const itemTagWithTagResponseSchema = itemTagsResponseSchema.extend({
 
 export const itemFullResponseSchema = itemResponseSchema.extend({
   priority: priorityResponseSchema.nullable(),
-  assignee: UserResponseSchema.nullable(),
+  assignee: AssigneeResponseSchema.nullable(),
   tags: zod.array(itemTagWithTagResponseSchema),
 });
 

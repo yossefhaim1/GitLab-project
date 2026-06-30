@@ -13,28 +13,28 @@ import { useState } from "react";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
-import { useUpDateUser } from "../../React_Queries/useBoardMutationsUpDateData";
+import { useUpDateAssignee } from "../../React_Queries/useBoardMutationsUpDateData";
 
-interface UpdateUserProps {
+interface UpdateAssigneeProps {
   id: number;
   name: string;
 }
 
-export default function UpdateUser({ id, name }: UpdateUserProps) {
-  const updateUser = useUpDateUser();
+export default function UpdateAssignee({ id, name }: UpdateAssigneeProps) {
+  const updateAssignee = useUpDateAssignee();
   const [open, setOpen] = useState<boolean>(false);
-  const [newNameUser, setNewNameUser] = useState<string>(name);
+  const [newNameAssignee, setNewNameAssignee] = useState<string>(name);
   const [errorMessage, setErrorMessage] = useState<string>("");
 
-  function handleUpdateUser() {
-    const cleanName = newNameUser.trim();
+  function handleUpdateAssignee() {
+    const cleanName = newNameAssignee.trim();
 
     if (!cleanName) {
-      setErrorMessage("User name is required.");
+      setErrorMessage("Assignee name is required.");
       return;
     }
 
-    updateUser.mutate(
+    updateAssignee.mutate(
       { id, changes: { name: cleanName } },
       {
         onSuccess: () => {
@@ -42,7 +42,7 @@ export default function UpdateUser({ id, name }: UpdateUserProps) {
           setOpen(false);
         },
         onError: () => {
-          setErrorMessage("Failed to update user. Please try again.");
+          setErrorMessage("Failed to update assignee. Please try again.");
         },
       },
     );
@@ -50,19 +50,19 @@ export default function UpdateUser({ id, name }: UpdateUserProps) {
   return (
     <Box>
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <DialogTitle>Update User</DialogTitle>
+        <DialogTitle>Update Assignee</DialogTitle>
         <DialogContent>
-          <Typography>Enter the new name for the user:</Typography>
+          <Typography>Enter the new name for the assignee:</Typography>
           <TextField
             autoFocus
             margin="dense"
-            label="User Name"
+            label="Assignee Name"
             type="text"
             fullWidth
             variant="standard"
-            value={newNameUser}
+            value={newNameAssignee}
             onChange={(e) => {
-              setNewNameUser(e.target.value);
+              setNewNameAssignee(e.target.value);
               if (errorMessage) {
                 setErrorMessage("");
               }
@@ -78,13 +78,13 @@ export default function UpdateUser({ id, name }: UpdateUserProps) {
           <IconButton onClick={() => setOpen(false)} color="secondary">
             <CloseIcon />
           </IconButton>
-          <IconButton onClick={handleUpdateUser} color="primary">
+          <IconButton onClick={handleUpdateAssignee} color="primary">
             <SaveAltIcon />
           </IconButton>
         </DialogActions>
       </Dialog>
 
-      <Tooltip title="Edit User">
+      <Tooltip title="Edit Assignee">
         <IconButton onClick={() => setOpen(true)} color="primary">
           <EditIcon />
         </IconButton>

@@ -20,5 +20,4 @@ export class BoardEntity {
     @OneToMany(() => ColumnEntity, (column) => column.board)
     columns!: ColumnEntity[];
 
-
 }

@@ -1,6 +1,6 @@
 import { Box, Paper, Tooltip, Typography } from "@mui/material";
 import DeleteItem from "./DeleteItem";
-import UpdateItem from "./UpdateItem";
+import {UpdateItem} from "./UpdateItem";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useColumns, useItems } from "../../React_Queries/useBoardsGetData";
@@ -188,7 +188,7 @@ export default function ItemCard({ itemId }: ItemCardProps) {
             color: "#6b7280",
           }}
         >
-          Assigned to: {item.assignee.name}
+        {item.assignee.name}
         </Typography>
       )}
 

@@ -1,32 +1,32 @@
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
-import { useAddUser } from "../../React_Queries/useBoardMutationsAddData";
+import { useAddAssignee } from "../../React_Queries/useBoardMutationsAddData";
 
-export default function AddUser() {
+export default function AddAssignee() {
   const [open, setOpen] = useState<boolean>(false);
-  const [userName, setUserName] = useState<string>("");
+  const [assigneeName, setAssigneeName] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const addUser = useAddUser();
+  const addAssignee = useAddAssignee();
 
-  function handleSaveUser() {
-    const cleanName = userName.trim();
+  function handleSaveAssignee() {
+    const cleanName = assigneeName.trim();
 
     if (!cleanName) {
-      setErrorMessage("User name is required.");
+      setErrorMessage("Assignee name is required.");
       return;
     }
 
-    addUser.mutate(
+    addAssignee.mutate(
       { name: cleanName },
       {
         onSuccess: () => {
           setErrorMessage("");
-          setUserName("");
+          setAssigneeName("");
           setOpen(false);
         },
         onError: () => {
-          setErrorMessage("Failed to add user. Please try again.");
+          setErrorMessage("Failed to add assignee. Please try again.");
         },
       },
     );
@@ -34,22 +34,22 @@ export default function AddUser() {
   return (
     <Box>
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <DialogTitle>Add User</DialogTitle>
+        <DialogTitle>Add Assignee</DialogTitle>
 
         <DialogContent>
             <Typography>
-                Enter the name of the new user:
+                Enter the name of the new assignee:
             </Typography>
             <TextField
               autoFocus
               margin="dense"
-              label="User Name"
+              label="Assignee Name"
               type="text"
               fullWidth
               variant="standard"
-              value={userName}
+              value={assigneeName}
               onChange={(e) => {
-                setUserName(e.target.value);
+                setAssigneeName(e.target.value);
                 if (errorMessage) {
                   setErrorMessage("");
                 }
@@ -63,7 +63,7 @@ export default function AddUser() {
         </DialogContent>
         <DialogActions>
             <Button onClick={() => setOpen(false)}>Cancel</Button>
-            <Button onClick={handleSaveUser} variant="contained">Save</Button>
+            <Button onClick={handleSaveAssignee} variant="contained">Save</Button>
         </DialogActions>
       </Dialog>
 
@@ -72,7 +72,7 @@ export default function AddUser() {
         startIcon={<AddIcon />}
         onClick={() => setOpen(true)}
       >
-        Add User
+        Add Assignee
       </Button>
     </Box>
   );

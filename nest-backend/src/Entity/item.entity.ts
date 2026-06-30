@@ -10,7 +10,7 @@ import { BoardEntity } from './board.entity';
 import { ColumnEntity } from './column.entity';
 import { PriorityEntity } from './priority.entity';
 import { ItemTagEntity } from './ItemTag.entity';
-import { UserEntity } from './user.entity';
+import { AssigneeEntity } from './assignee.entity';
 
 @Entity('items')
 export class ItemEntity {
@@ -41,12 +41,12 @@ export class ItemEntity {
   @Column({ name: 'title' })
   title!: string;
 
-  @ManyToOne(() => UserEntity, (user) => user.items, {
+  @ManyToOne(() => AssigneeEntity, (assignee) => assignee.items, {
     onDelete: 'SET NULL',
     nullable: true,
   })
   @JoinColumn({ name: 'assignee' })
-  assignee!: UserEntity | null;
+  assignee!: AssigneeEntity | null;
 
   @Column({ name: 'assignee', nullable: true })
   assigneeId!: number | null;

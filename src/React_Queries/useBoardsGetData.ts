@@ -46,14 +46,14 @@ export function useItems(boardId: number | undefined) {
   });
 }
 
-export function useUsers() {
+export function useAssignees() {
   return useQuery({
-    queryKey: ["users"],
-    queryFn: API.getUsers,
+    queryKey: ["assignees"],
+    queryFn: API.getAssignees,
     ...defaultQueryOptions,
     refetchOnMount: true,
     placeholderData: [],
-    select: (users) => [...users].sort((a, b) => a.id - b.id),
+    select: (assignees) => [...assignees].sort((a, b) => a.id - b.id),
   });
 }
 

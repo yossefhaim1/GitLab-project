@@ -22,7 +22,7 @@ export function useDeleteColumn() {
     mutationFn: (columnId: number) => API.deleteColumnById(columnId),
 
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["columns"] });
+      queryClient.invalidateQueries({ queryKey: ["columns", boardId] });
       queryClient.invalidateQueries({ queryKey: ["items", boardId] });
     },
   });
@@ -41,15 +41,15 @@ export function useDeleteItem() {
   });
 }
 
-export function useDeleteUser() {
+export function useDeleteAssignee() {
   const queryClient = useQueryClient();
   const boardId = useActiveBoardId();
 
   return useMutation({
-    mutationFn: (userId: number) => API.deleteUserById(userId),
+    mutationFn: (assigneeId: number) => API.deleteAssigneeById(assigneeId),
 
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: ["assignees"] });
       queryClient.invalidateQueries({ queryKey: ["items", boardId] });
     },
   });

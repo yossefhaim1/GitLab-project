@@ -15,18 +15,18 @@ import {
   Stack,
 } from "@mui/material";
 
-import AddUser from "./AddUser";
-import UpdateUser from "./UpdateUser";
-import DeleteUser from "./DeleteUser";
-import { useUsers } from "../../React_Queries/useBoardsGetData";
+import AddAssignee from "./AddAssignee";
+import UpdateAssignee from "./UpdateAssignee";
+import { useAssignees } from "../../React_Queries/useBoardsGetData";
+import DeleteAssignee from "./DeleteAssignee";
 
-interface TableOfUsersProps {
+interface TableOfAssigneesProps {
   open: boolean;
   onClose: () => void;
 }
 
-export function TableOfUsers({ open, onClose }: TableOfUsersProps) {
-  const { data: users = [], isLoading, error } = useUsers();
+export function TableOfAssignees({ open, onClose }: TableOfAssigneesProps) {
+  const { data: assignees = [], isLoading, error } = useAssignees();
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
@@ -38,18 +38,18 @@ export function TableOfUsers({ open, onClose }: TableOfUsersProps) {
             alignItems: "center",
           }}
         >
-          Table Of Users
-          <AddUser />
+          Table Of Assignees
+          <AddAssignee />
         </Box>
       </DialogTitle>
 
       <DialogContent dividers>
         {isLoading ? (
-          <Typography>Loading users...</Typography>
+          <Typography>Loading assignees...</Typography>
         ) : error ? (
-          <Typography color="error">Failed to load users</Typography>
-        ) : users.length === 0 ? (
-          <Typography>No users found</Typography>
+          <Typography color="error">Failed to load assignees</Typography>
+        ) : assignees.length === 0 ? (
+          <Typography>No assignees found</Typography>
         ) : (
           <TableContainer sx={{ maxHeight: 350 }}>
             <Table stickyHeader>
@@ -62,7 +62,7 @@ export function TableOfUsers({ open, onClose }: TableOfUsersProps) {
                       color: "#636363",
                     }}
                   >
-                    User Name
+                    Assignee Name
                   </TableCell>
 
                   <TableCell
@@ -79,9 +79,9 @@ export function TableOfUsers({ open, onClose }: TableOfUsersProps) {
               </TableHead>
 
               <TableBody>
-                {users.map((user) => (
-                  <TableRow key={user.id} hover>
-                    <TableCell>{user.name}</TableCell>
+                {assignees.map((assignee) => (
+                  <TableRow key={assignee.id} hover>
+                    <TableCell>{assignee.name}</TableCell>
 
                     <TableCell align="right">
                       <Stack
@@ -89,8 +89,8 @@ export function TableOfUsers({ open, onClose }: TableOfUsersProps) {
                         spacing={1}
                         justifyContent="flex-end"
                       >
-                        <UpdateUser id={user.id} name={user.name} />
-                        <DeleteUser id={user.id} name={user.name} />
+                        <UpdateAssignee id={assignee.id} name={assignee.name} />
+                        <DeleteAssignee id={assignee.id} name={assignee.name} />
                       </Stack>
                     </TableCell>
                   </TableRow>

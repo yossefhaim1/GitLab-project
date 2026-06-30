@@ -17,9 +17,9 @@ import { useAddItemWithTags } from "../../React_Queries/useBoardMutationsAddData
 import {
   useColumns,
   useItems,
-  useUsers,
   usePriorities,
   useTags,
+  useAssignees,
 } from "../../React_Queries/useBoardsGetData";
 import { useBoardStore } from "../../store/boardStore";
 
@@ -32,13 +32,13 @@ export default function AddItem({ columnId }: AddItemProps) {
 
   const { data: columns } = useColumns(activeBoard);
   const { data: items } = useItems(activeBoard);
-  const { data: users } = useUsers();
+  const { data: assignees } = useAssignees();
   const { data: priorities } = usePriorities();
   const { data: tags } = useTags();
 
   const addItemWithTags = useAddItemWithTags();
 
-  const allUsers = users || [];
+  const allAssignees = assignees || [];
   const allPriorities = priorities || [];
   const allTags = tags || [];
 
@@ -91,7 +91,7 @@ export default function AddItem({ columnId }: AddItemProps) {
     }
 
     if (!assigneeId) {
-      setErrorMessage("Please select a user to assign this task.");
+      setErrorMessage("Please select an Assignee to assign this task.");
       return;
     }
 
@@ -164,6 +164,7 @@ export default function AddItem({ columnId }: AddItemProps) {
 
           <Autocomplete
             options={allPriorities}
+            noOptionsText="If no priority is available, please create one first. > Menu >  Priorities Table > add priority."
             getOptionLabel={(option: Priority) => option.type}
             value={selectedPriority}
             onChange={(_, newValue) => {
@@ -226,9 +227,9 @@ export default function AddItem({ columnId }: AddItemProps) {
           />
 
           <Autocomplete
-            options={allUsers}
+            options={allAssignees}
             getOptionLabel={(option) => option.name}
-            value={allUsers.find((user) => user.id === assigneeId) || null}
+            value={allAssignees.find((assignee) => assignee.id === assigneeId) || null}
             onChange={(_, newValue) => {
               setAssigneeId(newValue ? newValue.id : null);
 

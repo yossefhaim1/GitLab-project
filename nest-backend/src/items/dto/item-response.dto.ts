@@ -5,9 +5,9 @@ import {
   priorityResponseSchema,
 } from '../../priorities/dto/priority-response.dto';
 import {
-  UserResponseDto,
-  UserResponseSchema,
-} from '../../users/dto/user-response.dto';
+  AssigneeResponseSchema,
+  AssigneeResponseDto,
+} from '../../assignee/dto/assignee-response.dto';
 import {
   itemTagWithTagResponseSchema,
   ItemTagWithTagResponseDto,
@@ -40,7 +40,7 @@ export class ItemResponseDto extends createZodDto(itemResponseSchema) {
 
 export const itemFullResponseSchema = itemResponseSchema.extend({
   priority: priorityResponseSchema.nullable(),
-  assignee: UserResponseSchema.nullable(),
+  assignee: AssigneeResponseSchema.nullable(),
   tags: zod.array(itemTagWithTagResponseSchema),
 });
 
@@ -52,14 +52,14 @@ export class ItemFullResponseDto extends createZodDto(itemFullResponseSchema) {
   position!: number;
 
   priority!: PriorityResponseDto | null;
-  assignee!: UserResponseDto | null;
+  assignee!: AssigneeResponseDto | null;
   tags!: ItemTagWithTagResponseDto[];
 }
 // זה ITEM עם כל ה RELATION כולל TAGS, PRIORITY, ASSIGNEE
 // ---------------------------------- //
 export const getItemByIdResponseSchema = itemResponseSchema.extend({
   priority: priorityResponseSchema.nullable(),
-  assignee: UserResponseSchema.nullable(),
+  assignee: AssigneeResponseSchema.nullable(),
   board: boardResponseSchema,
   column: columnResponseSchema,
   tags: zod.array(tagResponseSchema),
@@ -77,7 +77,7 @@ export class GetItemByIdResponseDto extends createZodDto(
   priorityId!: number | null;
 
   priority!: PriorityResponseDto | null;
-  assignee!: UserResponseDto | null;
+  assignee!: AssigneeResponseDto | null;
   board!: BoardResponseDto;
   column!: ColumnResponseDto;
   tags!: TagResponseDto[];

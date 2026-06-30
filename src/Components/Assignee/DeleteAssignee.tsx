@@ -3,25 +3,25 @@ import { useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DoneIcon from '@mui/icons-material/Done';
 import CloseIcon from '@mui/icons-material/Close';
-import { useDeleteUser } from "../../React_Queries/useBoardMutationsDeleteData";
+import { useDeleteAssignee } from "../../React_Queries/useBoardMutationsDeleteData";
 
-interface DeleteUserProps {
+interface DeleteAssigneeProps {
     id: number;
     name: string;
 }
-export default function DeleteUser({id , name}: DeleteUserProps){
+export default function DeleteAssignee({id , name}: DeleteAssigneeProps){
     const [open , setOpen] = useState<boolean>(false);
-    const deleteUser = useDeleteUser();
+    const deleteAssignee = useDeleteAssignee();
     const [errorMessage, setErrorMessage] = useState<string>("");
 
-    function handleDeleteUser() {
-        deleteUser.mutate(id, {
+    function handleDeleteAssignee() {
+        deleteAssignee.mutate(id, {
             onSuccess: () => {
                 setErrorMessage("");
                 setOpen(false);
             },
             onError: () => {
-                setErrorMessage("Failed to delete user. Please try again.");
+                setErrorMessage("Failed to delete assignee. Please try again.");
             },
         });
     }
@@ -29,11 +29,11 @@ export default function DeleteUser({id , name}: DeleteUserProps){
     return(
         <Box>
             <Dialog open={open} onClose={() => setOpen(false)}>
-                <DialogTitle>Delete User</DialogTitle>
+                <DialogTitle>Delete Assignee</DialogTitle>
 
                 <DialogContent>
                     <Typography>
-                        Are you sure you want to delete this user {name}?
+                        Are you sure you want to delete this assignee {name}?
                     </Typography>
                     {errorMessage ? (
                         <Typography color="error" sx={{ mt: 1, fontSize: 13 }}>
@@ -45,14 +45,14 @@ export default function DeleteUser({id , name}: DeleteUserProps){
                     <IconButton onClick={() => setOpen(false)} color="secondary">
                         <CloseIcon />
                     </IconButton>
-                    <IconButton onClick={handleDeleteUser} color="primary">
+                    <IconButton onClick={handleDeleteAssignee} color="primary">
                         <DoneIcon />
                     </IconButton>
                 </DialogActions>
 
             </Dialog>
             
-            <Tooltip title="Delete User">
+            <Tooltip title="Delete Assignee">
                 <IconButton onClick={() => setOpen(true)} color="error">
                     <DeleteIcon fontSize="small" />
                 </IconButton>

@@ -22,15 +22,16 @@ export interface Items {
   assigneeId: number | null;
   priorityId: number | null;
 
-  assignee?: User | null;
+  assignee?: Assignee | null;
   priority?: Priority | null;
   tags: Tag[];
 }
 
-export interface User {
+export interface Assignee {
   id: number;
   name: string;
 }
+
 
 export interface ItemTag {
   id: number;
@@ -69,7 +70,7 @@ export const PRIORITY_TYPES: PriorityTypeValues[] = [
   "CRITICAL",
 ];
 
-export type CreateUserPayload = Omit<User, "id">;
+export type CreateAssigneePayload = Omit<Assignee, "id">;
 export type CreateItemPayload = {
   boardId: number;
   columnId: number;
