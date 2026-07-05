@@ -11,7 +11,7 @@ import {
 import {
   itemTagWithTagResponseSchema,
   ItemTagWithTagResponseDto,
-} from '../../item_tag/dto/itemTags-response.dto';
+} from '../../Item_tag/dto/itemTags-response.dto';
 import { ColumnResponseDto, columnResponseSchema } from '../../columns/dto/column-response.dto';
 import { BoardResponseDto, boardResponseSchema } from '../../boards/dto/board-response.dto';
 import { TagResponseDto, tagResponseSchema } from '../../tags/dto/tag-response.dto';

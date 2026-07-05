@@ -6,7 +6,7 @@ import { itemResponseSchema } from '../../items/dto/item-response.dto';
 import { priorityResponseSchema } from '../../priorities/dto/priority-response.dto';
 import { tagResponseSchema } from '../../tags/dto/tag-response.dto';
 import { AssigneeResponseSchema } from '../../assignee/dto/assignee-response.dto';
-import { itemTagsResponseSchema } from '../../item_tag/dto/itemTags-response.dto';
+import { itemTagsResponseSchema } from '../../Item_tag/dto/itemTags-response.dto';
 import { userResponseSchema, UserResponseDto } from '../../users/dto/user-response.dto';
 
 // ---------------------------------- //
