@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { BoardRepository } from './Board.Repository';
 import type { CreateBoardDto, UpdateBoardDto } from './dto/board.dto';
 import {
@@ -7,6 +11,7 @@ import {
   DeleteBoardResponseDto,
   GetAllParamsForBoardResponseDto,
 } from './dto/board-response.dto';
+
 @Injectable()
 export class BoardsService {
   constructor(private readonly boardRepository: BoardRepository) {}
@@ -17,24 +22,50 @@ export class BoardsService {
         id: true,
         title: true,
         isDefault: true,
+        userId: true,
       },
     });
 
     return { boards };
   }
-  async getBoardById(id: number): Promise<BoardResponseDto | null> {
-    return await this.boardRepository.findOne({
-      where: {
-        id,
+  async getBoardById(id: number): Promise<BoardResponseDto> {
+    const board = await this.boardRepository.findOne({
+      where: { id },
+      select: {
+        id: true,
+        title: true,
+        isDefault: true,
+        userId: true,
       },
     });
+
+    if (!board) {
+      throw new NotFoundException(`Board with id ${id} not found`);
+    }
+
+    return board;
   }
 
   async createBoard(createBoardDto: CreateBoardDto): Promise<BoardResponseDto> {
-    this.boardRepository.existsBy({ isDefault: true });
-    return await this.boardRepository.save(
-      this.boardRepository.create(createBoardDto),
-    );
+    const boardWithSameTitleExists = await this.boardRepository.existsBy({
+      userId: createBoardDto.userId,
+      title: createBoardDto.title,
+    });
+
+    if (boardWithSameTitleExists) {
+      throw new ConflictException('Board with this title already exists');
+    }
+    const hasDefaultBoard = await this.boardRepository.existsBy({
+      userId: createBoardDto.userId,
+      isDefault: true,
+    });
+    const board = this.boardRepository.create({
+      title: createBoardDto.title,
+      userId: createBoardDto.userId,
+      isDefault: !hasDefaultBoard,
+    });
+
+    return await this.boardRepository.save(board);
   }
 
   async deleteBoard(id: number): Promise<DeleteBoardResponseDto> {
@@ -67,15 +98,15 @@ export class BoardsService {
   async setDefaultBoard(id: number): Promise<BoardResponseDto> {
     const board = await this.getBoardById(id);
 
-    if (!board) {
-      throw new NotFoundException(`Board with id ${id} not found`);
-    }
-
     await this.boardRepository.update(
-      { isDefault: true },
-      { isDefault: false },
+      {
+        userId: board.userId,
+        isDefault: true,
+      },
+      {
+        isDefault: false,
+      },
     );
-
     board.isDefault = true;
 
     return await this.boardRepository.save(board);
@@ -84,9 +115,13 @@ export class BoardsService {
   async updateBoard(
     id: number,
     updateBoardDto: UpdateBoardDto,
-  ): Promise<BoardResponseDto | null> {
+  ): Promise<BoardResponseDto> {
     await this.boardRepository.update({ id }, updateBoardDto);
-    return this.getBoardById(id);
+    const board = await this.getBoardById(id);
+    if (!board) {
+      throw new NotFoundException(`Board with id ${id} not found`);
+    }
+    return board;
   }
 
   async getAllParamsForBoard(
@@ -95,6 +130,7 @@ export class BoardsService {
     const board = await this.boardRepository.findOne({
       where: { id },
       relations: {
+        user: true,
         columns: {
           items: {
             priority: true,

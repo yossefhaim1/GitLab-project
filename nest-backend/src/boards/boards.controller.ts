@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import type { CreateBoardDto, UpdateBoardDto } from './dto/board.dto';
-import { createBoardSchema, updateBoardSchema } from './schemas/board.schema';
+import { createBoardSchema, updateBoardSchema } from './dto/board.dto';
 import {
   BoardResponseDto,
   DeleteBoardResponseDto,
@@ -59,7 +59,7 @@ export class BoardsController {
   updateBoard(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdateBoardDto,
-  ): Promise<BoardResponseDto | null> {
+  ): Promise<BoardResponseDto> {
     const updateBoardDto = updateBoardSchema.parse(body);
     return this.boardsService.updateBoard(id, updateBoardDto);
   }

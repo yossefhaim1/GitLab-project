@@ -6,15 +6,15 @@ export class UserEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column()
+  @Column({name : 'name'})
   name!: string;
 
-  @Column()
+  @Column({name : 'email', unique: true })
   email!: string;
 
-  @Column()
+  @Column({name : 'password_hash', select: false })
   passwordHash!: string;
-  
+
   @OneToMany(() => BoardEntity, (board) => board.user)
   boards!: BoardEntity[];
 }

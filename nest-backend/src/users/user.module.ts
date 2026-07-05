@@ -9,7 +9,7 @@ import { UserRepository } from "./User.Repository";
 @Module({
   imports: [
     TypeOrmModule.forFeature([UserEntity])
-    ],
+  ],
     providers: [UsersService, UserRepository],
     controllers: [UsersController]
 })

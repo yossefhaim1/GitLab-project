@@ -14,7 +14,7 @@ export class ItemTagEntity{
     @JoinColumn({name : 'itemId'})
     item! : ItemEntity;
 
-    @Column()
+    @Column({name : 'itemId'})
     itemId! : number;
 
     @ManyToOne ( ()=> TagEntity , (tag) => tag.items, {
@@ -23,6 +23,6 @@ export class ItemTagEntity{
     @JoinColumn({name : 'tagId'})
     tag! : TagEntity;
 
-    @Column()
+    @Column({name : 'tagId'})
     tagId! : number;
 }
