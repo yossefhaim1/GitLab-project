@@ -1,12 +1,8 @@
 import { Box, Stack, Typography } from "@mui/material";
 import ItemCard from "./ItemCard";
 import AddItem from "./AddItem";
-import {
-  
-  useColumns,
-  useItems,
-} from "../../React_Queries/useBoardsGetData";
-import { DeleteColumn } from "../TopColum/DeletColumn";
+import { useColumns, useItems } from "../../React_Queries/useBoardsGetData";
+import { DeleteColumn } from "../TopColum/DeleteColumn";
 import { useDroppable } from "@dnd-kit/core";
 import {
   SortableContext,
@@ -35,21 +31,21 @@ export default function Column({ columnId }: ColumnProps) {
       const searchValue = searchItem.toLowerCase().trim();
 
       const title = item.title.toLowerCase();
-      const assigneeId = item.assigneeId.toLowerCase();
-      const priority = item.priority[0]?.type.toLowerCase() || "";
+      const assignee = item.assignee?.name.toLowerCase() || "";
+      const priority = item.priority?.type.toLowerCase() || "";
 
       const isSameColumn = item.columnId === columnId;
 
       const isMatchSearch =
         searchValue.length === 0 ||
         title.includes(searchValue) ||
-        assigneeId.includes(searchValue) ||
+        assignee.includes(searchValue) ||
         priority.includes(searchValue);
 
       return isSameColumn && isMatchSearch;
     })
     .sort((a, b) => a.position - b.position);
-
+    
   if (!column) {
     return null;
   }

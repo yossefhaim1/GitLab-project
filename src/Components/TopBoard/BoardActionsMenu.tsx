@@ -7,24 +7,37 @@ import {
   ListItemText,
   Divider,
   Tooltip,
+  Badge,
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
-import PersonIcon from '@mui/icons-material/Person';
+import PersonIcon from "@mui/icons-material/Person";
+import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
+import BookmarkAddedIcon from "@mui/icons-material/BookmarkAdded";
 import { useState } from "react";
 import type { MouseEvent } from "react";
 
-import { TableOfUsers} from "../Users/AllUsers";
+import { TableOfPriorities } from "./TableOfPriorities";
+import { TableOfTags } from "./TableOfTags";
+import { TableOfAssignees } from "../Assignee/AllAssignee";
 import { AddNewBoard } from "./AddNewBoard";
-import { DeleteBoard } from "./DeletBoard";
+import { DeleteBoard } from "./DeleteBoard";
+import { ItemWithoutPriority } from "./ItemWithoutPriority";
+import { useItemsWithoutPriority } from "../../Hook/useItemsWithoutPriority";
 
 export function BoardActionsMenu() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const [openAddBoard, setOpenAddBoard] = useState<boolean>(false);
   const [openDeleteBoard, setOpenDeleteBoard] = useState<boolean>(false);
-  const [openBoardUserBoard, setOpenBoardUserBoard] = useState<boolean>(false);
+  const [openBoardTableOfAssignees, setOpenBoardTableOfAssignees] = useState<boolean>(false);
+  const [openTableOfPriorities, setOpenTableOfPriorities] =
+    useState<boolean>(false);
+  const [openTableOfTags, setOpenTableOfTags] = useState<boolean>(false);
+  const [openItemWithoutPriority, setOpenItemWithoutPriority] =
+    useState<boolean>(false);
+  const { count: itemsWithoutPriorityCount } = useItemsWithoutPriority();
 
   const openMenu = Boolean(anchorEl);
 
@@ -85,22 +98,86 @@ export function BoardActionsMenu() {
             },
           }}
         >
-            <MenuItem
+          <MenuItem
             onClick={() => {
               handleCloseMenu();
-              setOpenBoardUserBoard(true);
+              setOpenBoardTableOfAssignees(true);
             }}
           >
             <ListItemIcon>
               <PersonIcon fontSize="small" />
             </ListItemIcon>
-            <ListItemText primary="Table all users" />
-          </MenuItem> 
-          
+            <ListItemText primary="Table Assignees" />
+          </MenuItem>
+
           <MenuItem
             onClick={() => {
               handleCloseMenu();
+              setOpenTableOfPriorities(true);
+            }}
+          >
+            <ListItemIcon>
+              <PriorityHighIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText primary=" Priorities Table" />
+          </MenuItem>
 
+          <MenuItem
+            onClick={() => {
+              handleCloseMenu();
+              setOpenTableOfTags(true);
+            }}
+          >
+            <ListItemIcon>
+              <BookmarkAddedIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText primary=" Tags Table" />
+          </MenuItem>
+
+          <MenuItem
+            onClick={() => {
+              handleCloseMenu();
+              setOpenItemWithoutPriority(true);
+            }}
+          >
+            <ListItemIcon>
+              <Badge
+                badgeContent={itemsWithoutPriorityCount}
+                color="error"
+                invisible={itemsWithoutPriorityCount === 0}
+                // שימוש במיקום דיפולטיבי מדויק במקום הזזה ידנית אגרסיבית
+                overlap="circular"
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "left", // שינוי לשמאל כדי למנוע התנגשות עם הטקסט מימין
+                }}
+                sx={{
+                  "& .MuiBadge-badge": {
+                    fontSize: "0.65rem", // שימוש ביחידות rem לפונט פרופורציונלי
+                    fontWeight: "bold", // הדגשת המספר לקריאות משופרת
+                    height: 18,
+                    minWidth: 18,
+                    padding: "0 4px", // ריפוד פנימי למניעת עיוות כשהמספר גדל לדו-ספרתי
+                    border: "2px solid #fff", // קו מתאר לבן שמפריד את התג מהאייקון (אפקט מקצועי)
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.15)", // הצללה עדינה
+                  },
+                }}
+              >
+                <PriorityHighIcon
+                  fontSize="small"
+                  sx={{ color: "text.secondary" }}
+                />
+              </Badge>
+            </ListItemIcon>
+
+            <ListItemText primary="Items Without Priority" />
+          </MenuItem>
+
+          <Divider />
+
+          <MenuItem
+            onClick={() => {
+              handleCloseMenu();
               setTimeout(() => {
                 setOpenAddBoard(true);
               }, 0);
@@ -138,9 +215,24 @@ export function BoardActionsMenu() {
         open={openDeleteBoard}
         onClose={() => setOpenDeleteBoard(false)}
       />
-      <TableOfUsers
-        open={openBoardUserBoard}
-        onClose={() => setOpenBoardUserBoard(false)}
+
+      <TableOfAssignees
+        open={openBoardTableOfAssignees}
+        onClose={() => setOpenBoardTableOfAssignees(false)}
+      />
+
+      <TableOfPriorities
+        open={openTableOfPriorities}
+        onClose={() => setOpenTableOfPriorities(false)}
+      />
+      <TableOfTags
+        open={openTableOfTags}
+        onClose={() => setOpenTableOfTags(false)}
+      />
+
+      <ItemWithoutPriority
+        open={openItemWithoutPriority}
+        onClose={() => setOpenItemWithoutPriority(false)}
       />
     </>
   );

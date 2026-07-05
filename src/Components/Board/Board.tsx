@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import Column from "./Column";
 import { AllTopBoard } from "../TopBoard/AllTopBoard";
-import { AddColum } from "../TopColum/AddColum";
+import { AddColumn } from "../TopColum/AddColumn";
 import { useEffect, useRef } from "react";
 import BoardDndProvider from "./BoardDndProvider";
 import { useColumns } from "../../React_Queries/useBoardsGetData";
@@ -17,34 +17,34 @@ export default function Board() {
   const boardScrollRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-  const board = boardScrollRef.current;
-  if (!board) return;
+    const board = boardScrollRef.current;
+    if (!board) return;
 
-  const handleWheel = (e: WheelEvent) => {
-    const rect = board.getBoundingClientRect();
+    const handleWheel = (e: WheelEvent) => {
+      const rect = board.getBoundingClientRect();
 
-    const isMouseNearBottom = e.clientY >= rect.bottom - 35;
+      const isMouseNearBottom = e.clientY >= rect.bottom - 35;
 
-    if (!isMouseNearBottom) {
-      return;
-    }
+      if (!isMouseNearBottom) {
+        return;
+      }
 
-    if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-      e.preventDefault();
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        e.preventDefault();
 
-      board.scrollBy({
-        left: e.deltaY * 5,
-        behavior: "smooth",
-      });
-    }
-  };
+        board.scrollBy({
+          left: e.deltaY * 5,
+          behavior: "smooth",
+        });
+      }
+    };
 
-  board.addEventListener("wheel", handleWheel, { passive: false });
+    board.addEventListener("wheel", handleWheel, { passive: false });
 
-  return () => {
-    board.removeEventListener("wheel", handleWheel);
-  };
-}, []);
+    return () => {
+      board.removeEventListener("wheel", handleWheel);
+    };
+  }, []);
 
   if (!activeBoard) return null;
 
@@ -104,11 +104,11 @@ export default function Board() {
               scrollBehavior: "smooth",
             }}
           >
-            {columns?.map((col) => (
-              <Column key={col.id} columnId={col.id} />
-            ))}
+            {(columns || []).map((col) => (
+                <Column key={col.id} columnId={col.id} />
+              ))}
 
-            <AddColum />
+            <AddColumn />
           </Box>
         </BoardDndProvider>
       </Box>

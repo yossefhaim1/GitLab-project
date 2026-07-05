@@ -9,7 +9,9 @@ import { arrayMove } from "@dnd-kit/sortable";
 import { useState } from "react";
 import ItemCard from "./ItemCard";
 import type { Items } from "../../Type";
-import { useUpDateItem } from "../../React_Queries/useBoardMutationsUpDateData";
+import { useQueryClient } from "@tanstack/react-query";
+import { API } from "../../Api/boardPageApi";
+import { useBoardStore } from "../../store/boardStore";
 
 type BoardDndProviderProps = {
   children: React.ReactNode;
@@ -21,8 +23,12 @@ export default function BoardDndProvider({
   items,
 }: BoardDndProviderProps) {
   const [activeItemId, setActiveItemId] = useState<number | null>(null);
+  const activeBoardId = useBoardStore((state) => state.activeBoardId);
+  const queryClient = useQueryClient();
 
-  const updateItemMutation = useUpDateItem();
+  function toSortedItems(nextItems: Items[]) {
+    return [...nextItems].sort((a, b) => a.position - b.position);
+  }
 
   function getItemId(id: string | number) {
     return Number(String(id).replace("item-", ""));
@@ -45,6 +51,12 @@ export default function BoardDndProvider({
 
     const activeItemId = getItemId(active.id);
     const overId = String(over.id);
+
+    if (!activeBoardId) return;
+
+    const previousItems = items;
+
+    try {
 
     const activeItem = items.find((item) => item.id === activeItemId);
     if (!activeItem) return;
@@ -96,14 +108,27 @@ export default function BoardDndProvider({
         })
       );
 
-      for (const item of reorderedItems) {
-        await updateItemMutation.mutateAsync({
-          id: item.id,
-          changes: {
+      const nextItems = items.map((item) => {
+        const updatedItem = reorderedItems.find((updated) => updated.id === item.id);
+        return updatedItem ?? item;
+      });
+
+      queryClient.setQueryData(["items", activeBoardId], toSortedItems(nextItems));
+
+      const changedItems = reorderedItems.filter((item) => {
+        const originalItem = sourceItems.find((sourceItem) => sourceItem.id === item.id);
+        return originalItem?.position !== item.position;
+      });
+
+      await Promise.all(
+        changedItems.map((item) =>
+          API.updateItemRequest(item.id, {
             position: item.position,
-          },
-        });
-      }
+          })
+        )
+      );
+
+      queryClient.invalidateQueries({ queryKey: ["items", activeBoardId] });
 
       return;
     }
@@ -140,23 +165,55 @@ export default function BoardDndProvider({
       position: index + 1,
     }));
 
-    for (const item of updatedSourceItems) {
-      await updateItemMutation.mutateAsync({
-        id: item.id,
-        changes: {
-          position: item.position,
-        },
-      });
-    }
+    const nextItems = items.map((item) => {
+      const updatedSourceItem = updatedSourceItems.find(
+        (updated) => updated.id === item.id
+      );
 
-    for (const item of fixedTargetItems) {
-      await updateItemMutation.mutateAsync({
-        id: item.id,
-        changes: {
+      if (updatedSourceItem) {
+        return updatedSourceItem;
+      }
+
+      const updatedTargetItem = fixedTargetItems.find(
+        (updated) => updated.id === item.id
+      );
+
+      return updatedTargetItem ?? item;
+    });
+
+    queryClient.setQueryData(["items", activeBoardId], toSortedItems(nextItems));
+
+    const changedSourceItems = updatedSourceItems.filter((item) => {
+      const originalItem = sourceItems.find((sourceItem) => sourceItem.id === item.id);
+      return originalItem?.position !== item.position;
+    });
+
+    const changedTargetItems = fixedTargetItems.filter((item) => {
+      const originalItem = items.find((currentItem) => currentItem.id === item.id);
+      return (
+        originalItem?.columnId !== item.columnId ||
+        originalItem?.position !== item.position
+      );
+    });
+
+    await Promise.all([
+      ...changedSourceItems.map((item) =>
+        API.updateItemRequest(item.id, {
+          position: item.position,
+        })
+      ),
+      ...changedTargetItems.map((item) =>
+        API.updateItemRequest(item.id, {
           columnId: item.columnId,
           position: item.position,
-        },
-      });
+        })
+      ),
+    ]);
+
+    queryClient.invalidateQueries({ queryKey: ["items", activeBoardId] });
+    } catch {
+      queryClient.setQueryData(["items", activeBoardId], toSortedItems(previousItems));
+      alert("Failed to move item. Please try again.");
     }
   }
 

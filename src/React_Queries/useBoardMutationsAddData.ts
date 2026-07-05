@@ -1,26 +1,26 @@
 import { API } from "../Api/boardPageApi";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type {CreateBoardPayload, CreateColumnPayload, CreateItemPayload, CreateUserPayload} from "../Type";
+import type {
+  CreateBoardPayload,
+  CreateColumnPayload,
+  CreateItemPayload,
+  CreateAssigneePayload,
+  CreatePriorityPayload,
+  CreateTagPayload,
+  CreateItemTagPayload,
+} from "../Type";
 import { useBoardStore } from "../store/boardStore";
-
-// this part its for to ADD data for the boards, columns, items and users 
-// by this part "refetchOnMount" in the useQuery in the useBoards, useColumns, useItems and useUsers
-// we will get the new data after the add without to do anything because of this part "refetchOnMount: true" in the useQuery 
+import { useActiveBoardId } from "../Hook/useActiveBoardId";
 
 export function useAddBoard() {
   const queryClient = useQueryClient();
-
-  const setActiveBoardId = useBoardStore(
-    (state) => state.setActiveBoardId
-  );
+  const setActiveBoardId = useBoardStore((state) => state.setActiveBoardId);
 
   return useMutation({
-    mutationFn: (BoardData : CreateBoardPayload) => 
-      API.addBoard(BoardData),
+    mutationFn: (boardData: CreateBoardPayload) => API.addBoard(boardData),
+
     onSuccess: (newBoard) => {
-      queryClient.invalidateQueries({
-        queryKey: ["boards"],
-      });
+      queryClient.invalidateQueries({ queryKey: ["boards"] });
       setActiveBoardId(newBoard.id);
     },
   });
@@ -30,11 +30,10 @@ export function useAddColumn() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (ColumnData : CreateColumnPayload) => API.addColumn(ColumnData),
+    mutationFn: (columnData: CreateColumnPayload) => API.addColumn(columnData),
+
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["columns"],
-      });
+      queryClient.invalidateQueries({ queryKey: ["columns"] });
     },
   });
 }
@@ -43,24 +42,92 @@ export function useAddItem() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (ItemData : CreateItemPayload) => API.addItemRequest(ItemData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["items"],
-      });
+    mutationFn: (itemData: CreateItemPayload) => API.addItemRequest(itemData),
+
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["items", variables.boardId] });
     },
   });
 }
 
-export function useAddUser() {
+export function useAddItemWithTags() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (UserData : CreateUserPayload) => API.addUser(UserData),
+    mutationFn: async ({
+      item,
+      tagIds,
+    }: {
+      item: CreateItemPayload;
+      tagIds: number[];
+    }) => {
+      const newItem = await API.addItemRequest(item);
+
+      await Promise.all(
+        tagIds.map((tagId) =>
+          API.addItemTag({
+            itemId: newItem.id,
+            tagId,
+          })
+        )
+      );
+
+      return newItem;
+    },
+
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["items", variables.item.boardId] });
+    },
+  });
+}
+
+export function useAddAssignee() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (assigneeData: CreateAssigneePayload) => API.addAssignee(assigneeData),
+
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["users"],
-      });
+      queryClient.invalidateQueries({ queryKey: ["assignees"] });
+    },
+  });
+}
+
+export function useAddPriority() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (priorityData: CreatePriorityPayload) =>
+      API.addPriority(priorityData),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["priorities"] });
+    },
+  });
+}
+
+export function useAddTag() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (tagData: CreateTagPayload) => API.createTag(tagData),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tags"] });
+    },
+  });
+}
+
+export function useAddItemTag() {
+  const queryClient = useQueryClient();
+  const boardId = useActiveBoardId();
+
+  return useMutation({
+    mutationFn: (itemTagData: CreateItemTagPayload) =>
+      API.addItemTag(itemTagData),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["items", boardId] });
     },
   });
 }

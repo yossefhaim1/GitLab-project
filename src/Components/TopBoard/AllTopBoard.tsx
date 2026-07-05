@@ -1,10 +1,13 @@
 import { BoardActionsMenu } from "./BoardActionsMenu";
 import { Search } from "./Search";
 import { ListOfBoards } from "./ListOfBoards";
-import { SetDefaultBoardButton } from "./SetDefaulteBoardButton";
-import { Box } from "@mui/material";
+import { SetDefaultBoardButton } from "./SetDefaultBoardButton";
+import { Badge, Box } from "@mui/material";
+import { useItemsWithoutPriority } from "../../Hook/useItemsWithoutPriority";
 
 export function AllTopBoard() {
+  const { count: itemsWithoutPriorityCount } = useItemsWithoutPriority();
+
   return (
     <Box
       sx={{
@@ -49,7 +52,30 @@ export function AllTopBoard() {
         <Box sx={{ mr: { xs: 1, md: 2.5 } }}>
           <SetDefaultBoardButton />
         </Box>
-        <BoardActionsMenu />
+        <Badge
+          badgeContent={itemsWithoutPriorityCount}
+          color="error"
+          invisible={itemsWithoutPriorityCount === 0}
+          // שימוש במיקום דיפולטיבי מדויק במקום הזזה ידנית אגרסיבית
+          overlap="circular"
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "left", // שינוי לשמאל כדי למנוע התנגשות עם הטקסט מימין
+          }}
+          sx={{
+            "& .MuiBadge-badge": {
+              fontSize: "18", // שימוש ביחידות rem לפונט פרופורציונלי
+              fontWeight: "bold", // הדגשת המספר לקריאות משופרת
+              height: 20,
+              minWidth: 20  ,
+              padding: "0 4px", // ריפוד פנימי למניעת עיוות כשהמספר גדל לדו-ספרתי
+              border: "2px solid #fff", // קו מתאר לבן שמפריד את התג מהאייקון (אפקט מקצועי)
+              boxShadow: "0 1px 3px rgba(0,0,0,0.15)", // הצללה עדינה
+            },
+          }}
+        >
+          <BoardActionsMenu />
+        </Badge>
       </Box>
     </Box>
   );

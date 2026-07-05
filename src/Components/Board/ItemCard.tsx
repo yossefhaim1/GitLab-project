@@ -1,9 +1,9 @@
 import { Box, Paper, Tooltip, Typography } from "@mui/material";
 import DeleteItem from "./DeleteItem";
-import UpdateItem from "./UpdateItem";
+import {UpdateItem} from "./UpdateItem";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import {  useColumns, useItems } from "../../React_Queries/useBoardsGetData";
+import { useColumns, useItems } from "../../React_Queries/useBoardsGetData";
 import { useBoardStore } from "../../store/boardStore";
 
 type ItemCardProps = {
@@ -12,6 +12,7 @@ type ItemCardProps = {
 
 export default function ItemCard({ itemId }: ItemCardProps) {
   const activeBoard = useBoardStore((state) => state.activeBoardId);
+
   const { data: columns } = useColumns(activeBoard);
   const { data: items } = useItems(activeBoard);
 
@@ -123,13 +124,12 @@ export default function ItemCard({ itemId }: ItemCardProps) {
             p{item.position}-#{item.id}
           </Typography>
 
-          {item.priority.map((priority, index) => (
+          {item.priority && (
             <Box
-              key={index}
               sx={{
                 fontSize: "11px",
                 fontWeight: 800,
-                backgroundColor: `${priority.color}98`,
+                backgroundColor: `${item.priority.color}98`,
                 color: "#ffffff",
                 px: 1,
                 height: 22,
@@ -140,42 +140,57 @@ export default function ItemCard({ itemId }: ItemCardProps) {
                 lineHeight: 1,
               }}
             >
-              {priority.type[0].toUpperCase()}
+              {item.priority.type[0].toUpperCase()}
             </Box>
-          ))}
+          )}
         </Box>
       </Box>
 
-      <Box
-        sx={{
-          mt: 1.25,
-          display: "flex",
-          flexWrap: "wrap",
-          gap: 1,
-        }}
-      >
-        {item.tags.map((tag, index) => (
-          <Box
-            key={index}
-            sx={{
-              fontSize: "11px",
-              fontWeight: 700,
-              backgroundColor: `${tag.color}98`,
-              color: "#ffffff",
-              border: `1px solid ${tag.color}90`,
-              textShadow: "0 0 3px rgba(0,0,0,0.6)",
-              px: 1,
-              height: 24,
-              borderRadius: 999,
-              display: "inline-flex",
-              alignItems: "center",
-              lineHeight: 1,
-            }}
-          >
-            {tag.type}
-          </Box>
-        ))}
-      </Box>
+      {item.tags?.length > 0 && (
+        <Box
+          sx={{
+            mt: 1.25,
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 1,
+          }}
+        >
+          {item.tags.map((tag) => (
+            <Box
+              key={tag.id}
+              sx={{
+                fontSize: "11px",
+                fontWeight: 700,
+                backgroundColor: `${tag.color}98`,
+                color: "#ffffff",
+                border: `1px solid ${tag.color}90`,
+                textShadow: "0 0 3px rgba(0,0,0,0.6)",
+                px: 1,
+                height: 24,
+                borderRadius: 999,
+                display: "inline-flex",
+                alignItems: "center",
+                lineHeight: 1,
+              }}
+            >
+              {tag.title}
+            </Box>
+          ))}
+        </Box>
+      )}
+
+      {item.assignee && (
+        <Typography
+          sx={{
+            mt: 1.25,
+            fontSize: "12px",
+            fontWeight: 700,
+            color: "#6b7280",
+          }}
+        >
+        {item.assignee.name}
+        </Typography>
+      )}
 
       <Box
         sx={{

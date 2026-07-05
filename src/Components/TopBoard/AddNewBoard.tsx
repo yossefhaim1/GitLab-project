@@ -10,6 +10,7 @@ interface AddNewBoardProps {
 
 export function AddNewBoard({ open, onClose }: AddNewBoardProps) {
   const [boardName, setBoardName] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const { data } = useBoards();
   const boards = data?.boards ?? [];
@@ -21,21 +22,48 @@ export function AddNewBoard({ open, onClose }: AddNewBoardProps) {
       document.activeElement.blur();
     }
 
+    setErrorMessage("");
     onClose();
   }
 
   async function handleCreate() {
     const nameBoard = boardName.trim();
 
-    if (!nameBoard) return;
+    if (!nameBoard) {
+      setErrorMessage("Board name is required.");
+      return;
+    }
 
-    await addBoard.mutateAsync({
-      name: nameBoard,
-      isDefault: boards.length === 0,
-    });
+    const boardExists = boards.some(
+      (board) => board.title.trim().toLowerCase() === nameBoard.toLowerCase(),
+    );
 
-    setBoardName("");
-    handleCloseDrawer();
+    if (boardExists) {
+      setErrorMessage("A board with this name already exists.");
+      return;
+    }
+
+    try {
+      await addBoard.mutateAsync(
+        {
+          title: nameBoard,
+          isDefault: boards.length === 0,
+        },
+        {
+          onSuccess: () => {
+            setErrorMessage("");
+          },
+          onError: () => {
+            setErrorMessage("Failed to create board. Please try again.");
+          },
+        },
+      );
+
+      setBoardName("");
+      handleCloseDrawer();
+    } catch {
+      // Error state is handled via onError callback.
+    }
   }
 
   return (
@@ -64,6 +92,12 @@ export function AddNewBoard({ open, onClose }: AddNewBoardProps) {
             }
           }}
         />
+
+        {errorMessage ? (
+          <Typography color="error" sx={{ mb: 2, fontSize: 13 }}>
+            {errorMessage}
+          </Typography>
+        ) : null}
 
         <Button
           fullWidth
