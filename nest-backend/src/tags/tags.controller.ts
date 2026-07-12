@@ -1,9 +1,12 @@
-import { Body, Controller , Delete, Get, Param, ParseIntPipe, Patch, Post } from "@nestjs/common";
+import { Body, Controller , Delete, Get, Param, ParseIntPipe, Patch, Post, UseGuards } from "@nestjs/common";
 import { TagsService } from "./tags.service";
 import type { CreateTagDto, UpdateTagDto } from "./dto/tag.dto";
 import {CreateTagSchema } from './schemas/tag.schema'
 import { UpdateTagSchema } from "./schemas/tag.schema";
 import { TagDeleteResponseDto, TagResponseDto } from "./dto/tag-response.dto";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+
+@UseGuards(JwtAuthGuard)
 @Controller('tags')
 export class TagsController {
   constructor(private readonly tagsService: TagsService) {}     

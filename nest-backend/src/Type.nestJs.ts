@@ -9,4 +9,8 @@ export const PriorityType = {
 export type PriorityTypeValues =
   (typeof PriorityType)[keyof typeof PriorityType];
 
-
+export interface JwtPayload {
+  sub: number;
+  email: string;
+  name?: string;
+}

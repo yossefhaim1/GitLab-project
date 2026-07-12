@@ -1,24 +1,12 @@
-import {
-  Body,
-  Post,
-  Controller,
-  Get,
-  Param,
-  Patch,
-  ParseIntPipe,
-  Delete,
-} from '@nestjs/common';
+import {Body,Post,Controller,Get,Param,Patch,ParseIntPipe,Delete,UseGuards,} from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import type { CreateBoardDto, UpdateBoardDto } from './dto/board.dto';
 import { createBoardSchema, updateBoardSchema } from './dto/board.dto';
-import {
-  BoardResponseDto,
-  DeleteBoardResponseDto,
-  GetAllParamsForBoardResponseDto,
-  GetBoardsResponseDto,
+import {BoardResponseDto,DeleteBoardResponseDto,GetAllParamsForBoardResponseDto,GetBoardsResponseDto,
 } from './dto/board-response.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
-
+@UseGuards(JwtAuthGuard)
 @Controller('boards')
 export class BoardsController {
   constructor(private readonly boardsService: BoardsService) {}

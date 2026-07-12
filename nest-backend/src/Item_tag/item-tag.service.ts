@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ItemTagRepository } from './ItemTag.Repository';
+import { ItemTagRepository } from './item-tag.repository';
 import { createItemTagDto, updateItemTagDto } from './dto/item-tag.dto';
 import {
   ItemTagWithTagResponseDto,
@@ -7,9 +7,10 @@ import {
   ItemTagWithItemResponseDto,
   ItemTagWithRelationsResponseDto,
   DeleteItemTagResponseDto,
-} from './dto/itemTags-response.dto';
+} from './dto/item-tags-response.dto';
 import { ItemResponseDto } from '../items/dto/item-response.dto';
 import { TagResponseDto } from '../tags/dto/tag-response.dto';
+
 @Injectable()
 export class ItemTagService {
   constructor(private readonly itemTagRepository: ItemTagRepository) {}

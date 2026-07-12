@@ -8,11 +8,14 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { ItemTagService } from './ItamTag.service';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { ItemTagService } from './item-tag.service';
 import type { createItemTagDto, updateItemTagDto } from './dto/item-tag.dto';
-import { UpdateItemTagSchema } from './schemas/item_Tag.schema';
-import { CreateItemTagSchema } from './schemas/item_Tag.schema';
+import { UpdateItemTagSchema } from './schemas/item-tag.schema';
+import { CreateItemTagSchema } from './schemas/item-tag.schema';
 
+@UseGuards(JwtAuthGuard)
 @Controller('itemTags')
 export class ItemTagController {
   constructor(private readonly itemTagService: ItemTagService) {}

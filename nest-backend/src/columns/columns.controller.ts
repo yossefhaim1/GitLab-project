@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { ColumnsService } from './columns.service';
 import type { CreateColumnDto, UpdateColumnDto } from './dto/column.dto';
@@ -21,7 +22,9 @@ import {
   GetColumnsByBoardIdResponseDto,
   DeleteColumnResponseDto,
 } from './dto/column-response.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('columns')
 export class ColumnsController {
   constructor(private readonly columnsService: ColumnsService) {}
