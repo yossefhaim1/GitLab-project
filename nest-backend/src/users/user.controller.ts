@@ -6,25 +6,36 @@ import {
   Param,
   ParseIntPipe,
   Patch,
-  Post,
+  UseGuards,
 } from '@nestjs/common';
 
 import { UsersService } from './user.service';
-import { CreateUserDto, UpdateUserDto, createUserSchema, updateUserSchema } from './dto/user.dto';
-import { ResponseFindUserByEmailDto } from './dto/user-response.dto';
+import {
+  UpdateUserDto,
+  updateUserSchema,
+} from './dto/user.dto';
 import {
   DeleteUserResponseDto,
   GetUsersResponseDto,
   UserResponseDto,
 } from './dto/user-response.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('users')
+@UseGuards(JwtAuthGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
   async getUsers(): Promise<GetUsersResponseDto> {
     return this.usersService.getUsers();
+  }
+
+  @Get('email/:email')
+  async findUserByEmail(
+    @Param('email') email: string,
+  ): Promise<UserResponseDto> {
+    return this.usersService.findUserByEmail(email);
   }
 
   @Get(':id')
@@ -34,34 +45,17 @@ export class UsersController {
     return this.usersService.getUserById(id);
   }
 
-  @Get('emailPassword/:email')
-  async findUserByEmailWithPassword(
-    @Param('email') email: string,
-  ): Promise<ResponseFindUserByEmailDto> {
-    return this.usersService.findUserByEmailWithPassword(email);
-  }
-  @Get('email/:email')
-  async findUserByEmail(
-    @Param('email') email: string,
-  ): Promise<UserResponseDto> {
-    return this.usersService.findUserByEmail(email);
-  }
-
-  @Post()
-  async createUser(
-    @Body() body: CreateUserDto,
-  ): Promise<UserResponseDto> {
-    const createUserDtoCreated = createUserSchema.parse(body);
-    return this.usersService.createUser(createUserDtoCreated);
-  }
-
   @Patch(':id')
   async updateUser(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdateUserDto,
   ): Promise<UserResponseDto> {
     const updateUserDtoCreated = updateUserSchema.parse(body);
-    return this.usersService.updateUser(id, updateUserDtoCreated);
+
+    return this.usersService.updateUser(
+      id,
+      updateUserDtoCreated,
+    );
   }
 
   @Delete(':id')

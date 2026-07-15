@@ -103,7 +103,7 @@ export function ItemWithoutPriority({
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={onClose}>Close</Button>
+        <Button autoFocus onClick={onClose}>Close</Button>
       </DialogActions>
     </Dialog>
   );

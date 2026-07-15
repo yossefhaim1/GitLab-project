@@ -151,6 +151,7 @@ export default function AddItem({ columnId }: AddItemProps) {
           <TextField
             fullWidth
             label="Title"
+            autoFocus
             value={title}
             onChange={(e) => {
               setTitle(e.target.value);
@@ -174,30 +175,35 @@ export default function AddItem({ columnId }: AddItemProps) {
                 setErrorMessage("");
               }
             }}
-            renderOption={(props, option) => (
-              <Box
-                component="li"
-                {...props}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1,
-                }}
-              >
-                <Box
-                  sx={{
-                    width: 12,
-                    height: 12,
-                    borderRadius: "50%",
-                    backgroundColor: option.color,
-                    border: "1px solid #cbd5e1",
-                    flexShrink: 0,
-                  }}
-                />
+            renderOption={(props, option) => {
+              const { key, ...optionProps } = props;
 
-                {option.type}
-              </Box>
-            )}
+              return (
+                <Box
+                  key={key}
+                  component="li"
+                  {...optionProps}
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: 12,
+                      height: 12,
+                      borderRadius: "50%",
+                      backgroundColor: option.color,
+                      border: "1px solid #cbd5e1",
+                      flexShrink: 0,
+                    }}
+                  />
+
+                  {option.type}
+                </Box>
+              );
+            }}
             renderInput={(params) => (
               <TextField
                 {...params}
@@ -255,30 +261,35 @@ export default function AddItem({ columnId }: AddItemProps) {
                 setErrorMessage("");
               }
             }}
-            renderOption={(props, option) => (
-              <Box
-                component="li"
-                {...props}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1,
-                }}
-              >
-                <Box
-                  sx={{
-                    width: 12,
-                    height: 12,
-                    borderRadius: "50%",
-                    backgroundColor: option.color,
-                    border: "1px solid #cbd5e1",
-                    flexShrink: 0,
-                  }}
-                />
+            renderOption={(props, option) => {
+              const { key, ...optionProps } = props;
 
-                {option.title}
-              </Box>
-            )}
+              return (
+                <Box
+                  key={key}
+                  component="li"
+                  {...optionProps}
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: 12,
+                      height: 12,
+                      borderRadius: "50%",
+                      backgroundColor: option.color,
+                      border: "1px solid #cbd5e1",
+                      flexShrink: 0,
+                    }}
+                  />
+
+                  {option.title}
+                </Box>
+              );
+            }}
             renderTags={(value, getTagProps) =>
               value.map((option, index) => {
                 const { key, ...tagProps } = getTagProps({ index });

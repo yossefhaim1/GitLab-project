@@ -1,73 +1,115 @@
 import {
   Body,
-  Post,
   Controller,
+  Delete,
   Get,
   Param,
-  Patch,
   ParseIntPipe,
-  Delete,
-} from '@nestjs/common';
-import { BoardsService } from './boards.service';
-import type { CreateBoardDto, UpdateBoardDto } from './dto/board.dto';
-import { createBoardSchema, updateBoardSchema } from './dto/board.dto';
+  Patch,
+  Post,
+  Req,
+  UseGuards,
+} from "@nestjs/common";
+import { BoardsService } from "./boards.service";
+import type { CreateBoardDto, UpdateBoardDto } from "./dto/board.dto";
+import {
+  createBoardSchema,
+  updateBoardSchema,
+} from "./dto/board.dto";
 import {
   BoardResponseDto,
   DeleteBoardResponseDto,
   GetAllParamsForBoardResponseDto,
   GetBoardsResponseDto,
-} from './dto/board-response.dto';
+} from "./dto/board-response.dto";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 
+type RequestWithUser = {
+  user: {
+    id: number;
+    email: string;
+    name: string;
+  };
+};
 
-@Controller('boards')
+@UseGuards(JwtAuthGuard)
+@Controller("boards")
 export class BoardsController {
   constructor(private readonly boardsService: BoardsService) {}
 
   @Get()
-  getBoards(): Promise<GetBoardsResponseDto> {
-    return this.boardsService.getBoards();
+  getBoards(
+    @Req() req: RequestWithUser,
+  ): Promise<GetBoardsResponseDto> {
+    return this.boardsService.getBoards(req.user.id);
   }
 
-  @Get('/:id')
+  @Get("/:id")
   getBoardById(
-    @Param('id', ParseIntPipe) id: number,
+    @Req() req: RequestWithUser,
+    @Param("id", ParseIntPipe) id: number,
   ): Promise<BoardResponseDto | null> {
-    return this.boardsService.getBoardById(id);
+    return this.boardsService.getBoardById(id, req.user.id);
   }
 
-  @Get('/:id/params')
+  @Get("/:id/params")
   getAllParamsForBoard(
-    @Param('id', ParseIntPipe) id: number,
+    @Req() req: RequestWithUser,
+    @Param("id", ParseIntPipe) id: number,
   ): Promise<GetAllParamsForBoardResponseDto> {
-    return this.boardsService.getAllParamsForBoard(id);
+    return this.boardsService.getAllParamsForBoard(
+      id,
+      req.user.id,
+    );
   }
 
   @Post()
-  createBoard(@Body() body: CreateBoardDto): Promise<BoardResponseDto> {
-    const createBoardDto = createBoardSchema.parse(body);
-    return this.boardsService.createBoard(createBoardDto);
-  }
-
-  @Patch(':id/default')
-  setDefaultBoard(
-    @Param('id', ParseIntPipe) id: number,
+  createBoard(
+    @Req() req: RequestWithUser,
+    @Body() body: CreateBoardDto,
   ): Promise<BoardResponseDto> {
-    return this.boardsService.setDefaultBoard(id);
+    const createBoardDto = createBoardSchema.parse(body);
+
+    return this.boardsService.createBoard(
+      createBoardDto,
+      req.user.id,
+    );
   }
 
-  @Patch('/:id')
+  @Patch("/:id/default")
+  setDefaultBoard(
+    @Req() req: RequestWithUser,
+    @Param("id", ParseIntPipe) id: number,
+  ): Promise<BoardResponseDto> {
+    return this.boardsService.setDefaultBoard(
+      id,
+      req.user.id,
+    );
+  }
+
+  @Patch("/:id")
   updateBoard(
-    @Param('id', ParseIntPipe) id: number,
+    @Req() req: RequestWithUser,
+    @Param("id", ParseIntPipe) id: number,
     @Body() body: UpdateBoardDto,
   ): Promise<BoardResponseDto> {
     const updateBoardDto = updateBoardSchema.parse(body);
-    return this.boardsService.updateBoard(id, updateBoardDto);
+
+    return this.boardsService.updateBoard(
+      id,
+      updateBoardDto,
+      req.user.id,
+    );
   }
 
-  @Delete('/:id')
+  @Delete("/:id")
   deleteBoard(
-    @Param('id', ParseIntPipe) id: number,
+    @Req() req: RequestWithUser,
+    @Param("id", ParseIntPipe) id: number,
   ): Promise<DeleteBoardResponseDto> {
-    return this.boardsService.deleteBoard(id);
+    return this.boardsService.deleteBoard(
+      id,
+      req.user.id,
+    );
   }
 }

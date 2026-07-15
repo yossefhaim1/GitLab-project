@@ -92,6 +92,7 @@ export function UpdateTag({ id, title, color }: UpdateTagProps) {
 
           <TextField
             label="Title"
+            autoFocus
             value={newTitleTag}
             error={!!errorMessage}
             helperText={errorMessage}

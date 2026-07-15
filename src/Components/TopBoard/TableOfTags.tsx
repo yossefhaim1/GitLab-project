@@ -128,7 +128,7 @@ export function TableOfTags({ open, onClose }: TableOfTagsProps) {
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={onClose} color="primary">
+        <Button autoFocus onClick={onClose} color="primary">
           Close
         </Button>
       </DialogActions>

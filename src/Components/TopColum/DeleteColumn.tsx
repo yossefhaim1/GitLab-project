@@ -59,7 +59,7 @@ export function DeleteColumn({ columnId }: DeleteColumnProps) {
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>Cancel</Button>
+          <Button autoFocus onClick={() => setOpen(false)}>Cancel</Button>
 
           <Button
             onClick={handleDelete}

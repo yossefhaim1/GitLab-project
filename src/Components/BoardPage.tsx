@@ -1,30 +1,47 @@
 import { useEffect } from "react";
-import Board from "./Board/Board";
 import { Box } from "@mui/material";
-import { useBoardStore } from "../store/boardStore";
+
+import Board from "./Board/Board";
 import { FirstBoardForNewUser } from "./FirstBoardForNewUser";
+import { useBoardStore } from "../store/boardStore";
 import { useBoards } from "../React_Queries/useBoardsGetData";
 
 export default function BoardPage() {
   const { data, isLoading, isFetching, error } = useBoards();
+
   const defaultBoardId = data?.defaultBoardId;
   const boards = data?.boards ?? [];
 
   const activeBoardId = useBoardStore((state) => state.activeBoardId);
-  const setActiveBoardId = useBoardStore((state) => state.setActiveBoardId);
+  const setActiveBoardId = useBoardStore(
+    (state) => state.setActiveBoardId,
+  );
 
   useEffect(() => {
-    const activeBoardExists = boards.some((board) => board.id === activeBoardId);
+    const activeBoardExists = boards.some(
+      (board) => board.id === activeBoardId,
+    );
 
     if (!activeBoardId && defaultBoardId) {
       setActiveBoardId(defaultBoardId);
       return;
     }
 
-    if (activeBoardId && !activeBoardExists && !isFetching && defaultBoardId) {
+    if (
+      activeBoardId &&
+      !activeBoardExists &&
+      !isFetching &&
+      defaultBoardId
+    ) {
       setActiveBoardId(defaultBoardId);
     }
-  }, [activeBoardId, defaultBoardId, boards, isFetching, setActiveBoardId]);
+  }, [
+    activeBoardId,
+    defaultBoardId,
+    boards,
+    isFetching,
+    setActiveBoardId,
+  ]);
 
   if (isLoading) {
     return <div>Loading...</div>;

@@ -51,7 +51,7 @@ export function DeleteBoard({ open, onClose }: DeleteBoardProps) {
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
+        <Button autoFocus onClick={onClose}>Cancel</Button>
 
         <Button
           onClick={handleDelete}

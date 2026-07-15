@@ -105,7 +105,7 @@ export function AddPriority() {
             }}
             sx={{ mt: 2 }}
             renderInput={(params) => (
-              <TextField {...params} label="Priority Type" />
+              <TextField {...params} autoFocus label="Priority Type" />
             )}
           />
 

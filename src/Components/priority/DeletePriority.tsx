@@ -67,6 +67,7 @@ export function DeletePriority({ id, type }: DeletePriorityProps) {
         <DialogActions>
           <Tooltip title="Cancel">
             <IconButton
+              autoFocus
               onClick={handleClose}
               color="secondary"
               disabled={deletePriority.isPending}

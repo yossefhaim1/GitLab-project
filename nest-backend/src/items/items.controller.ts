@@ -12,7 +12,10 @@ import { ItemsService } from './items.service';
 import type { CreateItemDto, UpdateItemDto } from './dto/item.dto';
 import { createItemSchema, updateItemSchema } from './schemas/item.schema';
 import { DeleteItemResponseDto, GetItemByIdResponseDto, ItemResponseDto } from './dto/item-response.dto';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('items')
 export class ItemsController {
   constructor(private readonly itemsService: ItemsService) {}

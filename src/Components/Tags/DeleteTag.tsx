@@ -67,6 +67,7 @@ export function DeleteTag({ id, title }: DeleteTagProps) {
         <DialogActions>
           <Tooltip title="Cancel">
             <IconButton
+              autoFocus
               onClick={handleClose}
               color="secondary"
               disabled={deleteTag.isPending}

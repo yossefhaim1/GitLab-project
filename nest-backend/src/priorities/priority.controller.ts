@@ -1,8 +1,11 @@
-import { Body , Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from "@nestjs/common";
+import { Body , Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseGuards } from "@nestjs/common";
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PrioritiesService } from "./priority.service";
 import type { CreatePriorityDto, UpdatePriorityDto } from "./dto/priority.dto";
 import { createPrioritySchema, updatePrioritySchema } from "./schemas/prioritiy.schema";
 import { PriorityResponseDto ,PriorityDeleteResponseDto} from "./dto/priority-response.dto";
+
+@UseGuards(JwtAuthGuard)
 @Controller('priorities')
 export class PrioritiesController {
     constructor(private readonly prioritiesService: PrioritiesService) {}

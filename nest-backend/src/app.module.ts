@@ -5,12 +5,13 @@ import { AssigneeModule } from './assignee/assignee.module';
 import { BoardsModule } from './boards/boards.module';
 import { ColumnsModule } from './columns/columns.module';
 import { ItemsModule } from './items/items.module';
-import { ItemTagModule } from './item_tag/ItemTag.module';
+import { ItemTagModule } from './Item_tag/item-tag.module';
 import { TagsModule } from './tags/tags.module';
 import { PrioritiesModule } from './priorities/priority.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/user.module';
+import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -34,6 +35,7 @@ import { UsersModule } from './users/user.module';
     TagsModule,
     PrioritiesModule,
     UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

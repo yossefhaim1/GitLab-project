@@ -159,6 +159,7 @@ export function UpdateItem({ itemId }: UpdateItemProps) {
           <TextField
             fullWidth
             label="Title"
+            autoFocus
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             sx={{ mb: 2 }}
@@ -231,6 +232,7 @@ export function UpdateItem({ itemId }: UpdateItemProps) {
 
           <Autocomplete
             options={allAssignees}
+            disablePortal
             getOptionLabel={(option) => option.name}
             value={allAssignees.find((assignee) => assignee.id === assigneeId) || null}
             onChange={(_, newValue) => {
