@@ -1,9 +1,37 @@
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+export interface AuthUser {
+  id: number;
+  name: string;
+  email: string;
+}
+
+export interface AuthResponse {
+  user: AuthUser;
+  accessToken: string;
+  refreshToken: string;
+}
+// ---------------------------------- //
+
+export interface LoginPayload {
+  email: string;
+  password: string;
+}
+export interface RegisterPayload {
+  name: string;
+  email: string;
+  password: string;
+}
+// ---------------------------------- //
 export interface Boards {
   id: number;
   title: string;
   isDefault: boolean;
 }
-
+// ---------------------------------- //
 export interface Columns {
   id: number;
   boardId: number;
@@ -11,7 +39,7 @@ export interface Columns {
   order: number;
   color: string;
 }
-
+// ---------------------------------- //
 export interface Items {
   id: number;
   boardId: number;
@@ -26,31 +54,30 @@ export interface Items {
   priority?: Priority | null;
   tags: Tag[];
 }
-
+// ---------------------------------- //
 export interface Assignee {
   id: number;
   name: string;
 }
-
-
+// ---------------------------------- //
 export interface ItemTag {
   id: number;
   itemId: number;
   tagId: number;
 }
-
+// ---------------------------------- //
 export interface Tag {
   id: number;
   title: string;
   color: string;
 }
-
+// ---------------------------------- //
 export interface Priority {
   id: number;
   type: PriorityTypeValues;
   color: string;
 }
-
+// ---------------------------------- //
 export const PriorityType = {
   LOW: "LOW",
   MEDIUM: "MEDIUM",
@@ -67,9 +94,10 @@ export const PRIORITY_TYPES: PriorityTypeValues[] = [
   "LOW",
   "MEDIUM",
   "HIGH",
+  "URGENT",
   "CRITICAL",
 ];
-
+// ---------------------------------- //
 export type CreateAssigneePayload = Omit<Assignee, "id">;
 export type CreateItemPayload = {
   boardId: number;
@@ -84,4 +112,4 @@ export type CreateBoardPayload = Omit<Boards, "id">;
 export type CreateTagPayload = Omit<Tag, "id">;
 export type CreatePriorityPayload = Omit<Priority, "id">;
 export type CreateItemTagPayload = Omit<ItemTag, "id">;
-
+// ---------------------------------- //

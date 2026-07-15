@@ -1,24 +1,51 @@
 import { create } from "zustand";
-interface BoardStore {
-  activeBoardId?: number;
-  searchItem: string;
+import { persist } from "zustand/middleware";
+import type { User } from "../Type";
 
-  // מגדיר את ה SEARCH ITEM
+interface BoardStore {
+  activeBoardId: number | undefined;
+  searchItem: string;
+  profile: User | undefined;
+
   setSearchItem: (value: string) => void;
-  setActiveBoardId: (id: number) => void;
+  setActiveBoardId: (id: number | undefined) => void;
+  setProfile: (profile: User) => void;
+  clearProfile: () => void;
 }
 
-export const useBoardStore = create<BoardStore>((set) => ({
-  searchItem: "",
-  activeBoardId: undefined,
+export const useBoardStore = create<BoardStore>()(
+  persist(
+    (set) => ({
+      searchItem: "",
+      activeBoardId: undefined,
+      profile: undefined,
 
-  //  נוסף בשביל Drag And Drop: מעדכן את כל ה-items ב-Zustand
+      setSearchItem: (value) => {
+        set({ searchItem: value });
+      },
 
-  setSearchItem: (value) => {
-    set({ searchItem: value });
-  },
+      setActiveBoardId: (id) => {
+        set({ activeBoardId: id });
+      },
 
-  setActiveBoardId: (id) => {
-    set({ activeBoardId: id });
-  },
-}));
+      setProfile: (profile) => {
+        set({ profile });
+      },
+
+      clearProfile: () => {
+        set({
+          profile: undefined,
+          activeBoardId: undefined,
+          searchItem: "",
+        });
+      },
+    }),
+    {
+      name: "board-store",
+
+      partialize: (state) => ({
+        profile: state.profile,
+      }),
+    },
+  ),
+);

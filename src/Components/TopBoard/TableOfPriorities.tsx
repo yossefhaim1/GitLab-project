@@ -131,7 +131,7 @@ export function TableOfPriorities({ open, onClose }: TableOfPrioritiesProps) {
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={onClose} color="primary">
+        <Button autoFocus onClick={onClose} color="primary">
           Close
         </Button>
       </DialogActions>

@@ -31,11 +31,7 @@ export default function Board() {
 
       if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
         e.preventDefault();
-
-        board.scrollBy({
-          left: e.deltaY * 5,
-          behavior: "smooth",
-        });
+        board.scrollBy({ left: e.deltaY * 5, behavior: "smooth" });
       }
     };
 
@@ -59,6 +55,7 @@ export default function Board() {
         boxSizing: "border-box",
       }}
     >
+      {" "}
       <Box
         sx={{
           px: 3,
@@ -69,6 +66,7 @@ export default function Board() {
           flexShrink: 0,
         }}
       >
+        {" "}
         <Box
           sx={{
             backgroundColor: "#ffffff",
@@ -78,10 +76,10 @@ export default function Board() {
             boxShadow: "0 2px 10px rgba(0,0,0,0.06)",
           }}
         >
-          <AllTopBoard />
-        </Box>
-      </Box>
-
+          {" "}
+          <AllTopBoard />{" "}
+        </Box>{" "}
+      </Box>{" "}
       <Box
         sx={{
           flex: 1,
@@ -92,7 +90,9 @@ export default function Board() {
           overflow: "hidden",
         }}
       >
+        {" "}
         <BoardDndProvider items={items || []}>
+          {" "}
           <Box
             ref={boardScrollRef}
             sx={{
@@ -104,14 +104,14 @@ export default function Board() {
               scrollBehavior: "smooth",
             }}
           >
+            {" "}
             {(columns || []).map((col) => (
-                <Column key={col.id} columnId={col.id} />
-              ))}
-
-            <AddColumn />
-          </Box>
-        </BoardDndProvider>
-      </Box>
+              <Column key={col.id} columnId={col.id} />
+            ))}{" "}
+            <AddColumn />{" "}
+          </Box>{" "}
+        </BoardDndProvider>{" "}
+      </Box>{" "}
     </Box>
   );
 }

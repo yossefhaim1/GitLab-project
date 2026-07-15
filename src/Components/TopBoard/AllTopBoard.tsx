@@ -4,6 +4,7 @@ import { ListOfBoards } from "./ListOfBoards";
 import { SetDefaultBoardButton } from "./SetDefaultBoardButton";
 import { Badge, Box } from "@mui/material";
 import { useItemsWithoutPriority } from "../../Hook/useItemsWithoutPriority";
+import { ProfileAvatar } from "../../Profile_button/Profile";
 
 export function AllTopBoard() {
   const { count: itemsWithoutPriorityCount } = useItemsWithoutPriority();
@@ -23,6 +24,7 @@ export function AllTopBoard() {
         "& .MuiIconButton-root": { width: 40, height: 40 },
       }}
     >
+      <ProfileAvatar />
       <Box sx={{ display: "flex", alignItems: "center" }}>
         <ListOfBoards />
       </Box>

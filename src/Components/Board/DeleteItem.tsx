@@ -59,7 +59,7 @@ export default function DeleteItem({ itemId }: DeleteItemProps) {
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>Cancel</Button>
+            <Button autoFocus onClick={() => setOpen(false)}>Cancel</Button>
           <Button
             onClick={handleDelete}
             color="error"

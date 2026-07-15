@@ -90,6 +90,7 @@ export function AddTag() {
 
           <TextField
             label="Tag Title"
+            autoFocus
             value={tagTitle}
             onChange={(e) => {
               setTagTitle(e.target.value);

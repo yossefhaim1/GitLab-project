@@ -83,6 +83,7 @@ export function AddNewBoard({ open, onClose }: AddNewBoardProps) {
         <TextField
           fullWidth
           label="Board name"
+          autoFocus
           value={boardName}
           onChange={(e) => setBoardName(e.target.value)}
           sx={{ mb: 2 }}

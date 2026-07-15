@@ -14,7 +14,72 @@ import type {
   CreatePriorityPayload,
   CreateItemTagPayload,
   ItemTag,
+  LoginPayload,
+  RegisterPayload,
+  AuthResponse,
+  User,
 } from "../Type";
+import { tokenStorage } from "../Utils/tokenStorage";
+
+// AUTH
+
+async function login(loginData: LoginPayload) {
+  const res = await api.post<AuthResponse>("/auth/login", loginData);
+
+  tokenStorage.setTokens(
+    res.data.accessToken,
+    res.data.refreshToken,
+  );
+
+  return res.data;
+}
+
+async function register(registerData: RegisterPayload) {
+  const res = await api.post<AuthResponse>(
+    "/auth/register",
+    registerData,
+  );
+
+  tokenStorage.setTokens(
+    res.data.accessToken,
+    res.data.refreshToken,
+  );
+
+  return res.data;
+}
+
+function logout(): void {
+  tokenStorage.clearTokens();
+}
+
+// User
+
+async function getUsers() {
+  const res = await api.get<User[]>("/users");
+  return res.data;
+}
+
+async function getUserById(id: number) {
+  const res = await api.get<User>(`/users/${id}`);
+  return res.data;
+}
+
+async function getUserByEmail(email: string) {
+  const encodedEmail = encodeURIComponent(email);
+  const res = await api.get<User>(`/users/email/${encodedEmail}`);
+  return res.data;
+}
+
+async function updateUserById(id: number, changes: Partial<User>) {
+  const res = await api.patch<User>(`/users/${id}`, changes);
+  return res.data;
+}
+
+async function deleteUserById(id: number) {
+  const res = await api.delete(`/users/${id}`);
+  return res.data;
+}
+
 
 // ASSIGNEES
 
@@ -228,6 +293,19 @@ async function deletePriorityById(id: number) {
 }
 
 export const API = {
+
+  // auth
+  login,
+  register,
+  logout,
+
+  // user
+  getUsers,
+  getUserById,
+  getUserByEmail,
+  updateUserById,
+  deleteUserById,
+
   // assignees
   getAssignees,
   getAssigneeById,
